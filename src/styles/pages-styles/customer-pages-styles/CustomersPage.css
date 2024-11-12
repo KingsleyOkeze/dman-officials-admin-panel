@@ -1,0 +1,158 @@
+.customers-page-container {
+    background: #F5F3F5;
+    padding: 15px;
+    min-height: 100vh;
+}
+
+.customers-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.customers-page-header h3 {
+    font-weight: 700;
+    font-size: 26px;
+}
+
+.customers-page-filter-and-refresh-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.drop-down-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #808080;
+    width: 150px;
+    height: 40px;
+    border-radius: 12px;
+    margin-right: 15px;
+    position: relative; /* Enable absolute positioning for children */
+    /* padding-top: 10px; */
+}
+
+.drop-down-filter-small-border-text {
+    position: absolute;
+    top: -10px; /* Move the text above the border */
+    left: 10px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    background-color: #F5F3F5; /* Match background to cover border line */
+    padding: 0 4px;
+    color: #808080;
+}
+
+.drop-down-filter p {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #000000;
+    padding-left: 10px;
+}
+
+.drop-down-icon {
+    padding-right: 10px;
+    width: 14px;
+    height: 14px;
+}
+
+.order-refresh-icon {
+    width: 24px;
+    height: 24px
+}
+
+.customers-page-table-container {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 15px;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.customers-page-table-container p {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    color: #000000;
+    width: 128px;
+    height: 24px;
+    padding-bottom: 15px;
+}
+
+.customers-page-table {
+    width: 100%; 
+    border-collapse: collapse;
+}
+
+.customers-page-table thead {
+    border-bottom: 1.5px solid #000000;
+}
+
+.customers-page-table-head th {
+    width: 96px;
+    height: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: #000000;
+    white-space: nowrap;
+    text-align: left;
+    padding: 15px; 
+}
+
+.customers-page-table-body td {
+    white-space: nowrap;
+    padding: 15px; 
+    /* font-weight: 400; */
+    /* font-size: 16px; */
+    line-height: 24px;
+}
+
+
+.customers-page-table-index {
+    width: 40px;
+    height: 40px;
+    font-size: 18;
+    align-items: center;
+    font-weight: 700;
+    background: #007AFF;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    margin-right: 15px;
+    color: #FFFFFF;
+}
+
+
+.customers-delete-icon {
+    color: #B80000;
+    text-align: center;
+    align-items: center;
+    /* width: 24px;
+    height: 24px; */
+}
+
+.customers-page-phone-and-email-container{
+    line-height: 24px;
+    font-weight: 500;
+    font-size: 16px;
+    height: 48px;
+    color: #000000;
+}
+
+
+.customers-page-table-body:nth-child(7) {
+    
+}
+
+
+@media (max-width: 800px) {
+    .drop-down-filter {
+        height: 50px;
+    }
+}

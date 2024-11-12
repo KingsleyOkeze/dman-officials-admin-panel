@@ -1,0 +1,142 @@
+.order-page-container {
+    background: #F5F3F5;
+    padding: 15px;
+    min-height: 100vh;
+}
+
+.order-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.order-page-header h3 {
+    font-weight: 700;
+    font-size: 25px;
+}
+
+.order-page-filter-and-refresh-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.drop-down-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #808080;
+    width: 150px;
+    height: 40px;
+    border-radius: 12px;
+    margin-right: 15px;
+    position: relative; /* Enable absolute positioning for children */
+    /* padding-top: 10px; */
+}
+
+.drop-down-filter-small-border-text {
+    position: absolute;
+    top: -10px; /* Move the text above the border */
+    left: 10px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    background-color: #F5F3F5; /* Match background to cover border line */
+    padding: 0 4px;
+    color: #808080;
+}
+
+.drop-down-filter p {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #000000;
+    padding-left: 10px;
+}
+
+.drop-down-icon {
+    padding-right: 10px;
+    width: 14px;
+    height: 14px;
+}
+
+.order-refresh-icon {
+    width: 24px;
+    height: 24px
+}
+
+.orders-page-table-container {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 15px;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.orders-page-table-container p {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    color: #000000;
+    width: 86px;
+    padding-bottom: 15px;
+}
+
+.orders-page-table {
+    width: 100%; 
+    border-collapse: collapse;
+}
+
+.orders-page-table thead {
+    border-bottom: 1.5px solid #000000;
+}
+
+.orders-page-table-head th {
+    width: 96px;
+    height: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: #000000;
+    white-space: nowrap;
+    text-align: left;
+    padding: 15px; 
+}
+
+.orders-page-table-body td {
+    white-space: nowrap;
+    padding: 15px; 
+}
+
+
+.orders-page-table-index {
+    width: 30px;
+    height: 30px;
+    font-size: 18;
+    align-items: center;
+    font-weight: 700;
+    color: #000000;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    margin-right: 15px;
+    color: #FFFFFF;
+}
+
+
+.order-delete-icon {
+    color: #B80000;
+}
+
+.orders-page-table-body:nth-child(7) {
+    text-align: center;
+    align-items: center;
+}
+
+
+@media (max-width: 800px) {
+    .drop-down-filter {
+        height: 50px;
+    }
+}
