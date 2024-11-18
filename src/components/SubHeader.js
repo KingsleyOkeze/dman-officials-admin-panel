@@ -12,11 +12,11 @@ function SubHeader () {
     return(
         <div className="sub-header-container">
             <ul>
-                <li onClick={() => navigate("/edit-product-page")}><RiHome5Line className="sub-header-icon"/>Dashboard</li>
-                <li onClick={() => navigate("/product-page")}><FiPackage className="sub-header-icon"/>Products</li>
-                <li onClick={() => navigate("/order-page")}><BiBasket className="sub-header-icon"/>Orders</li>
-                <li onClick={() => navigate("/customers-page")}><GrGroup className="sub-header-icon"/>Customers</li>
-                <li onClick={() => navigate("/coupon-code-page")}><TbRosetteDiscountCheck className="sub-header-icon"/>Coupons</li>
+                <li onClick={() => navigate("/admin/edit-product-page")}><RiHome5Line className="sub-header-icon"/>Dashboard</li>
+                <li onClick={() => navigate("/admin/product-page")}><FiPackage className="sub-header-icon"/>Products</li>
+                <li onClick={() => navigate("/admin/order-page")}><BiBasket className="sub-header-icon"/>Orders</li>
+                <li onClick={() => navigate("/admin/customers-page")}><GrGroup className="sub-header-icon"/>Customers</li>
+                <li onClick={() => navigate("/admin/coupon-code-page")}><TbRosetteDiscountCheck className="sub-header-icon"/>Coupons</li>
             </ul>
         </div>
     )

@@ -1,0 +1,103 @@
+/* General Page Layout */
+.signup-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.signup-page h1 {
+    color: #333;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+/* Form Styling */
+.signup-page form {
+    width: 100%;
+    max-width: 400px;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.signup-page label {
+    font-size: 1rem;
+    color: #555;
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.signup-page input {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    transition: border 0.2s ease-in-out;
+}
+
+.signup-page input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Button Styling */
+.signup-page button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+}
+
+.signup-page button:hover {
+    background-color: #45a049;
+}
+
+/* Message Styling */
+.message, .error {
+    font-size: 1rem;
+    margin-top: 15px;
+    text-align: center;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+.message {
+    color: #4CAF50;
+    background-color: #e7f9ed;
+}
+
+.error {
+    color: #f44336;
+    background-color: #fdecea;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+    .signup-page form {
+        padding: 15px;
+    }
+
+    .signup-page h1 {
+        font-size: 1.5rem;
+    }
+
+    .signup-page button {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+}
