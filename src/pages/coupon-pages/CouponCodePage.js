@@ -126,7 +126,9 @@ function CouponCodePage () {
                                     </td>
                                     <td>{coupon.type}</td>
                                     <td>{coupon.amount}</td>
-                                    <td><FiEdit onClick={() => navigate("/admin/edit-coupon-code-page")}/></td>
+                                    <td><FiEdit
+                                            className="coupon-code-edit-icon"
+                                            onClick={() => navigate("/admin/edit-coupon-code-page")}/></td>
                                     <td><FaRegTrashCan className="coupon-code-delete-icon"/></td>
                                 </tr>
                             ))

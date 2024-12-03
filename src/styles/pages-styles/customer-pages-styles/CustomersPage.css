@@ -13,7 +13,7 @@
 
 .customers-page-header h3 {
     font-weight: 700;
-    font-size: 26px;
+    font-size: 25px;
 }
 
 .customers-page-filter-and-refresh-container {
@@ -133,8 +133,7 @@
     color: #B80000;
     text-align: center;
     align-items: center;
-    /* width: 24px;
-    height: 24px; */
+    font-size: 24px;
 }
 
 .customers-page-phone-and-email-container{

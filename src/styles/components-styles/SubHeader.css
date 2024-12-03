@@ -1,17 +1,81 @@
 .sub-header-container {
-    display: none;
+    position: absolute;
+    top: 100%; /* Position it directly below the Header */
+        right: 0;
+        width: 200px; /* Smaller width for smaller screens */
+        height: auto; 
+        z-index: 1000; /* Ensure it overlays properly */
+        border-left: 1px solid #ccc; /* Optional: add a dividing line */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for distinction */
+        transform: translateY(-100%);
+        transition: transform 0.3s ease-in-out;
+        visibility: hidden;
+        background: green;
+        opacity: 0; /* Invisible */
+        
+}
+
+.sub-header-container.active {
+    transform: translateY(0); /* Slide down when active */
+    visibility: visible;
+    opacity: 1;
+}
+
+
+/* Add a toggle button */
+.sub-header-toggle-button {
+    display: none; /* Default: hidden */
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #333;
+    z-index: 1100; /* Above sub-header */
+}
+
+
+.sub-header-toggle-button {
+    display: block;
+}
+
+
+
+
+.sub-header-container ul {
+    display: block;
+    list-style-type: none;
+    padding: 0;
+}
+
+.sub-header-container ul li {
+    display: block;
+    align-items: center;
+    line-height: 24px;
+    font-weight: 400;
+    padding-right: 30px;
+}
+
+.sub-header-icon {
+    font-size: 24px;
+    padding-right: 15px;
 }
 
 @media (min-width: 800px) {
     .sub-header-container {
+        position: relative;
         display: flex; 
         justify-content: flex-start; 
         align-items: center; 
         background: #FFFFFF;
+        box-sizing: border-box;
         height: 64px;
         color: #000000;
         padding-left: 50px;
         padding-right: 50px;
+        width: 100%;
     }
     
     .sub-header-container ul {

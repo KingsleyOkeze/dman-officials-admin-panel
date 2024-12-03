@@ -111,8 +111,8 @@
 
 
 .orders-page-table-index {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     font-size: 18;
     align-items: center;
     font-weight: 700;
@@ -124,9 +124,14 @@
     color: #FFFFFF;
 }
 
+.order-edit-icon {
+    font-size: 24px;
+}
+
 
 .order-delete-icon {
     color: #B80000;
+    font-size: 24px;
 }
 
 .orders-page-table-body:nth-child(7) {

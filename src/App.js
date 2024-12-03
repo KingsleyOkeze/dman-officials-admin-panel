@@ -18,6 +18,7 @@ import PublicRoute from './utils/PublicRoute';
 import NotFoundPage from './pages/NotFoundPage';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
+import HomePage from './pages/HomePage';
 
 function App() {
 
@@ -39,8 +40,9 @@ function App() {
         </Route>
         {/* Protected Routes */}
         <Route path="/admin" element={<ProtectedRoute />}>
-          <Route index element={<Navigate to="/admin/order-page" replace />} /> {/* Redirect to OrdersPage */}
+          <Route index element={<Navigate to="/admin/home-page" replace />} /> {/* Redirect to HomePage */}
           <Route element={<Dashboard />}>
+            <Route path="home-page" element={<HomePage />} />
             <Route path="order-page" element={<OrdersPage />} />
             <Route path="order-details-page" element={<OrderDetailsPage />} />
             <Route path="product-page" element={<ProductPage />} />

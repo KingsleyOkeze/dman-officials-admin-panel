@@ -18,8 +18,8 @@
 }
 
 .coupon-code-page-header h3 {
+    font-size: 25px;
     font-weight: 700;
-    font-size: 20px;
     white-space: nowrap;
     /* background-color: yellow; */
 }
@@ -157,6 +157,10 @@
     border-radius: 50%;
     margin-right: 15px;
     color: #FFFFFF;
+}
+
+.coupon-code-edit-icon {
+    font-size: 24px;
 }
 
 

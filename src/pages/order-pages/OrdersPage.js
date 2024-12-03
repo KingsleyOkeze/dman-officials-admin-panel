@@ -138,7 +138,7 @@ function OrdersPage () {
                                     <td>{order.payment}</td>
                                     <td>{order.status}</td>
                                     <td>{order.date}</td>
-                                    <td><FiEdit /></td>
+                                    <td><FiEdit className="order-edit-icon"/></td>
                                     <td><FaRegTrashCan className="order-delete-icon"/></td>
                                 </tr>
                             ))

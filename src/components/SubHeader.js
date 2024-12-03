@@ -5,14 +5,15 @@ import { GrGroup } from "react-icons/gr";
 import { TbRosetteDiscountCheck } from "react-icons/tb";
 import { BiBasket } from "react-icons/bi";
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
-function SubHeader () {
+function SubHeader ({ isOpen }) {
     const navigate = useNavigate();
 
     return(
-        <div className="sub-header-container">
+        <div className={`sub-header-container ${isOpen ? "active" : ""} ${window.innerWidth >= 786 ? "always-visible" : ""}`}> 
             <ul>
-                <li onClick={() => navigate("/admin/edit-product-page")}><RiHome5Line className="sub-header-icon"/>Dashboard</li>
+                <li onClick={() => navigate("/admin/home-page")}><RiHome5Line className="sub-header-icon"/>Dashboard</li>
                 <li onClick={() => navigate("/admin/product-page")}><FiPackage className="sub-header-icon"/>Products</li>
                 <li onClick={() => navigate("/admin/order-page")}><BiBasket className="sub-header-icon"/>Orders</li>
                 <li onClick={() => navigate("/admin/customers-page")}><GrGroup className="sub-header-icon"/>Customers</li>
