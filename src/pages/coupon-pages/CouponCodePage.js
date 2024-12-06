@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../../styles/pages-styles/coupon-pages-styles/CouponCodePage.css";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { TiArrowSortedDown } from "react-icons/ti";
@@ -6,6 +6,7 @@ import { TfiReload } from "react-icons/tfi";
 import { FiEdit } from "react-icons/fi";
 import { GrAddCircle } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function CouponCodePage () {
     const navigate = useNavigate();
@@ -52,28 +53,65 @@ function CouponCodePage () {
             type: "Fixed",
             amount: 20,
           },
-          {
-            couponName: "WINTER2024",
-            status: "Expired",
-            type: "Percentage",
-            amount: 30,
-          },
-          {
-            couponName: "SPRINGFLING",
-            status: "Active",
-            type: "Fixed",
-            amount: 40,
-          },
-          {
-            couponName: "CYBERMONDAY",
-            status: "Active",
-            type: "Percentage",
-            amount: 20,
-          }
+          
       ]);
 
     const [color, setColor] = useState(['#007AFF', '#008C00']);
   
+    const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
+    const [totalPages, setTotalPages] = useState(5); // Total number of pages (example)
+
+    const handlePreviousFunction = async () => {
+        if (paginationIndex > 0) { 
+            const newPaginationIndex = paginationIndex - 1;
+            setPaginationIndex(newPaginationIndex);
+            const response = await axios.get(`/admin/fetch-coupons?page=${newPaginationIndex}`);
+    
+            if (response.data.result) {
+                console.log("fetched data", response.data.result)
+                setCoupons(response.data.result);
+                
+            }
+        }
+    };
+
+    const handleNextFunction = async () => {
+        if (paginationIndex < totalPages - 1) {
+            const newPaginationIndex = paginationIndex + 1;
+            setPaginationIndex(newPaginationIndex);
+            const response = await axios.get(`/admin/fetch-coupons?page=${newPaginationIndex}`);
+        
+            if (response.data) {
+                console.log("fetched data", response.data.result)
+                setCoupons(response.data.result);
+            }
+        }
+        
+    };
+
+
+    const fetchCoupons = async () => {
+        const response = await axios.get(`/admin/fetch-coupons?page=${paginationIndex}`);
+
+        if (response.data) {
+            console.log("fetched data", response.data.result)
+            setCoupons(response.data.result);
+            setTotalPages(response.data.totalPages)
+        }
+    }
+
+    useEffect(() => {
+        fetchCoupons();
+    }, [])
+
+
+
+
+
+
+
+
+
       
     return(
         <div className="coupon-code-page-container">
@@ -98,7 +136,7 @@ function CouponCodePage () {
 
             <div className="coupon-code-page-table-container">
                 <p>All Coupons</p>
-                <table className="coupon-code-page-table">
+                <table className="coupon-code-page-table" style={{ height: coupons.length === 0 ? '75vh' : ''}}>
                     <thead className="coupon-code-page-table-head">
                         <tr>
                             <th>Coupon Name</th>
@@ -110,7 +148,7 @@ function CouponCodePage () {
                         </tr>
                     </thead>
                     <tbody className="coupon-code-page-table-body">
-                        {
+                        {coupons.length > 0 ? (
                             coupons.map((coupon, index) => (
                                 <tr key={index}>
                                     <td style={{ display: 'flex', alignItems: 'center' }}>
@@ -132,14 +170,40 @@ function CouponCodePage () {
                                     <td><FaRegTrashCan className="coupon-code-delete-icon"/></td>
                                 </tr>
                             ))
+                        ) : (
+                            <tr>
+                                <td colSpan="7" className="coupon-code-page-no-records-message">
+                                    No records found
+                                </td>
+                            </tr>
+                        )
                         }
                         
                     </tbody>
                 </table>
 
-
-
             </div>
+            {/* Pagination Section */}
+            <div className="coupon-code-page-pagination-container">
+                <button
+                    className="coupon-code-page-pagination-button pagination-prev"
+                    onClick={handlePreviousFunction}
+                    disabled={paginationIndex === 0}
+                >
+                    Previous
+                </button>
+                    <span className="coupon-code-page-pagination-status">
+                        {paginationIndex + 1} / {totalPages}
+                    </span>
+                <button
+                    className="coupon-code-page-pagination-button pagination-next"
+                    onClick={handleNextFunction}
+                    disabled={paginationIndex + 1 === totalPages}
+                >
+                    Next
+                </button>
+            </div>
+
         </div>
     )
 }

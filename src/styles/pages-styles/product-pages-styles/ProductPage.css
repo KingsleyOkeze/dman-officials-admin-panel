@@ -29,17 +29,72 @@
     background: #FFFFFF;
     border-radius: 10px;
     width: 125px;
+    height: 150px; /* Set a fixed height to prevent layout shifting */
     text-align: center;
     padding: 15px;
-    display: grid;
-    place-items: center;
-
+    display: flex; /* Use Flexbox for alignment */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Center items vertically */
+    align-items: center; /* Center items horizontally */
+    position: relative; /* For absolute positioning of children if needed */
 }
+
+.product-img-remove-image-icon {
+    position: absolute;
+    top: 5px; /* Adjust position as needed */
+    right: 5px; /* Adjust position as needed */
+    font-size: 20px; /* Adjust icon size */
+    color: red;
+    cursor: pointer;
+}
+
+.product-image-div img {
+    width: 78px;
+    height: 78px;
+    object-fit: contain; /* Ensure the image fits within its container */
+    margin-bottom: 10px; /* Space between image and other elements */
+}
+
 
 .product-image-div .product-image-icon {
     font-size: 76px;
     padding-bottom: 15px;
 }
+
+
+/* Hide the default input */
+.product-image-pick-input {
+    display: none;
+}
+
+/* Custom label for the input */
+.custom-file-label {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.custom-file-label:hover {
+    background-color: #0056b3;
+}
+
+/* Style for file name text */
+.file-name-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+    text-align: center;
+}
+
+
+
+
 
 .product-input-section {
     padding-top: 30px;
@@ -91,7 +146,7 @@
 
 .product-sub-specs {
     width: 45%;
-    /* background: green; */
+    position: relative;
 }
 .product-sub-specs p {
     font-size: 16px;
@@ -112,6 +167,56 @@
     border-radius: 12px;
     border: 1px solid #808080;
 }
+
+
+/* Doing some drop down  */
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    z-index: 1; 
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .dropdown-menu li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    list-style: none;
+  }
+  
+  
+  .dropdown-menu li:hover {
+    background-color: #f1f1f1;
+  }
+
+ 
+
+
+/* end */
+
+
+
+.product-sub-input-container {
+    width: 100%;
+    height: 40px;
+}
+
+
+.product-sub-input {
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid #808080 ;
+    background: #F5F3F5;
+    text-indent: 10px;
+}
+
 
 .product-timer-container {
     padding-top: 30px;
@@ -169,6 +274,34 @@
     margin-right: 10px;
 }
 
+.all-time-container input {
+    width: 100%;
+    height: 100%;
+    background: #F5F3F5;
+    border: 1px solid #808080;
+    border-radius: 12px;
+    text-align: center; /* Centers the text horizontally */
+    font-size: 16px; /* Adjust as needed for better visibility */
+    line-height: 1.5; /* Optional for better vertical alignment */
+  }
+  
+  /* Remove the default arrows on number inputs */
+  .all-time-container input[type="number"]::-webkit-inner-spin-button,
+  .all-time-container input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  .all-time-container input[type="number"] {
+    -moz-appearance: textfield; /* For Firefox */
+  }
+  
+  /* Optional: Center the placeholder text vertically */
+  .all-time-container input::placeholder {
+    text-align: center;
+    line-height: 1.5;
+  }
+  
 
 .product-create-button {
     background: #000000;
@@ -183,7 +316,10 @@
 }
 
 @media (min-width: 780px) {
-
+    .product-page-head-h3 {
+        font-size: 36px;
+    }
+    
     .product-image-div {
         width: 200px;
     }

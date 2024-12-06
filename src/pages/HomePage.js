@@ -222,7 +222,7 @@ function HomePage () {
             <div className="home-page-main-header-container">
                 <p className="home-page-main-header-my-product-text">My Products</p>
                 <div className="home-page-main-header-add-new-text-and-icon-container"
-                    onClick={() => navigate("/admin/edit-product-page") }>
+                    onClick={() => navigate("/admin/product-page") }>
                     <GrAddCircle className="home-page-main-header-add-new-icon"/>
                     <p className="home-page-main-header-add-new-text">Add New</p>
                 </div>

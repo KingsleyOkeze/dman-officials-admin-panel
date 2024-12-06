@@ -2,13 +2,14 @@
     background: #F5F3F5;
     padding: 15px;
     min-height: 100vh;
+    table-layout: fixed; /* Ensures consistent column widths */
 }
 
 .order-page-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .order-page-header h3 {
@@ -86,6 +87,7 @@
 .orders-page-table {
     width: 100%; 
     border-collapse: collapse;
+
 }
 
 .orders-page-table thead {
@@ -105,9 +107,34 @@
 }
 
 .orders-page-table-body td {
+    /* min-width: 100px; */
     white-space: nowrap;
     padding: 15px; 
+    overflow: hidden; /* Prevent overflow */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    vertical-align: middle;
 }
+
+
+/* Handle Empty Cells */
+.orders-page-table-body td:empty::before {
+    content: "-"; /* Placeholder text */
+    color: #ccc; /* Optional: Dim placeholder text */
+    text-align: center; /* Center placeholder */
+    display: inline-block; /* Ensure it behaves like text */
+    width: 100%; /* Ensure it spans the width of the cell */
+}
+
+
+
+
+/* Style for Table Rows */
+.orders-page-table-body tr:hover {
+    background-color: #f9f9f9; /* Light grey on hover */
+    cursor: pointer; /* Show pointer for clickable rows */
+}
+
+
 
 
 .orders-page-table-index {
@@ -140,8 +167,130 @@
 }
 
 
-@media (max-width: 800px) {
+
+
+
+.order-page-no-records-message {
+    text-align: center;
+    color: #808080;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 15px 0;
+}
+
+.order-page-no-records-message {
+    background-color: #f2f2f2;
+    border-top: 1px solid #ddd;
+}
+
+
+
+
+
+
+.order-page-pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    padding: 15px 0;
+    background-color: #ffffff;
+    border-top: 1px solid #ddd;
+    border-radius: 0 0 12px 12px; /* Match table's rounded corners */
+    width: 100%;
+}
+
+.order-page-pagination-button {
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.order-page-pagination-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.order-page-pagination-button:hover:not(:disabled) {
+    background-color: #ff4f4f;
+    color: #ffffff;
+}
+
+.order-page-pagination-prev {
+    margin-right: 10px;
+}
+
+.order-page-pagination-next {
+    margin-left: 10px;
+}
+
+.order-page-pagination-status {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000000;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (min-width: 786px) {
+    .order-page-header h3 { 
+        font-size: 36px;
+    }
+    
     .drop-down-filter {
         height: 50px;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 
+.order-page-bottom-pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #FFFFFF;
+    padding-top: 15px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 15px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    margin-top: 20px;
+    
+}
+
+
+.order-page-bottom-pagination-container div {
+    display: flex;
+    align-items: center;
+    white-space: none;
+}
+ */
