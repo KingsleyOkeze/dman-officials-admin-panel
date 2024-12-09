@@ -13,6 +13,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import DeleteConfirmationModal from "../components/ConfirmationModal";
 import ConfirmationModal from "../components/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 
 // Register necessary chart.js components
@@ -38,46 +39,46 @@ function HomePage () {
             subCategory: '4K TVs',
             price: '$1,299.99',
           },
-          {
-            img: img1,
-            id: 3,
-            productName: 'Nike Air Max 270',
-            category: 'Fashion',
-            subCategory: 'Sneakers',
-            price: '$149.99',
-          },
-          {
-            img: img1,
-            id: 4,
-            productName: 'Sony PlayStation 5',
-            category: 'Gaming',
-            subCategory: 'Consoles',
-            price: '$499.99',
-          },
-          {
-            img: img1,
-            id: 5,
-            productName: 'Canon EOS Rebel T8i',
-            category: 'Electronics',
-            subCategory: 'DSLR Cameras',
-            price: '$749.99',
-          },
-          {
-            img: img1,
-            id: 6,
-            productName: 'Apple MacBook Air',
-            category: 'Electronics',
-            subCategory: 'Laptops',
-            price: '$999.99',
-          },
-          {
-            img: img1,
-            id: 7,
-            productName: 'Samsung Galaxy Watch',
-            category: 'Electronics',
-            subCategory: 'Smartwatches',
-            price: '$299.99',
-          },
+        //   {
+        //     img: img1,
+        //     id: 3,
+        //     productName: 'Nike Air Max 270',
+        //     category: 'Fashion',
+        //     subCategory: 'Sneakers',
+        //     price: '$149.99',
+        //   },
+        //   {
+        //     img: img1,
+        //     id: 4,
+        //     productName: 'Sony PlayStation 5',
+        //     category: 'Gaming',
+        //     subCategory: 'Consoles',
+        //     price: '$499.99',
+        //   },
+        //   {
+        //     img: img1,
+        //     id: 5,
+        //     productName: 'Canon EOS Rebel T8i',
+        //     category: 'Electronics',
+        //     subCategory: 'DSLR Cameras',
+        //     price: '$749.99',
+        //   },
+        //   {
+        //     img: img1,
+        //     id: 6,
+        //     productName: 'Apple MacBook Air',
+        //     category: 'Electronics',
+        //     subCategory: 'Laptops',
+        //     price: '$999.99',
+        //   },
+        //   {
+        //     img: img1,
+        //     id: 7,
+        //     productName: 'Samsung Galaxy Watch',
+        //     category: 'Electronics',
+        //     subCategory: 'Smartwatches',
+        //     price: '$299.99',
+        //   },
         //   {
         //     img: img1,
         //     id: 8,
@@ -143,6 +144,7 @@ function HomePage () {
 
     // Options for customization
     const options = {
+        maintainAspectRatio: true, // Ensures the chart remains proportional
         responsive: true,
             plugins: {
                 legend: {
@@ -208,6 +210,46 @@ function HomePage () {
         setModalOpen(false);
         setSelectedProduct(null);
       };
+
+
+
+
+    // PAGINATION
+    const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
+    const [totalPages, setTotalPages] = useState(5); // Total number of pages (example)
+  
+    const handlePreviousFunction = async () => {
+        if (paginationIndex > 0) { 
+            const newPaginationIndex = paginationIndex - 1;
+            setPaginationIndex(newPaginationIndex);
+            const response = await axios.get(`/admin/fetch-products?page=${newPaginationIndex}`);
+      
+            if (response.data.result) {
+                console.log("fetched data", response.data.result)
+                setProducts(response.data.result);
+                  
+            }
+        }
+    };
+  
+    const handleNextFunction = async () => {
+        if (paginationIndex < totalPages - 1) {
+            const newPaginationIndex = paginationIndex + 1;
+            setPaginationIndex(newPaginationIndex);
+            const response = await axios.get(`/admin/fetch-products?page=${newPaginationIndex}`);
+          
+            if (response.data) {
+                console.log("fetched data", response.data.result)
+                setProducts(response.data.result);
+            }
+        }
+          
+    };
+
+
+
+
+
 
 
     return(
@@ -347,7 +389,7 @@ function HomePage () {
                 </div>
                 <div className="home-page-table-container">
                    <p>ALL PRODUCT</p>
-                   <table className="home-page-table">
+                   <table className="home-page-table" style={{ height: products.length < 7 ? '100vh' : ''}} >
                        <thead className="home-page-table-head">
                            <tr>
                                <th>Product Name</th>
@@ -359,7 +401,7 @@ function HomePage () {
                             </tr>
                         </thead>
                         <tbody className="home-page-table-body">
-                            {
+                            {products.length > 0 ? (
                                 products.map((product, index) => (
                                     <tr key={index}>
                                         <td className="home-page-img-and-product-name-container">
@@ -385,18 +427,49 @@ function HomePage () {
                                         </td>
                                     </tr>
                                 ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="7" className="order-page-no-records-message">
+                                        No records found
+                                    </td>
+                                </tr>
+                            )
                             }     
                         </tbody>
                     </table>
+
                 </div>
+
+                {/* Pagination Section */}
+                <div className="home-page-pagination-container">
+                    <button
+                        className="home-page-pagination-button pagination-prev"
+                        onClick={handlePreviousFunction}
+                        disabled={paginationIndex === 0}
+                    >
+                        Previous
+                    </button>
+                        <span className="home-page-pagination-status">
+                            {paginationIndex + 1} / {totalPages}
+                        </span>
+                    <button
+                        className="home-page-pagination-button pagination-next"
+                        onClick={handleNextFunction}
+                        disabled={paginationIndex + 1 === totalPages}
+                    >
+                        Next
+                    </button>
+                </div>
+
+
             </div>
             {/* Modal */}
             <ConfirmationModal
-        isOpen={isModalOpen}
-        onClose={() => setModalOpen(false)}
-        onConfirm={handleConfirmDelete}
-        message={`Are you sure you want to delete "${selectedProduct?.productName}"?`}
-      />
+                isOpen={isModalOpen}
+                onClose={() => setModalOpen(false)}
+                onConfirm={handleConfirmDelete}
+                message={`Are you sure you want to delete "${selectedProduct?.productName}"?`}
+            />
 
         </div>
     )

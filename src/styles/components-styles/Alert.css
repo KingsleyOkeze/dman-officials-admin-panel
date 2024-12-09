@@ -1,4 +1,22 @@
-.alert-container {
+.success-alert-container {
+    width: 309px;
+    height: 60px;
+    position: absolute;
+    top: 33%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    display: block;
+    background: #008C00;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    color: #FFFFFF;
+  }
+  
+
+  .error-alert-container {
     width: 309px;
     height: 60px;
     position: absolute;
@@ -13,13 +31,14 @@
     align-items: center;
     padding: 15px;
     color: #FFFFFF;
-  }
-  
-  .alert-icon {
+}
+
+
+.alert-icon {
     color: #F5F3F5;
     font-size: 24px;
   }
   
-  .alert-message-container {
+.alert-message-container {
     padding-left: 10px;
   }

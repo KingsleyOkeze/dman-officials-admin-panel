@@ -7,12 +7,12 @@ import { LiaTimesSolid } from "react-icons/lia";
 import axios from "axios";
 import { useRef } from 'react';
 import { TiArrowSortedUp } from "react-icons/ti";
-
-
-
+import Alert from "../../components/Alert";
 
 
 function ProductPage () {
+    const [customAlert, setCustomAlert] = useState({ visibility: false, status: "", title: "", message: ""});
+
     const [image, setImage] = useState(null);
     const [firstImagePreview, setFirstImagePreview] = useState(null);
     const [secondImagePreview, setSecondImagePreview] = useState(null);
@@ -20,20 +20,21 @@ function ProductPage () {
     const [fourthImagePreview, setFourthImagePreview] = useState(null);
 
 
-    const [productImage, setProductImage] = useState({ firstImage: "", secondImage: "", thirdImage: "", fourthImage: ""});
+    const [productImages, setProductImages] = useState({ firstImage: "", secondImage: "", thirdImage: "", fourthImage: ""});
     const [productName, setProductName] = useState("");
     const [productDescription, setProductDescription] = useState();
     const [productCategory, setProductCategory] = useState('Select category');
     const [productSubCategory, setProductSubCategory] = useState('Sub category');
-    const [productSize, setProductSize] = useState('Selected size');
+    const [productSize, setProductSize] = useState(['Selected size']);
     const [productPrice, setProductPrice] = useState('');
-    
     const [productBrand, setProductBrand] = useState('');
     const [productOfferPrice, setProductOfferPrice] = useState();
     const [productQuantity, setProductQuantity] = useState();
-    const [productColor, setProductColor] = useState('Select color');
-    const [productTimer, setProductTimer] = useState();
+    const [productColor, setProductColor] = useState(['Select color']);
+    const [productTimer, setProductTimer] = useState({ hrs: 0, min: 0, sec: 0});
 
+
+    const [addTimer, setAddTimer] = useState(false)
              
     // Create refs for each file input element to directly access and reset them    
     const firstImageInputRef = useRef(null); // Ref for the first image file input
@@ -47,7 +48,7 @@ function ProductPage () {
     const handleFirstImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-          setProductImage((prevState) => ({
+          setProductImages((prevState) => ({
             ...prevState,
             firstImage: file
           }));
@@ -58,7 +59,7 @@ function ProductPage () {
       const handleSecondImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-          setProductImage((prevState) => ({
+          setProductImages((prevState) => ({
             ...prevState,
             secondImage: file
           }));
@@ -69,7 +70,7 @@ function ProductPage () {
       const handleThirdImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-          setProductImage((prevState) => ({
+          setProductImages((prevState) => ({
             ...prevState,
             thirdImage: file
           }));
@@ -80,7 +81,7 @@ function ProductPage () {
       const handleFourthImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-          setProductImage((prevState) => ({
+          setProductImages((prevState) => ({
             ...prevState,
             fourthImage: file
           }));
@@ -88,16 +89,16 @@ function ProductPage () {
         }
       };
     
-      // Log productImage after it changes
+      // Log productImages after it changes
       useEffect(() => {
-        console.log("Updated productImage:", productImage);
-      }, [productImage]);
+        console.log("Updated productImages:", productImages);
+      }, [productImages]);
 
 
 
    
       const clearFirstImage = () => {
-        setProductImage((prevState) => ({
+        setProductImages((prevState) => ({
           ...prevState,
           firstImage: null, // Clear first image
         }));
@@ -106,7 +107,7 @@ function ProductPage () {
       };
       
       const clearSecondImage = () => {
-        setProductImage((prevState) => ({
+        setProductImages((prevState) => ({
           ...prevState,
           secondImage: null, // Clear second image
         }));
@@ -115,7 +116,7 @@ function ProductPage () {
       };
       
       const clearThirdImage = () => {
-        setProductImage((prevState) => ({
+        setProductImages((prevState) => ({
           ...prevState,
           thirdImage: null, // Clear third image
         }));
@@ -124,7 +125,7 @@ function ProductPage () {
       };
       
       const clearFourthImage = () => {
-        setProductImage((prevState) => ({
+        setProductImages((prevState) => ({
           ...prevState,
           fourthImage: null, // Clear fourth image
         }));
@@ -143,22 +144,11 @@ function ProductPage () {
     const [sizeDropDownListIsOpen, setSizeDropDownListIsOpen] = useState(false);
     const [colorDropDownListIsOpen, setColorDropDownListIsOpen] = useState(false);
     
-    // const [selectedCategory, setSelectedCategory] = useState('Select category');
-    // const [selectedSubCategory, setSelectedSubCategory] = useState('Sub category');
-    // const [selectedSize, setSelectedSize] = useState('Selected size');
-    // const [selectedColor, setSelectedColor] = useState('Selected color');
-    
-
-
-
-
-
-
 
     const categories = ['Men wear', 'Women wear', 'Accessory'];
     const subCategories = ['Top', 'Undies', 'Watch'];
     const sizes = ['small', 'medium', 'large', 'extra large'];
-    const colors = ['red', 'yellow', 'blue'];
+    const colors = ['Black ', 'White'];
   
 
 
@@ -205,57 +195,121 @@ function ProductPage () {
     };
 
 
+    const handleShowMultiDropdownSelection = (item) => {
+        if (item.length > 1) {
+            const newArr = item.filter(i => i !== item[0]);
+            const formattedNewArr = newArr.join(", ");
+            return formattedNewArr;
+        }
+    }
 
 
 
 
+    const handleAddProduct = async () => {
+
+        //Emsure we send only colors selected and not the select text word
+        const actualProductColorArr = productColor.filter(i => i !== productColor[0]);
+        console.log('colors is ', actualProductColorArr);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    const handleAddProduct = () => {
-        // Create a FormData instance
+        // // Create a FormData instance
         const formData = new FormData();
 
+        
+        // Append image files (only if they exist)
+        Object.keys(productImages).forEach((key) => {
+           const image = productImages[key];
+           console.log("Appending image:", image); // Debug the file object
+           if (image) {
+             formData.append("images", image); // "images" is the key on the backend
+           }
+        });
         // Append all fields to FormData
-        formData.append("productImage", productImage); // Append the image
         formData.append("productName", productName);
         formData.append("productDescription", productDescription);
         formData.append("productCategory", productCategory);
         formData.append("productSubCategory", productSubCategory);
         formData.append("productSize", productSize);
-        formData.append("productColor", productColor);
+        formData.append("productColor", actualProductColorArr);
+        formData.append("productBrand", productBrand);
+        formData.append("productPrice", productPrice);
         formData.append("productOfferPrice", productOfferPrice);
         formData.append("productQuantity", productQuantity);
         formData.append("productTimer", productTimer);
 console.log(
-    productImage, productName, productDescription, productCategory, productSubCategory, productSize, productColor, productOfferPrice, productQuantity, productTimer
-);
+    productImages, productName, productDescription, productCategory, productSubCategory, productSize, productColor, productBrand, productPrice, productOfferPrice, productQuantity, productTimer
+    ,addTimer);
         try {
-            const response = axios.post("/admin/add-product", formData, {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },          
-            })
-        } catch (err) {
+            const response = await axios.post("/admin/add-product", formData, 
+                // {
+                // headers: {
 
+                // },          
+            // }
+             );
+
+            if (response.status === 201) {
+                console.log("successfully added product", response.data)
+                setCustomAlert(
+                    { 
+                        visibility: true, 
+                        status: "success", 
+                        title: "Success", 
+                        message: response.data.message
+                    }
+                ); 
+                
+            } 
+        } catch (error) {
+            if (error.response) {
+                console.log("error uploading", error);
+                const status = error.response.data.status;
+                const errMessage = error.response.data.error;
+
+            
+                if (status === 400 || status === 500) {
+                    setCustomAlert(
+                        { 
+                            visibility: true, 
+                            status: "error", 
+                            title: "Error", 
+                            message: errMessage
+                        }
+                    );
+                }
+                if (status === 401) {
+                    setCustomAlert(
+                        { 
+                            visibility: true, 
+                            status: "error", 
+                            title: "Error", 
+                            message: errMessage
+                        }
+                    );
+                }
+            } else {
+                setCustomAlert(
+                    { 
+                        visibility: true, 
+                        status: "error", 
+                        title: "Error", 
+                        message: "An unknown error occured!"
+                    }
+                );
+            }
         }
     };
 
     return(
         <div className="product-page-container">
+            {customAlert.visibility === true && (
+                <Alert
+                    status={customAlert.status}
+                    title={customAlert.title}
+                    message={customAlert.message}
+                />
+            )}
             <h3 className="product-page-head-h3">Add Product</h3>
             <p className="product-page-sub-head">Creating new Product</p>
             <div className="product-images-container">
@@ -267,7 +321,11 @@ console.log(
                         />
                     )}
                     {firstImagePreview ? (
-                        <img src={firstImagePreview} alt="Preview" />
+                        <img src={firstImagePreview} alt="Preview" 
+                            onClick={() => {
+                            const newTab = window.open(firstImagePreview, '_blank');
+                            newTab.focus();}}
+                        />
                     ) : (
                         <CiImageOn className="product-image-icon" />
                     )}
@@ -294,7 +352,12 @@ console.log(
                     />
                     )}
                     {secondImagePreview ? (
-                    <img src={secondImagePreview} alt="Preview" />
+                    <img src={secondImagePreview} alt="Preview"
+                        onClick={() => {
+                            const newTab = window.open(secondImagePreview, '_blank');
+                            newTab.focus();
+                        }} 
+                    />
                     ) : (
                         <CiImageOn className="product-image-icon" />
                     )}
@@ -321,7 +384,12 @@ console.log(
                         />
                     )}
                     {thirdImagePreview ? (
-                        <img src={thirdImagePreview} alt="Preview" />
+                        <img src={thirdImagePreview} alt="Preview" 
+                            onClick={() => {
+                                const newTab = window.open(thirdImagePreview, '_blank');
+                                newTab.focus();
+                            }}
+                        />
                     ) : (
                         <CiImageOn className="product-image-icon" />
                     )}
@@ -348,7 +416,12 @@ console.log(
                         />
                     )}
                     {fourthImagePreview ? (
-                        <img src={fourthImagePreview} alt="Preview" />
+                        <img src={fourthImagePreview} alt="Preview" 
+                            onClick={() => {
+                                const newTab = window.open(fourthImagePreview, '_blank');
+                                newTab.focus();
+                            }}
+                        />
                         ) : (
                         <CiImageOn className="product-image-icon" />
                     )}
@@ -373,13 +446,29 @@ console.log(
                 <div className="product-input-container">
                     <label>Product Name * </label>
                     <div>
-                        <input type="text" placeholder="Enter product name" />
+                        <input type="text" 
+                            value={productName}
+                            placeholder="Enter product name"
+                            onChange={(e) => {
+                                if (e.target.value.length <= 50) {
+                                    setProductName(e.target.value);
+                                }
+                            }}
+                        />
                     </div>
                 </div>
                 <div className="product-input-container">
                     <label>Product Details * </label>
                     <div>
-                        <textarea type="text" placeholder="Product description" />
+                        <textarea type="text" 
+                            value={productDescription}
+                            placeholder="Product description"
+                            onChange={(e) => {
+                                if (e.target.value.length <= 250) {
+                                    setProductDescription(e.target.value);
+                                }
+                            }}
+                        />
                     </div>
                 </div>
                 <div className="product-specs-section">
@@ -430,7 +519,7 @@ console.log(
                     <div className="product-sub-specs">
                         <p>Size</p>
                         <div className="product-select-drop-down" onClick={handleSizeDropdownClick}>
-                            <p>{productSize}</p>
+                            <p>{productSize.length > 1 ? handleShowMultiDropdownSelection(productSize) : productSize[0]}</p>
                             {
                                sizeDropDownListIsOpen ? 
                                     <TiArrowSortedUp />
@@ -442,8 +531,21 @@ console.log(
                         {sizeDropDownListIsOpen === true ? (
                             <ul className="dropdown-menu">
                                 {sizes.map((size) => (
-                                    <li key={size} onClick={() => handleSizeClick(size)}>
-                                        {size}
+                                    <li key={size} /*onClick={() => handleSizeClick(size)}*/>
+                                        <input type="checkbox" 
+                                            className="product-timer-checkbox"
+                                            onChange={(e) => {
+                                                if (!productSize.includes(size)) {
+                                                    // Add the size to the array
+                                                    setProductSize((prevState) => [...prevState, size]); // Fixed spread syntax
+                                                } else {
+                                                    // Remove the size from the array
+                                                    setProductSize((prevState) =>
+                                                        prevState.filter((i) => i !== size)
+                                                    );
+                                                }
+                                            }}
+                                            /> {size}
                                     </li>
                                 ))}
                             </ul>
@@ -452,35 +554,47 @@ console.log(
                     <div className="product-sub-specs">
                         <p>Brand</p>
                         <div className="product-sub-input-container">
-                            <input type="text" className="product-sub-input"
-                                onChange={(e) => setProductBrand(e.target.value)}/>
+                            <input type="text" 
+                                className="product-sub-input"
+                                onChange={(e) => setProductBrand(e.target.value)}
+                                required
+                            />
                         </div>
                     </div>
                     <div className="product-sub-specs">
                         <p>Price</p>
                         <div className="product-sub-input-container">
-                            <input type="number" className="product-sub-input" 
-                                onChange={(e) => setProductPrice(e.target.value)}/>
+                            <input type="number" 
+                                className="product-sub-input" 
+                                onChange={(e) => setProductPrice(e.target.value)}
+                                required
+                            />
                         </div>
                     </div>
                     <div className="product-sub-specs">
                         <p>Offer price</p>
                         <div className="product-sub-input-container">
-                            <input type="text" className="product-sub-input"
-                                onChange={(e) => setProductOfferPrice(e.target.value)}/>
+                            <input type="text" 
+                                className="product-sub-input"
+                                onChange={(e) => setProductOfferPrice(e.target.value)}
+                                required
+                            />
                         </div>
                     </div>
                     <div className="product-sub-specs">
-                        <p>Quality</p>
+                        <p>Quantity</p>
                         <div className="product-sub-input-container">
-                            <input type="text" className="product-sub-input"
-                                onChange={(e) => setProductQuantity(e.target.value)}/>
+                            <input type="text" 
+                                className="product-sub-input"
+                                onChange={(e) => setProductQuantity(e.target.value)}
+                                required
+                            />
                         </div>
                     </div>
                     <div className="product-sub-specs">
                         <p>Color</p>
                         <div className="product-select-drop-down" onClick={handleColorDropdownClick}>
-                            <p>{productColor}</p>
+                            <p>{productColor.length > 1 ? handleShowMultiDropdownSelection(productColor) : productColor[0]}</p>
                             {
                                 colorDropDownListIsOpen ? 
                                     <TiArrowSortedUp />
@@ -492,8 +606,21 @@ console.log(
                         {colorDropDownListIsOpen === true ? (
                             <ul className="dropdown-menu">
                                 {colors.map((color) => (
-                                    <li key={color} onClick={() => handleColorClick(color)}>
-                                        {color}
+                                    <li key={color} /*onClick={() => handleColorClick(color)}*/>
+                                        <input type="checkbox" 
+                                            className="product-timer-checkbox"
+                                            onChange={(e) => {
+                                                if (!productColor.includes(color)) {
+                                                    // Add the color to the array
+                                                    setProductColor((prevState) => [...prevState, color]); // Fixed spread syntax
+                                                } else {
+                                                    // Remove the color from the array
+                                                    setProductColor((prevState) =>
+                                                        prevState.filter((i) => i !== color)
+                                                    );
+                                                }
+                                            }}
+                                            /> <span>{color}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -501,31 +628,102 @@ console.log(
                     </div>
                 </div>
                 <div className="product-timer-container">
-                    <p>Timer <input type="checkbox" className="product-timer-checkbox"/></p>
+                    <p>Timer 
+                        <input type="checkbox" 
+                        checked={addTimer}
+                        onChange={() => {
+                            const newAddTimer = !addTimer; // Toggle the addTimer state
+                            setAddTimer(newAddTimer); 
+                    
+                            // If the checkbox is unchecked, reset the timer values to 0
+                            if (!newAddTimer) {
+                              setProductTimer({ hrs: 0, min: 0, sec: 0 });
+                            }
+                        }} 
+                        className="product-timer-checkbox"/></p>
                     <div className="all-time-container">
                         <div>
-                            <p><span><input type="number" placeholder="12"/></span> Hrs </p>
+                            <p>
+                                <span>
+                                    <input type="number" 
+                                    placeholder="12"
+                                    disabled={addTimer === false ? true : false}
+                                    value={productTimer.hrs}
+                                    onChange={(e) => {
+                                        const inputValue = e.target.value;
+                                        if (inputValue.length <= 2 || inputValue === '') {
+                                          const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
+                                          if (!isNaN(numericValue) && numericValue <= 99) {
+                                            setProductTimer({...productTimer, hrs: numericValue});
+                                          }
+                                        }
+                                      }}
+                                      style={{ background: addTimer === false ? 'lightgrey' : '#F5F3F5'}}
+                                    />
+                                </span> Hrs </p>
                         </div>
                         <div>
-                            <p><span><input type="number" placeholder="56"/></span> Mins </p>
+                            <p>
+                                <span>
+                                    <input type="number" 
+                                    placeholder="00"
+                                    min={0}
+                                    max={59}
+                                    disabled={addTimer === false ? true : false}
+                                    value={productTimer.min}
+                                    onChange={(e) => {
+                                      const inputValue = e.target.value;
+                                      if (inputValue.length <= 2 || inputValue === '') {
+                                        const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
+                                        if (!isNaN(numericValue) && numericValue <= 59) {
+                                          setProductTimer({...productTimer, min: numericValue});
+                                        }
+                                      }
+                                    }}
+                                    style={{ background: addTimer === false ? 'lightgrey' : '#F5F3F5'}}
+                                    />
+                                </span> Mins </p>
                         </div>
                         <div>
-                            <p><span><input type="number" placeholder="00"/></span> Secs</p>
+                            <p>
+                                <span>
+                                    <input type="number" 
+                                    placeholder="00"
+                                    min={0}
+                                    max={59}
+                                    disabled={addTimer === false ? true : false}
+                                    value={productTimer.sec}
+                                    onChange={(e) => {
+                                      const inputValue = e.target.value;
+                                      if (inputValue.length <= 2 || inputValue === '') {
+                                        const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
+                                        if (!isNaN(numericValue) && numericValue <= 59) {
+                                          setProductTimer({...productTimer, sec: numericValue});
+                                        }
+                                      }
+                                    }}
+                                    style={{ background: addTimer === false ? 'lightgrey' : '#F5F3F5'}}
+                                    />
+                                </span> Secs</p>
                         </div>
 
                     </div>
                 </div> 
-                <button className="product-create-button">Submit</button>
+                <button 
+                    className="product-create-button"
+                    onClick={handleAddProduct}
+                    >
+                        Submit
+                </button>
 
             </div>
 
 
 
-
-
-
         </div>
     )
+
 }
+
 
 export default ProductPage;

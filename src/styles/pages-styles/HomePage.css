@@ -283,6 +283,11 @@
 .home-page-order-details-section-doughnut-container {
     margin-top: 10px;
     margin-bottom: 25px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+    width: 100%; 
 }
 
 
@@ -367,6 +372,7 @@
     background: #FFFFFF;
     border-radius: 12px;
     padding: 15px;
+    min-height: 300px; /* Set to your desired minimum height */
     max-width: 100%;
     overflow-x: auto;
 }
@@ -402,13 +408,33 @@
     padding: 15px; 
 }
 
+
+
 .home-page-table-body td {
     white-space: nowrap;
     padding: 15px; 
     font-weight: 500;
     line-height: 24px;
+    overflow: hidden; /* Prevent overflow */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    vertical-align: middle;
 }
 
+/* Handle Empty Cells */
+.home-page-table-body td:empty::before {
+    content: "-"; /* Placeholder text */
+    color: #ccc; /* Optional: Dim placeholder text */
+    text-align: center; /* Center placeholder */
+    display: inline-block; /* Ensure it behaves like text */
+    width: 100%; /* Ensure it spans the width of the cell */
+}
+
+
+/* Style for Table Rows */
+.home-page-table-body tr:hover {
+    background-color: #f9f9f9; /* Light grey on hover */
+    cursor: pointer; /* Show pointer for clickable rows */
+}
 
 
 .home-page-img-and-product-name-container {
@@ -439,6 +465,70 @@
 
 
 
+.home-page-no-records-message {
+    text-align: center;
+    color: #808080;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 15px 0;
+}
+
+.home-page-no-records-message {
+    background-color: #f2f2f2;
+    border-top: 1px solid #ddd;
+}
+
+
+
+
+.home-page-pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    padding: 15px 0;
+    background-color: #ffffff;
+    border-top: 1px solid #ddd;
+    border-radius: 0 0 12px 12px; /* Match table's rounded corners */
+    width: 100%;
+}
+
+.home-page-pagination-button {
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.home-page-pagination-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.home-page-pagination-button:hover:not(:disabled) {
+    background-color: #ff4f4f;
+    color: #ffffff;
+}
+
+.home-page-pagination-prev {
+    margin-right: 10px;
+}
+
+.home-page-pagination-next {
+    margin-left: 10px;
+}
+
+.home-page-pagination-status {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000000;
+}
 
 
 
@@ -560,5 +650,13 @@
     .home-page-table-container {
         grid-column: 1/2;
         grid-row: 2/3;
+        background-color: blue;
     }
+
+
+    .home-page-table-body {
+        
+    background-color: #008C00;
+    }
+
 }

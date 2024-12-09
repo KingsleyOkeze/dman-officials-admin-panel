@@ -11,50 +11,51 @@ import axios from "axios";
 function CouponCodePage () {
     const navigate = useNavigate();
     const [coupons, setCoupons] = useState([
-        {
-            couponName: "SUMMER2024",
-            status: "Active",
-            type: "Percentage",
-            amount: 15,
-          },
-          {
-            couponName: "WELCOME10",
-            status: "Inactive",
-            type: "Fixed",
-            amount: 10,
-          },
-          {
-            couponName: "FREESHIP50",
-            status: "Active",
-            type: "Fixed",
-            amount: 50,
-          },
-          {
-            couponName: "BLACKFRIDAY",
-            status: "Active",
-            type: "Percentage",
-            amount: 25,
-          },
-          {
-            couponName: "VIPSALE",
-            status: "Expired",
-            type: "Fixed",
-            amount: 100,
-          },
-          {
-            couponName: "NEWYEAR25",
-            status: "Active",
-            type: "Percentage",
-            amount: 25,
-          },
-          {
-            couponName: "FALLSAVINGS",
-            status: "Inactive",
-            type: "Fixed",
-            amount: 20,
-          },
+        // {
+        //     couponName: "SUMMER2024",
+        //     status: "Active",
+        //     type: "Percentage",
+        //     amount: 15,
+        //   },
+        //   {
+        //     couponName: "WELCOME10",
+        //     status: "Inactive",
+        //     type: "Fixed",
+        //     amount: 10,
+        //   },
+        //   {
+        //     couponName: "FREESHIP50",
+        //     status: "Active",
+        //     type: "Fixed",
+        //     amount: 50,
+        //   },
+        //   {
+        //     couponName: "BLACKFRIDAY",
+        //     status: "Active",
+        //     type: "Percentage",
+        //     amount: 25,
+        //   },
+        //   {
+        //     couponName: "VIPSALE",
+        //     status: "Expired",
+        //     type: "Fixed",
+        //     amount: 100,
+        //   },
+        //   {
+        //     couponName: "NEWYEAR25",
+        //     status: "Active",
+        //     type: "Percentage",
+        //     amount: 25,
+        //   },
+        //   {
+        //     couponName: "FALLSAVINGS",
+        //     status: "Inactive",
+        //     type: "Fixed",
+        //     amount: 20,
+        //   },
           
       ]);
+    const [emptyResult, setEmptyResult] = useState("");
 
     const [color, setColor] = useState(['#007AFF', '#008C00']);
   
@@ -91,13 +92,43 @@ function CouponCodePage () {
 
 
     const fetchCoupons = async () => {
-        const response = await axios.get(`/admin/fetch-coupons?page=${paginationIndex}`);
+        
+        try {
+            const response = await axios.get(`/admin/fetch-coupons?page=${paginationIndex}`);
 
-        if (response.data) {
-            console.log("fetched data", response.data.result)
-            setCoupons(response.data.result);
-            setTotalPages(response.data.totalPages)
+            if (response.data) {
+                console.log("fetched data", response.data.result)
+                setCoupons(response.data.result);
+                setTotalPages(response.data.totalPages)
+            }
+        } catch (error) {
+            const status = error.response?.data.status;
+            const errMessage = error.response?.data.error;
+
+            if (status === 404) {
+                setEmptyResult(errMessage)
+            }
+            if (status === 401 || status === 500) {
+                // setCustomAlert(
+                //     { 
+                //         visibility: true, 
+                //         status: "error", 
+                //         title: "Error", 
+                //         message: errMessage
+                //     }
+                // );  
+            } else {
+                // setCustomAlert(
+                //     { 
+                //         visibility: true, 
+                //         status: "error", 
+                //         title: "Error", 
+                //         message: "An unknown error occured!"
+                //     }
+                // );  
+            }
         }
+        
     }
 
     useEffect(() => {
@@ -119,7 +150,7 @@ function CouponCodePage () {
                 <div className="coupon-code-page-header-and-add-new-container">  
                 <h3>Coupon Code</h3>
                 <ul>
-                    <li onClick={() => navigate("/add-coupon-code-page")}><GrAddCircle className="add-coupon-icon"/><span className="coupon-add-new-text">Add New</span></li>
+                    <li onClick={() => navigate("/admin/add-coupon-code-page")}><GrAddCircle className="add-coupon-icon"/><span className="coupon-add-new-text">Add New</span></li>
                 </ul>
                 </div>
                 <div className="coupon-code-page-filter-and-refresh-container">
@@ -162,8 +193,8 @@ function CouponCodePage () {
                                         {coupon.status}
         
                                     </td>
-                                    <td>{coupon.type}</td>
-                                    <td>{coupon.amount}</td>
+                                    <td>{coupon.discountType}</td>
+                                    <td>{coupon.discountAmount}</td>
                                     <td><FiEdit
                                             className="coupon-code-edit-icon"
                                             onClick={() => navigate("/admin/edit-coupon-code-page")}/></td>
@@ -173,7 +204,7 @@ function CouponCodePage () {
                         ) : (
                             <tr>
                                 <td colSpan="7" className="coupon-code-page-no-records-message">
-                                    No records found
+                                    { emptyResult ? emptyResult : "No records found!" }
                                 </td>
                             </tr>
                         )
