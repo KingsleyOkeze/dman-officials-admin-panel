@@ -6,10 +6,12 @@ import { FiEdit } from "react-icons/fi";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { TiArrowSortedUp } from "react-icons/ti";
 
 function OrdersPage () {
     const navigate = useNavigate();
+    const [showFilterDropDown, setShowFilterDrop] = useState(false);
+    const [filterPicked, setFilterPicked] = useState('All Orders');
     const [orders, setOrders] = useState([
         // {
         //     billingName: "Daniel Wilson",
@@ -78,8 +80,18 @@ function OrdersPage () {
     }, [])
 
 
+    
+    const filterArr = ['status', 'pending', 'completed', 'shipped'];
 
-
+    const handleFilterDropdownClick = () => {
+        setShowFilterDrop(!showFilterDropDown);
+    };
+  
+    
+    const handleFilterClick = (item) => {
+      setFilterPicked(item);
+      setShowFilterDrop(false);
+    };
 
 
 
@@ -98,14 +110,31 @@ function OrdersPage () {
             <div className="order-page-header">
                 <h3>Orders</h3>
                 <div className="order-page-filter-and-refresh-container">
-                    <div className="drop-down-filter">
-                        <small className="drop-down-filter-small-border-text">filter order by status</small>
+                    <div className="order-page-filter-drop-down-container">
+                        <div className="order-page-drop-down-filter-box" onClick={handleFilterDropdownClick}>
+                            <small className="order-page-drop-down-filter-small-border-text">filter order by status</small>
                        
-                        <p>All Orders</p>
-                        <TiArrowSortedDown className="drop-down-icon"/>
+                            <p>{filterPicked}</p>
+                            
+                            {
+                                showFilterDropDown ? 
+                                   <TiArrowSortedUp className="order-page-drop-down-icon"/>
+                                : 
+                                <TiArrowSortedDown className="order-page-drop-down-icon"/>
+                            }
+                        </div>
+                        {showFilterDropDown === true ? (
+                            <ul className="order-page-dropdown-menu">
+                                {filterArr.map((item) => (
+                                    <li key={item} onClick={() => handleFilterClick(item)}>
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : <></>} 
                     </div>
-               
-                    <TfiReload  className="order-refresh-icon"/>
+
+                    <TfiReload className="order-refresh-icon"/>
                 </div>
             </div>
 
@@ -126,7 +155,7 @@ function OrdersPage () {
                     <tbody className="orders-page-table-body">
                         {orders.length > 0 ? (
                             orders.map((order, index) => (
-                                <tr onClick={() => navigate("/order-details-page")}>
+                                <tr onClick={() => navigate("/admin/order-details-page")}>
                                     <td style={{ display: 'flex', alignItems: 'center' }}>
                                         <span style={{
                                         background: color[Math.floor(Math.random() * color.length)]
@@ -194,19 +223,3 @@ export default OrdersPage;
 
 
 
-
-
-
-{/* <div className="order-page-bottom-pagination-container">
-                    <div>
-                        <IoIosArrowBack />
-                        <p>Previous page</p>
-                    </div>
-                    <div>
-                        <p>1/5</p>
-                    </div>
-                    <div>
-                        <p>Next page</p>
-                        <IoIosArrowForward />
-                    </div>
-                </div> */}

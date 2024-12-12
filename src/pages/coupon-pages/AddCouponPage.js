@@ -18,7 +18,7 @@ function AddCouponPage () {
     // const [usageLimit, setUsageLimit] = useState(0)
     const [expirationDate, setExpirationDate] = useState('');
     const [minimumPurchaseAmount, setMinimumPurchaseAmount] = useState(0);
-    const [couponDiscount, setCouponDiscount] = useState('Select Discount');
+    const [couponDiscountType, setCouponDiscountType] = useState('Select Discount');
     const [couponStatus, setCouponStatus] = useState('Select status');
     const [couponCategory, setCouponCategory] = useState('Select category');
     const [couponSubCategory, setCouponSubCategory] = useState('Select sub category');
@@ -62,7 +62,7 @@ function AddCouponPage () {
   
     
     const handleDiscountClick = (discount) => {
-      setCouponDiscount(discount);
+      setCouponDiscountType(discount);
       setDiscountDropDownListIsOpen(false);
     };
 
@@ -79,12 +79,12 @@ function AddCouponPage () {
 
 
     const addCouponFunction = async () => {
-        console.log(couponName,couponCode,product, discountAmount, expirationDate, minimumPurchaseAmount, couponDiscount, couponStatus, couponCategory, couponSubCategory)
+        console.log(couponName,couponCode,product, discountAmount, expirationDate, minimumPurchaseAmount, couponDiscountType, couponStatus, couponCategory, couponSubCategory)
         try {
             const response = await axios.post("/admin/add-coupon", {
                 couponName: couponName.toUpperCase(),
-                couponCode,
-                discountType: couponDiscount,
+                couponCode: couponCode.toUpperCase(),
+                discountType: couponDiscountType,
                 discountAmount,
                 minimumPurchaseAmount,
                 status: couponStatus,
@@ -196,7 +196,7 @@ function AddCouponPage () {
                         <label>Discount type</label>
                     </div>
                     <div className="add-coupon-second-section-dropdown" onClick={handleDiscountDropdownClick}>
-                        <p className="add-coupon-first-section-dropdown-p">{couponDiscount}</p>
+                        <p className="add-coupon-first-section-dropdown-p">{couponDiscountType}</p>
                         {
                         discountDropDownListIsOpen ? 
                             <TiArrowSortedUp />

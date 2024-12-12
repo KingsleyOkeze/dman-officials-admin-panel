@@ -46,10 +46,10 @@ function App() {
             <Route path="order-page" element={<OrdersPage />} />
             <Route path="order-details-page" element={<OrderDetailsPage />} />
             <Route path="product-page" element={<ProductPage />} />
-            <Route path="edit-product-page" element={<EditProductPage />} />
+            <Route path="edit-product-page/:productId" element={<EditProductPage />} />
             <Route path="customers-page" element={<CustomersPage />} />
             <Route path="coupon-code-page" element={<CouponCodePage />} />
-            <Route path="edit-coupon-code-page" element={<EditCouponPage />} />
+            <Route path="edit-coupon-code-page/:couponId" element={<EditCouponPage />} />
             <Route path="add-coupon-code-page" element={<AddCouponPage />} />
           </Route>
         </Route>

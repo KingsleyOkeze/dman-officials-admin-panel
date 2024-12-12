@@ -3,9 +3,13 @@ import "../../styles/pages-styles/customer-pages-styles/CustomersPage.css";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { TfiReload } from "react-icons/tfi";
+import { TiArrowSortedUp } from "react-icons/ti";
+
 import axios from "axios";
 
 function CustomersPage () {
+    const [showFilterDropDown, setShowFilterDrop] = useState(false);
+    const [filterPicked, setFilterPicked] = useState('All Orders');
     const [customers, setCustomers] = useState([
         // {
         //   username: "john_doe",
@@ -113,16 +117,19 @@ function CustomersPage () {
       }, [])
   
   
+      const filterArr = ['status', 'pending', 'completed', 'shipped'];
+
+      const handleFilterDropdownClick = () => {
+          setShowFilterDrop(!showFilterDropDown);
+      };
+    
+      
+      const handleFilterClick = (item) => {
+        setFilterPicked(item);
+        setShowFilterDrop(false);
+      };
   
   
-
-
-
-
-
-
-
-
 
 
 
@@ -139,14 +146,31 @@ function CustomersPage () {
             <div className="customers-page-header">
                 <h3>Customers</h3>
                 <div className="customers-page-filter-and-refresh-container">
-                    <div className="drop-down-filter">
-                        <small className="drop-down-filter-small-border-text">filter order by status</small>
+                    <div className="customers-page-filter-drop-down-container">
+                        <div className="customers-page-drop-down-filter-box" onClick={handleFilterDropdownClick}>
+                            <small className="customers-page-drop-down-filter-small-border-text">filter order by status</small>
                        
-                        <p>All Customers</p>
-                        <TiArrowSortedDown className="drop-down-icon"/>
+                            <p>{filterPicked}</p>
+                            
+                            {
+                                showFilterDropDown ? 
+                                   <TiArrowSortedUp className="customers-page-drop-down-icon"/>
+                                : 
+                                <TiArrowSortedDown className="customers-page-drop-down-icon"/>
+                            }
+                        </div>
+                        {showFilterDropDown === true ? (
+                            <ul className="customers-page-dropdown-menu">
+                                {filterArr.map((item) => (
+                                    <li key={item} onClick={() => handleFilterClick(item)}>
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : <></>} 
                     </div>
                
-                    <TfiReload  className="customers-refresh-icon"/>
+                    <TfiReload  className="customers-page-refresh-icon"/>
                 </div>
             </div>
 

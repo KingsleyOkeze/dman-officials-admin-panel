@@ -5,18 +5,20 @@ import { TiArrowSortedDown } from "react-icons/ti";
 import { TiArrowSortedUp } from "react-icons/ti";
 import axios from "axios";
 import Alert from "../../components/Alert";
+import { useParams } from "react-router-dom";
 
 function EditCouponPage () {
+    const { couponId } = useParams();
     const [customAlert, setCustomAlert] = useState({ visibility: false, status: "", title: "", message: ""});
 
     const [couponName, setCouponName] = useState('');
     const [couponCode, setCouponCode] = useState('');
     const [product, setProduct] = useState('');
-    const [discountAmount, setDiscountAmount] = useState('');
+    const [couponDiscountAmount, setCouponDiscountAmount] = useState('');
     // const [usageLimit, setUsageLimit] = useState(0)
     const [expirationDate, setExpirationDate] = useState('');
     const [minimumPurchaseAmount, setMinimumPurchaseAmount] = useState(0);
-    const [couponDiscount, setCouponDiscount] = useState('Select Discount');
+    const [couponDiscountType, setCouponDiscountType] = useState('Select Discount');
     const [couponStatus, setCouponStatus] = useState('Select status');
     const [couponCategory, setCouponCategory] = useState('Select category');
     const [couponSubCategory, setCouponSubCategory] = useState('Select sub category');
@@ -60,7 +62,7 @@ function EditCouponPage () {
   
     
     const handleDiscountClick = (discount) => {
-      setCouponDiscount(discount);
+      setCouponDiscountType(discount);
       setDiscountDropDownListIsOpen(false);
     };
 
@@ -77,14 +79,14 @@ function EditCouponPage () {
 
 
     const editCouponFunction = async () => {
-        console.log(couponName,couponCode,product, discountAmount, expirationDate, minimumPurchaseAmount, couponDiscount, couponStatus, couponCategory, couponSubCategory)
+        console.log(couponName,couponCode,product, couponDiscountAmount, expirationDate, minimumPurchaseAmount, couponDiscountType, couponStatus, couponCategory, couponSubCategory)
         try {
             const response = await axios.post("/admin/edit-coupon", {
-                // couponId,
+                couponId,
                 couponName: couponName.toUpperCase(),
-                couponCode,
-                discountType: couponDiscount,
-                discountAmount,
+                couponCode: couponCode.toUpperCase(),
+                discountType: couponDiscountType,
+                discountAmount: couponDiscountAmount,
                 minimumPurchaseAmount,
                 status: couponStatus,
                 category: couponCategory,
@@ -141,6 +143,87 @@ function EditCouponPage () {
     }, [customAlert]);
 
 
+    useEffect(() => {
+        console.log('coupon is ', couponId)
+        const fetchProductById = async () => {
+            try {
+                const response = await axios.get(`/admin/fetch-coupon-by-id/${couponId}`);
+                
+                if (response.status === 200) {
+                    console.log("successfully fetched coupon product", response.data)
+                    const {
+                        category,
+                        couponCode,
+                        couponName,
+                        createdAt,
+                        discountAmount,
+                        discountType,
+                        expirationDate,
+                        minimumPurchaseAmount,
+                        product,
+                        status,
+                        subCategory
+                    } = response.data;
+          
+
+                    setCouponName(couponName)
+                    setCouponCode(couponCode);
+                    setProduct(product);
+                    setCouponDiscountAmount(discountAmount);
+                    setExpirationDate(expirationDate);
+                    setMinimumPurchaseAmount(minimumPurchaseAmount);
+                    setCouponDiscountType(discountType);
+                    setCouponStatus(status);
+                    setCouponCategory(category);
+                    setCouponSubCategory(subCategory)
+                }
+
+            } catch (error) {
+                if (error.response) {
+                    console.log("error fetching coupon by id", error);
+                    const status = error.response.data.status;
+                    const errMessage = error.response.data.error;
+    
+                
+                    if (status === 400 || status === 500) {
+                        setCustomAlert(
+                            { 
+                                visibility: true, 
+                                status: "error", 
+                                title: "Error", 
+                                message: errMessage
+                            }
+                        );
+                    }
+                    if (status === 401) {
+                        setCustomAlert(
+                            { 
+                                visibility: true, 
+                                status: "error", 
+                                title: "Error", 
+                                message: errMessage
+                            }
+                        );
+                    }
+                } else {
+                    setCustomAlert(
+                        { 
+                            visibility: true, 
+                            status: "error", 
+                            title: "Error", 
+                            message: "An unknown error occured!"
+                        }
+                    );
+                }
+            } finally {
+                // setLoading(false);
+            }
+        };
+
+        fetchProductById();
+    }, [couponId]);
+
+
     return(
         <div className="edit-coupon-page-container">
             {customAlert.visibility === true && (
@@ -160,6 +243,7 @@ function EditCouponPage () {
                     <div className="edit-coupon-first-section-input-div">
                         <input type="text" 
                             placeholder="Enter coupon name"
+                            value={couponName}
                             onChange={(e) => setCouponName(e.target.value)} 
                             required
                         />
@@ -172,6 +256,7 @@ function EditCouponPage () {
                     <div className="edit-coupon-first-section-input-div">
                         <input type="text" 
                             placeholder="Eg: SUMMER SALE" 
+                            value={couponCode}
                             onChange={(e) => setCouponCode(e.target.value)} 
                             required
                         />
@@ -182,7 +267,7 @@ function EditCouponPage () {
                         <label>Discount type</label>
                     </div>
                     <div className="edit-coupon-second-section-dropdown" onClick={handleDiscountDropdownClick}>
-                        <p className="edit-coupon-first-section-dropdown-p">{couponDiscount}</p>
+                        <p className="edit-coupon-first-section-dropdown-p">{couponDiscountType}</p>
                         {
                         discountDropDownListIsOpen ? 
                             <TiArrowSortedUp />
@@ -208,7 +293,8 @@ function EditCouponPage () {
                     <div className="edit-coupon-first-section-input-div">
                         <input type="number" 
                             placeholder="Eg: 20"
-                            onChange={(e) => setDiscountAmount(e.target.value)}
+                            value={couponDiscountAmount}
+                            onChange={(e) => setCouponDiscountAmount(e.target.value)}
                             required
                         />
                     </div>
@@ -219,6 +305,7 @@ function EditCouponPage () {
                     </div>
                     <div className="edit-coupon-first-section-input-div">
                         <input type="number" 
+                            value={minimumPurchaseAmount}
                             placeholder="Enter min purchase amount"
                             onChange={(e) => setMinimumPurchaseAmount(e.target.value)}
                         />
@@ -233,6 +320,7 @@ function EditCouponPage () {
                     </div>
                     <div className="edit-coupon-second-section-input-div">
                         <input type="date" 
+                            value={expirationDate}
                             placeholder="Enter expiration date" 
                             onChange={(e) => setExpirationDate(e.target.value)} 
                             required
@@ -318,6 +406,7 @@ function EditCouponPage () {
                     <div className="edit-coupon-second-section-input-container">
                         <input type="text" 
                             placeholder="Enter product name" 
+                            value={product}
                             onChange={(e) => setProduct(e.target.value)} 
                         />
                     </div>

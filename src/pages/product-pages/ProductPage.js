@@ -2,10 +2,9 @@ import "../../styles/pages-styles/product-pages-styles/ProductPage.css";
 import image from "../../images/image.png";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { CiImageOn } from "react-icons/ci";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef} from "react";
 import { LiaTimesSolid } from "react-icons/lia";
 import axios from "axios";
-import { useRef } from 'react';
 import { TiArrowSortedUp } from "react-icons/ti";
 import Alert from "../../components/Alert";
 
@@ -212,6 +211,10 @@ function ProductPage () {
         const actualProductColorArr = productColor.filter(i => i !== productColor[0]);
         console.log('colors is ', actualProductColorArr);
 
+       //Emsure we send only sizes selected and not the select text word
+       const actualProductSizeArr = productSize.filter(i => i !== productSize[0]);
+       console.log('size is ', actualProductSizeArr);
+
 
         // // Create a FormData instance
         const formData = new FormData();
@@ -230,7 +233,7 @@ function ProductPage () {
         formData.append("productDescription", productDescription);
         formData.append("productCategory", productCategory);
         formData.append("productSubCategory", productSubCategory);
-        formData.append("productSize", productSize);
+        formData.append("productSize", actualProductSizeArr);
         formData.append("productColor", actualProductColorArr);
         formData.append("productBrand", productBrand);
         formData.append("productPrice", productPrice);

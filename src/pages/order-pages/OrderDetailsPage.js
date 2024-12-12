@@ -1,14 +1,45 @@
+import { useEffect, useState } from "react";
 import "../../styles/pages-styles/order-pages-styles/OrderDetailsPage.css"
 import { TiArrowSortedDown } from "react-icons/ti";
+import { TiArrowSortedUp } from "react-icons/ti";
 
 function OrderDetailsPage () {
+    const [showOrderStatusDropDown, setShowOrderStatusDropDown] = useState(false);
+    const [orderStatusPicked, setOrderStatusPicked] = useState('Pending');
+    const [showTrackingDropDown, setShowTrackingDropDown] = useState(false);
+    const [trackingPicked, setTrackingPicked] = useState('url');
+
+
+    const orderStatusArr = ['status', 'pending', 'completed', 'shipped'];
+    const trackingArr = ['url', 'url1'];
+
+    const handleOrderStatusDropdownClick = () => {
+        setShowOrderStatusDropDown(!showOrderStatusDropDown);
+    };
+  
+    
+    const handleOrderStatusClick = (item) => {
+      setOrderStatusPicked(item);
+      setShowOrderStatusDropDown(false);
+    };
+
+
+    const handleTrackingDropdownClick = () => {
+        setShowTrackingDropDown(!showTrackingDropDown);
+    };
+  
+    
+    const handleTrackingClick = (item) => {
+      setTrackingPicked(item);
+      setShowTrackingDropDown(false);
+    };
 
     return(
         <div className="order-details-page-container">
             <h3 className="order-details-head-h3">Order Details</h3>
             
             <div className="order-details-body-container">
-                <div className="order-body-top-header">
+                <div className="order-details-body-top-header">
                     <p><span>Name:</span> Igwe Okeze</p>
                     <p><span>Order ID:</span> 7768558559</p>
                     <p><span>Date:</span> 26th October, 2024</p>
@@ -47,22 +78,56 @@ function OrderDetailsPage () {
                     </ul>
                     <p>TOTAL PRICE: <b>₦</b>56,000.00</p>
                 </div>
-                <div className="order-detail-bottom-status-container">
+                <div className="order-details-bottom-status-container">
                     <p>ORDER STATUS:</p>
-                    <div className="order-details-drop-down-filter">
-                        <small className="order-details-drop-down-filter-small-border-text">filter order by status</small>
+                    <div className="order-details-bottom-order-status-filter-drop-down-container">
+                        <div className="order-details-bottom-order-status-drop-down-filter-box" onClick={handleOrderStatusDropdownClick}>
+                            <small className="order-details-bottom-order-status-drop-down-filter-small-border-text">filter order by status</small>
                        
-                        <p>Status</p>
-                        <TiArrowSortedDown className="order-details-drop-down-icon"/>
+                            <p>{orderStatusPicked}</p>
+                            
+                            {
+                                showOrderStatusDropDown ? 
+                                   <TiArrowSortedUp className="order-details-bottom-order-status-drop-down-icon"/>
+                                : 
+                                <TiArrowSortedDown className="order-details-bottom-order-status-drop-down-icon"/>
+                            }
+                        </div>
+                        {showOrderStatusDropDown === true ? (
+                            <ul className="order-details-bottom-order-status-dropdown-menu">
+                                {orderStatusArr.map((item) => (
+                                    <li key={item} onClick={() => handleOrderStatusClick(item)}>
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : <></>} 
                     </div>
                 </div>
-                <div className="order-detail-bottom-tracking-container">
+                <div className="order-details-bottom-tracking-container">
                     <p>TRACKING URL:</p>
-                    <div className="order-details-drop-down-filter">
-                        <small className="order-details-drop-down-filter-small-border-text">filter order by status</small>
+                    <div className="order-details-bottom-tracking-filter-drop-down-container">
+                        <div className="order-details-bottom-tracking-drop-down-filter-box" onClick={handleTrackingDropdownClick}>
+                            <small className="order-details-bottom-tracking-drop-down-filter-small-border-text">filter order by status</small>
                        
-                        <p>Tracking Url</p>
-                        <TiArrowSortedDown className="order-details-drop-down-icon"/>
+                            <p>{trackingPicked}</p>
+                            
+                            {
+                                showTrackingDropDown ? 
+                                   <TiArrowSortedUp className="order-details-bottom-tracking-drop-down-icon"/>
+                                : 
+                                <TiArrowSortedDown className="order-details-bottom-tracking-drop-down-icon"/>
+                            }
+                        </div>
+                        {showTrackingDropDown === true ? (
+                            <ul className="order-details-bottom-tracking-dropdown-menu">
+                                {trackingArr.map((item) => (
+                                    <li key={item} onClick={() => handleTrackingClick(item)}>
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : <></>} 
                     </div>
                 </div>
                 <div className="order-details-button-container">

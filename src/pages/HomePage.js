@@ -5,7 +5,7 @@ import { PiDotsThreeVertical } from "react-icons/pi";
 import { RiTruckLine } from "react-icons/ri";
 import "../styles/pages-styles/HomePage.css";
 import img1 from "../images/img1.jpg"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
 import { Doughnut } from 'react-chartjs-2';
@@ -14,6 +14,7 @@ import DeleteConfirmationModal from "../components/ConfirmationModal";
 import ConfirmationModal from "../components/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Alert from "../components/Alert";
 
 
 // Register necessary chart.js components
@@ -22,23 +23,24 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 function HomePage () {
     const navigate = useNavigate();
+    const [customAlert, setCustomAlert] = useState({ visibility: false, status: "", title: "", message: ""});
     const [products, setProducts] = useState([
-        {
-            img: img1,
-            id: 1,
-            productName: 'Apple iPhone 13',
-            category: 'Electronics',
-            subCategory: 'Smartphones',
-            price: '$999.99',
-          },
-          {
-            img: img1,
-            id: 2,
-            productName: 'Samsung 4K Smart TV',
-            category: 'Electronics',
-            subCategory: '4K TVs',
-            price: '$1,299.99',
-          },
+        // {
+        //     img: img1,
+        //     id: 1,
+        //     productName: 'Apple iPhone 13',
+        //     category: 'Electronics',
+        //     subCategory: 'Smartphones',
+        //     price: '$999.99',
+        //   },
+        //   {
+        //     img: img1,
+        //     id: 2,
+        //     productName: 'Samsung 4K Smart TV',
+        //     category: 'Electronics',
+        //     subCategory: '4K TVs',
+        //     price: '$1,299.99',
+        //   },
         //   {
         //     img: img1,
         //     id: 3,
@@ -217,6 +219,60 @@ function HomePage () {
     // PAGINATION
     const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
     const [totalPages, setTotalPages] = useState(5); // Total number of pages (example)
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+
+            try {
+                const response = await axios.get(`/admin/fetch-products?page=${paginationIndex}`);
+
+                if (response.status === 200) {
+                    console.log('product are', response.data.result)
+                    setProducts(response.data.result)
+                }
+            } catch (error) {
+                if (error.response) {
+                    console.log("error fetching products", error);
+                    const status = error.response.data.status;
+                    const errMessage = error.response.data.error;
+    
+                
+                    if (status === 400 || status === 500) {
+                        setCustomAlert(
+                            { 
+                                visibility: true, 
+                                status: "error", 
+                                title: "Error", 
+                                message: errMessage
+                            }
+                        );
+                    }
+                    if (status === 401) {
+                        setCustomAlert(
+                            { 
+                                visibility: true, 
+                                status: "error", 
+                                title: "Error", 
+                                message: errMessage
+                            }
+                        );
+                    }
+                } else {
+                    setCustomAlert(
+                        { 
+                            visibility: true, 
+                            status: "error", 
+                            title: "Error", 
+                            message: "An unknown error occured!"
+                        }
+                    );
+                }
+            }
+        }
+
+        fetchProducts();
+        
+    }, [])
   
     const handlePreviousFunction = async () => {
         if (paginationIndex > 0) { 
@@ -254,6 +310,13 @@ function HomePage () {
 
     return(
         <div className="home-page-container">
+             {customAlert.visibility === true && (
+                <Alert
+                    status={customAlert.status}
+                    title={customAlert.title}
+                    message={customAlert.message}
+                />
+            )}
             <div className="home-page-search-and-header-container">
             <div className="home-page-main-search-container">
                 <input type="text" className="home-page-main-search-input"/>
@@ -405,20 +468,20 @@ function HomePage () {
                                 products.map((product, index) => (
                                     <tr key={index}>
                                         <td className="home-page-img-and-product-name-container">
-                                            <div>
-                                                <img src={product.img} className="home-page-table-img"/>
-                                            </div> 
-                                            <div
+                                            <span>
+                                                <img src={product.productImageUrl[0]} className="home-page-table-img"/>
+                                            </span> 
+                                            <span
                                                 className="home-page-table-product-name">
                                                 {product.productName}
-                                            </div>
+                                            </span>
                                         </td>  
-                                        <td>{product.category}</td>
-                                        <td>{product.subCategory}</td>
-                                        <td>{product.price}</td>
+                                        <td>{product.productCategory}</td>
+                                        <td>{product.productSubCategory}</td>
+                                        <td>{product.productPrice}</td>
                                         <td><FiEdit 
                                                 className="home-page-table-edit-icon"
-                                                onClick= { () => navigate("/admin/edit-product-page") }/></td>
+                                                onClick= { () => navigate(`/admin/edit-product-page/${product._id}`) }/></td>
                                         <td>
                                             <FaRegTrashCan 
                                                 className="home-page-delete-icon"
@@ -429,7 +492,7 @@ function HomePage () {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="7" className="order-page-no-records-message">
+                                    <td colSpan="7" className="home-page-no-records-message">
                                         No records found
                                     </td>
                                 </tr>

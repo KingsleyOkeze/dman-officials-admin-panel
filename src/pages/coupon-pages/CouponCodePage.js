@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "../../styles/pages-styles/coupon-pages-styles/CouponCodePage.css";
 import { FaRegTrashCan } from "react-icons/fa6";
+import { TiArrowSortedUp } from "react-icons/ti";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { TfiReload } from "react-icons/tfi";
 import { FiEdit } from "react-icons/fi";
@@ -10,6 +11,8 @@ import axios from "axios";
 
 function CouponCodePage () {
     const navigate = useNavigate();
+    const [showFilterDropDown, setShowFilterDrop] = useState(false);
+    const [filterPicked, setFilterPicked] = useState('All Orders');
     const [coupons, setCoupons] = useState([
         // {
         //     couponName: "SUMMER2024",
@@ -137,6 +140,18 @@ function CouponCodePage () {
 
 
 
+    const filterArr = ['status', 'pending', 'completed', 'shipped'];
+
+    const handleFilterDropdownClick = () => {
+        setShowFilterDrop(!showFilterDropDown);
+    };
+  
+    
+    const handleFilterClick = (item) => {
+      setFilterPicked(item);
+      setShowFilterDrop(false);
+    };
+
 
 
 
@@ -149,19 +164,39 @@ function CouponCodePage () {
             <div className="coupon-code-page-header">
                 <div className="coupon-code-page-header-and-add-new-container">  
                 <h3>Coupon Code</h3>
-                <ul>
-                    <li onClick={() => navigate("/admin/add-coupon-code-page")}><GrAddCircle className="add-coupon-icon"/><span className="coupon-add-new-text">Add New</span></li>
-                </ul>
+                <div 
+                    className="coupon-code-page-add-new-container"
+                    onClick={() => navigate("/admin/add-coupon-code-page")}>
+                    <p><GrAddCircle className="coupon-code-page-add-coupon-icon"/></p>
+                    <p className="coupon-add-new-text">Add New</p>
+                </div>
                 </div>
                 <div className="coupon-code-page-filter-and-refresh-container">
-                    <div className="drop-down-filter">
-                        <small className="drop-down-filter-small-border-text">filter coupon by type</small>
+                    <div className="coupon-code-page-filter-drop-down-container">
+                        <div className="coupon-code-page-drop-down-filter-box" onClick={handleFilterDropdownClick}>
+                            <small className="coupon-code-page-drop-down-filter-small-border-text">filter order by status</small>
                        
-                        <p>Fixed</p>
-                        <TiArrowSortedDown className="drop-down-icon"/>
+                            <p>{filterPicked}</p>
+                            
+                            {
+                                showFilterDropDown ? 
+                                   <TiArrowSortedUp className="coupon-code-page-drop-down-icon"/>
+                                : 
+                                <TiArrowSortedDown className="coupon-code-page-drop-down-icon"/>
+                            }
+                        </div>
+                        {showFilterDropDown === true ? (
+                            <ul className="coupon-code-page-dropdown-menu">
+                                {filterArr.map((item) => (
+                                    <li key={item} onClick={() => handleFilterClick(item)}>
+                                        {item}
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : <></>} 
                     </div>
                
-                    <TfiReload  className="coupon-code-refresh-icon"/>
+                    <TfiReload  className="coupon-code-page-refresh-icon"/>
                 </div>
             </div>
 
@@ -182,12 +217,16 @@ function CouponCodePage () {
                         {coupons.length > 0 ? (
                             coupons.map((coupon, index) => (
                                 <tr key={index}>
-                                    <td style={{ display: 'flex', alignItems: 'center' }}>
+                                    <td style={{ display: 'flex', alignItems: 'center', height: '48px'}}>
                                         <span style={{
                                         background: color[Math.floor(Math.random() * color.length)]
                                         }}
-                                        className="coupon-code-page-table-index">{index + 1}</span> 
-                                        {coupon.couponName}
+                                        className="coupon-code-page-table-index">
+                                            {index + 1}
+                                        </span> 
+                                        <span>
+                                            {coupon.couponName}
+                                        </span>
                                     </td>
                                     <td className="coupon-code-page-phone-and-email-container">
                                         {coupon.status}
@@ -197,7 +236,7 @@ function CouponCodePage () {
                                     <td>{coupon.discountAmount}</td>
                                     <td><FiEdit
                                             className="coupon-code-edit-icon"
-                                            onClick={() => navigate("/admin/edit-coupon-code-page")}/></td>
+                                            onClick={() => navigate(`/admin/edit-coupon-code-page/${coupon._id}`)}/></td>
                                     <td><FaRegTrashCan className="coupon-code-delete-icon"/></td>
                                 </tr>
                             ))
