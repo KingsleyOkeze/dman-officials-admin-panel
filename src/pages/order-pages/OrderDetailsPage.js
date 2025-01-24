@@ -2,15 +2,20 @@ import { useEffect, useState } from "react";
 import "../../styles/pages-styles/order-pages-styles/OrderDetailsPage.css"
 import { TiArrowSortedDown } from "react-icons/ti";
 import { TiArrowSortedUp } from "react-icons/ti";
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 function OrderDetailsPage () {
+    const { orderId } = useParams(); 
+    const [orderDetails, setOrderDetails] = useState({});
+
     const [showOrderStatusDropDown, setShowOrderStatusDropDown] = useState(false);
-    const [orderStatusPicked, setOrderStatusPicked] = useState('Pending');
+    const [orderStatusPicked, setOrderStatusPicked] = useState("");
     const [showTrackingDropDown, setShowTrackingDropDown] = useState(false);
     const [trackingPicked, setTrackingPicked] = useState('url');
 
 
-    const orderStatusArr = ['status', 'pending', 'completed', 'shipped'];
+    const orderStatusArr = ['Status', 'Pending', 'Completed', 'Shipped'];
     const trackingArr = ['url', 'url1'];
 
     const handleOrderStatusDropdownClick = () => {
@@ -34,49 +39,137 @@ function OrderDetailsPage () {
       setShowTrackingDropDown(false);
     };
 
+
+    const handleFetchOrderDetails = async () => {
+        try {
+            const response = await axios.get(`/admin/fetch-order-details/${orderId}`);
+
+            if (response.status === 200) {
+                console.log("order details", response.data.order)
+                setOrderDetails(response.data.order);
+                setOrderStatusPicked(response.data.order.orderStatus)
+            }
+        } catch (err) {
+            console.log("err getting order details", err)
+        }
+        
+    }
+
+    useEffect(() => {
+        handleFetchOrderDetails();
+    }, []);
+
+    const handleUpdateOrderStatus = async () => {
+        try {
+            const response = await axios.post("/admin/update-order-status", {
+                orderId,
+                orderCurrentStatus: orderStatusPicked
+            });
+
+            if (response.status === 200) {
+                console.log("updated order status!", response.data.orderStatus);
+                setOrderStatusPicked(response.data.orderStatus)
+            } 
+
+        } catch (err) {
+            console.log("error updating order status", err)
+        }
+    }
+    
+
+    const [totalItemsInCartPrice, setTotalItemsInCartPrice] = useState(0);
+
+    useEffect(() => {
+        let totalPrice = 0;
+        orderDetails && orderDetails.orderedItems && orderDetails.orderedItems.length > 0 && 
+        orderDetails.orderedItems.forEach((item) => {
+          totalPrice += item.price * item.quantity;
+        });
+        setTotalItemsInCartPrice(totalPrice);
+    }, [orderDetails])
+    
+
     return(
         <div className="order-details-page-container">
             <h3 className="order-details-head-h3">Order Details</h3>
             
             <div className="order-details-body-container">
                 <div className="order-details-body-top-header">
-                    <p><span>Name:</span> Igwe Okeze</p>
-                    <p><span>Order ID:</span> 7768558559</p>
-                    <p><span>Date:</span> 26th October, 2024</p>
+                    <p>
+                        <span>Name:</span> 
+                        {orderDetails.firstName} 
+                        {orderDetails.lastName}
+                    </p>
+                    <p>
+                        <span>Order ID:</span> 
+                        {orderDetails._id}
+                    </p>
+                    <p>
+                        <span>Date:</span> 
+                        {orderDetails.createdAt}
+                    </p>
                 </div>
                 <div className="order-details-sub-container">
                     <p className="order-details-sub-title">ITEMS</p>
                     <ul>
-                        <li>Item user bought 1 X N14,000</li>
-                        <li>Item user bought 1 X N14,000</li>
-                        <li>Item user bought 1 X N14,000</li>
-                        <li>Item user bought 1 X N14,000</li>
+                        {
+                            orderDetails && orderDetails.orderedItems && 
+                            orderDetails.orderedItems.length > 0 && 
+                            orderDetails.orderedItems.map((item, index) => (
+                                <li key={index}>
+                                    {item.productRef.productName} X {item.quantity} <b>₦</b> {item.price}
+                                </li>
+                            ))
+                        }
+                
                     </ul>
-                    <p>TOTAL PRICE: <b>₦56,000.00</b></p>
+                    <p>TOTAL PRICE: <b>₦ {totalItemsInCartPrice}</b>
+                    </p>
                 </div>
                 <div className="order-details-sub-container">
                     <p className="order-details-sub-title">SHIPPING ADDRESS</p>
                     <ul>
-                        <li><span className="order-list-span">Name:</span> John Doe</li>
-                        <li><span className="order-list-span">Address:</span> 45 Adebayo</li>
-                        <li><span className="order-list-span">City</span>Ikeja</li>
-                        <li><span className="order-list-span">State:</span> Lagos</li>
-                        <li><span className="order-list-span">Postal code:</span> 1000001</li>
-                        <li><span className="order-list-span">Country/Region:</span> Nigeria</li>
-                        <li><span className="order-list-span">Phone Number:</span> +234905647690</li>
+                        <li>
+                            <span className="order-list-span">Name:</span> 
+                                {orderDetails?.customerRef?.firstName} 
+                                {orderDetails?.customerRef?.lastName}
+                        </li>
+                        <li>
+                            <span className="order-list-span">Address:</span> 
+                            {orderDetails.address}
+                        </li>
+                        <li>
+                            <span className="order-list-span">City</span> 
+                            {orderDetails.city}
+                        </li>
+                        <li>
+                            <span className="order-list-span">State:</span> 
+                            {orderDetails.state}
+                        </li>
+                        <li>
+                            <span className="order-list-span">Postal code:</span> 
+                            {orderDetails.postalCode}
+                        </li>
+                        <li>
+                            <span className="order-list-span">Country/Region:</span> 
+                            {orderDetails.country}
+                        </li>
+                        <li>
+                            <span className="order-list-span">Phone Number:</span> 
+                            {orderDetails.phoneNumber}
+                        </li>
                     </ul>
-                    <p>TOTAL PRICE: <b>₦</b>56,000.00</p>
                 </div>
                 <div className="order-details-sub-container">
                     <p className="order-details-sub-title">PAYMENT DETAILS</p>
                     <ul>
                         <li><span className="order-list-span">Payment Method:</span> Credit Card</li>
                         <li><span className="order-list-span">Coupon Code:</span> N/A</li>
-                        <li><span className="order-list-span">Order Sub Total:</span> N56,000</li>
-                        <li><span className="order-list-span">Discount:</span> N0.00</li>
-                        <li><span className="order-list-span">Grand Total:</span> N56,000</li>
+                        <li><span className="order-list-span">Order Sub Total:</span> <b>₦</b> {totalItemsInCartPrice}</li>
+                        <li><span className="order-list-span">Discount:</span> <b>₦</b> 0.00</li>
+                        <li><span className="order-list-span">Shipping cost:</span> <b>₦</b> 1,000</li>
+                        <li><span className="order-list-span">Grand Total:</span> <b>₦</b> {orderDetails.orderTotalAmount}</li>
                     </ul>
-                    <p>TOTAL PRICE: <b>₦</b>56,000.00</p>
                 </div>
                 <div className="order-details-bottom-status-container">
                     <p>ORDER STATUS:</p>
@@ -132,7 +225,12 @@ function OrderDetailsPage () {
                 </div>
                 <div className="order-details-button-container">
                     <button className="order-details-cancel-button">Cancel</button>
-                    <button className="order-details-save-button">Save changes</button>
+                    <button 
+                        className="order-details-save-button"
+                        onClick={handleUpdateOrderStatus}
+                    >
+                        Save changes
+                    </button>
                 </div>
             </div>
         </div>

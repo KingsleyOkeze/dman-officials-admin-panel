@@ -3,16 +3,17 @@ import Header from "../components/Header";
 import SubHeader from "../components/SubHeader";
 import "../styles/dashboard-style/Dashboard.css";
 import { useEffect, useState } from "react";
+import { SubHeaderProvider } from "../contexts/SubHeaderContext";
+import { ModalProvider } from "../contexts/ModalContext";
 
 function Dashboard () {
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-    const [isSubHeaderOpen, setIsSubHeaderOpen] = useState(true);
     
     useEffect(() => {
         const handleResize = () => {
             const width = window.innerWidth;
             setScreenWidth(width);
-            setIsSubHeaderOpen(width >= 786); // Automatically open for large screens
+            // setIsSubHeaderOpen(width >= 786); // Automatically open for large screens
         };
 
         handleResize(); // Ensure it runs on mount
@@ -24,20 +25,22 @@ function Dashboard () {
     }, []);
 
 
-    const toggleSubHeader = () => {
-        setIsSubHeaderOpen(!isSubHeaderOpen);
-    };
+    
 
     return(
-        <div className="dashboard-container">
-            <div style={{ position: "relative", width: "100%"  }}>
-                <Header toggleSubHeader={toggleSubHeader} />
-                <SubHeader isOpen={isSubHeaderOpen} />
-            </div>
-            <div className="dashboard-main-content">
-                <Outlet/>
-            </div>
-        </div>
+        <ModalProvider>
+           <SubHeaderProvider>
+                <div className="dashboard-container">
+                    <div style={{ position: "relative", width: "100%"  }}>
+                        <Header/>
+                        <SubHeader/>
+                    </div>
+                    <div className="dashboard-main-content">
+                        <Outlet/>
+                    </div>
+                </div>
+            </SubHeaderProvider>
+        </ModalProvider>
     )
 }
 

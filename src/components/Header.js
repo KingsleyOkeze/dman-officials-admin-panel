@@ -2,21 +2,23 @@ import logo from '../images/dman-logo.png'
 import { LuUser2 } from "react-icons/lu";
 import { RiMenu5Fill } from "react-icons/ri";
 import '../styles/components-styles/Header.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { SubHeaderContext } from '../contexts/SubHeaderContext';
 
-function Header ({ toggleSubHeader }) {
+function Header () {
+    const { isSubHeaderOpen, setIsSubHeaderOpen, toggleSubHeader } = useContext(SubHeaderContext);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
     useEffect(() => {
-      const handleResize = () => {
-        setScreenWidth(window.innerWidth);
-      };
+        const handleResize = () => {
+            setScreenWidth(window.innerWidth);
+        };
   
-      window.addEventListener('resize', handleResize);
+        window.addEventListener('resize', handleResize);
   
-      return () => {
-        window.removeEventListener('resize', handleResize);
-      };
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
     }, []);
 
 
@@ -28,13 +30,16 @@ function Header ({ toggleSubHeader }) {
             </div>
             <div>
             {
-                screenWidth > 768 ? (
+                screenWidth > 986 ? (
                     <div className="header-account-div">
                         <LuUser2 />
                         <p>Account</p>
                     </div>
                     ) : (
-                    <RiMenu5Fill className="header-icon" onClick={toggleSubHeader}/>
+                    <RiMenu5Fill 
+                        className="header-icon" 
+                        onClick={toggleSubHeader}
+                    />
                 )
             }
             </div>

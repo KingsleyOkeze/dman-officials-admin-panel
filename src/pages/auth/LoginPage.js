@@ -24,7 +24,13 @@ const LoginPage = () => {
             localStorage.setItem("accessToken", response.data.accessToken);
             navigate("/admin");
         } catch (err) {
-            setError(err.response?.data?.error || 'Login failed.');
+            if (err.response) {
+                if (err.response.status === 403) {
+                    navigate(`/admin/email-sent/${err.response?.data?.userId}`);
+                } else {
+                    setError(err.response?.data?.error || 'Login failed.');
+                }
+            }
         } finally {
             setLoading(false);
         }

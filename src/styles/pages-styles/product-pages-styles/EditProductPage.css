@@ -18,17 +18,15 @@
 }
 
 .edit-product-images-container {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 20px;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    justify-content: center;
+    gap: 15px;
 }
 
 .edit-product-image-div {
     background: #FFFFFF;
     border-radius: 10px;
-    width: 125px;
     height: 150px; /* Set a fixed height to prevent layout shifting */
     text-align: center;
     padding: 15px;
@@ -342,7 +340,6 @@
     }
     
     .edit-product-image-div {
-        width: 200px;
     }
 
     .edit-product-sub-specs {

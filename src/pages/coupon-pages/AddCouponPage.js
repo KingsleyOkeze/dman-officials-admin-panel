@@ -13,15 +13,14 @@ function AddCouponPage () {
 
     const [couponName, setCouponName] = useState('');
     const [couponCode, setCouponCode] = useState('');
-    const [product, setProduct] = useState('');
-    const [discountAmount, setDiscountAmount] = useState('');
-    // const [usageLimit, setUsageLimit] = useState(0)
+    const [couponDiscountAmount, setCouponDiscountAmount] = useState('');
+    const [usageLimit, setUsageLimit] = useState(0);
     const [expirationDate, setExpirationDate] = useState('');
     const [minimumPurchaseAmount, setMinimumPurchaseAmount] = useState(0);
     const [couponDiscountType, setCouponDiscountType] = useState('Select Discount');
-    const [couponStatus, setCouponStatus] = useState('Select status');
-    const [couponCategory, setCouponCategory] = useState('Select category');
-    const [couponSubCategory, setCouponSubCategory] = useState('Select sub category');
+    const [couponStatus, setCouponStatus] = useState('Select Status');
+    const [couponCategory, setCouponCategory] = useState('Select Category');
+    const [couponSubCategory, setCouponSubCategory] = useState('Select Sub Category');
     
     // DROP DOWNS CATEGORY 
     const [discountDropDownListIsOpen, setDiscountDropDownListIsOpen] = useState(false);
@@ -30,10 +29,10 @@ function AddCouponPage () {
     const [subCategoryDropDownListIsOpen, setSubCategoryDropDownListIsOpen] = useState(false);
     
 
-    const discounts = ['Percentage off', 'Flat discount'];
+    const discounts = ['Percentage Off', 'Flat Discount'];
     const status = ['Active', 'Inactive', 'Expired'];
-    const categories = ['Men', 'Women', 'Accessory'];
-    const subCategories = ['Top', 'Undies', 'Watch'];
+    const categories = ['Mens Wear', 'Footwear', 'Accessory'];
+    const subCategories = ['T Shirt', 'Hoodie', 'Sweat Shirt', 'Bullup 500'];
  
 
     const handleCategoryDropdownClick = () => {
@@ -79,20 +78,19 @@ function AddCouponPage () {
 
 
     const addCouponFunction = async () => {
-        console.log(couponName,couponCode,product, discountAmount, expirationDate, minimumPurchaseAmount, couponDiscountType, couponStatus, couponCategory, couponSubCategory)
+        console.log(couponName,couponCode, usageLimit, couponDiscountAmount, expirationDate, minimumPurchaseAmount, couponDiscountType, couponStatus, couponCategory, couponSubCategory)
         try {
             const response = await axios.post("/admin/add-coupon", {
                 couponName: couponName.toUpperCase(),
                 couponCode: couponCode.toUpperCase(),
-                discountType: couponDiscountType,
-                discountAmount,
+                discountType: couponDiscountType.replace(/\s+/g, ''),// Remove spaces from `couponDiscountType`
+                discountAmount: couponDiscountAmount,
                 minimumPurchaseAmount,
                 status: couponStatus,
-                category: couponCategory,
-                subCategory: couponSubCategory,
-                product,
+                category: couponCategory.replace(/\s+/g, ''),
+                subCategory: couponSubCategory.replace(/\s+/g, ''),
                 expirationDate,
-                // usageLimit,
+                usageLimit,
             });
     
             if (response.data) {
@@ -222,7 +220,7 @@ function AddCouponPage () {
                     <div className="add-coupon-first-section-input-div">
                         <input type="number" 
                             placeholder="Eg: 20"
-                            onChange={(e) => setDiscountAmount(e.target.value)}
+                            onChange={(e) => setCouponDiscountAmount(e.target.value)}
                             required
                         />
                     </div>
@@ -233,8 +231,19 @@ function AddCouponPage () {
                     </div>
                     <div className="add-coupon-first-section-input-div">
                         <input type="number" 
+                            min={0}
+                            value={minimumPurchaseAmount}
                             placeholder="Enter min purchase amount"
-                            onChange={(e) => setMinimumPurchaseAmount(e.target.value)}
+                            onChange={(e) => {
+                                // Remove any leading zeros from the input value
+                                const value = parseInt(e.target.value.replace(/^0+/, ''), 10);
+
+                                if (value >= 0) {
+                                    setMinimumPurchaseAmount(value);
+                                } else {
+                                    setMinimumPurchaseAmount(0); // or some other default value
+                                }
+                            }} 
                         />
                     </div>
                 </div>
@@ -327,12 +336,22 @@ function AddCouponPage () {
                 </div>
                 <div className="add-coupon-second-section-input-container">
                     <div className="add-coupon-label">
-                        <label>Product</label>
+                        <label>Usage limit</label>
                     </div>
                     <div className="add-coupon-second-section-input-container">
-                        <input type="text" 
-                            placeholder="Enter product name" 
-                            onChange={(e) => setProduct(e.target.value)} 
+                        <input type="number" 
+                            min={1}
+                            value={usageLimit}
+                            placeholder="Eg: 15" 
+                            onChange={(e) => {
+                                // Remove any leading zeros from the input value
+                                const value = parseInt(e.target.value.replace(/^0+/, ''), 10);
+                                if (value >= 0) {
+                                    setUsageLimit(value);
+                                } else {
+                                    setUsageLimit(1); // or some other default value
+                                }
+                            }}  
                         />
                     </div>
                 </div>

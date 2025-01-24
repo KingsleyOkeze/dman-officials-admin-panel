@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../styles/pages-styles/customer-pages-styles/CustomersPage.css";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { TiArrowSortedDown } from "react-icons/ti";
@@ -6,138 +6,106 @@ import { TfiReload } from "react-icons/tfi";
 import { TiArrowSortedUp } from "react-icons/ti";
 
 import axios from "axios";
+import { ModalContext } from "../../contexts/ModalContext";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 function CustomersPage () {
+    const {
+            isModalOpen, 
+            setModalOpen, 
+            selectedItem, 
+            setSelectedItem, 
+            handleDeleteClick, 
+            handleCancelDelete
+        } = useContext(ModalContext); 
+    const [customers, setCustomers] = useState([]);
     const [showFilterDropDown, setShowFilterDrop] = useState(false);
     const [filterPicked, setFilterPicked] = useState('All Orders');
-    const [customers, setCustomers] = useState([
-        // {
-        //   username: "john_doe",
-        //   phone: "+1234567890",
-        //   email: "john.doe@example.com",
-        //   password: "password123", // Typically, passwords should be hashed
-        //   country: "United States",
-        //   dob: "1990-02-15",
-        //   joiningDate: "2022-01-10",
-        //   deleted: false,
-        //   id: 1
-        // },
-        // {
-        // //   username: "jane_smith",
-        //   phone: "+0987654321",
-        //   email: "jane.smith@example.com",
-        //   password: "securePass456",
-        //   country: "Canada",
-        //   dob: "1985-11-22",
-        //   joiningDate: "2021-08-05",
-        //   deleted: false,
-        //   id: 2
-        // },
-        // {
-        //   username: "alex_jones",
-        //   phone: "+1122334455",
-        //   email: "alex.jones@example.com",
-        //   password: "pass789!@#",
-        //   country: "Australia",
-        //   dob: "1993-07-30",
-        //   joiningDate: "2023-03-19",
-        //   deleted: true,
-        //   id: 3
-        // },
-        // {
-        //   username: "lisa_lee",
-        //   phone: "+9988776655",
-        //   email: "lisa.lee@example.com",
-        //   password: "myPassword789",
-        //   country: "United Kingdom",
-        //   dob: "1989-04-11",
-        //   joiningDate: "2020-05-21",
-        //   deleted: false,
-        //   id: 4
-        // },
-        // {
-        //   username: "mike_brown",
-        //   phone: "+6677889900",
-        //   email: "mike.brown@example.com",
-        //   password: "mike123Pass",
-        //   country: "Germany",
-        //   dob: "1995-09-12",
-        //   joiningDate: "2019-12-15",
-        //   deleted: true,
-        //   id: 5
-        // }
-      ]);
-
-
-
-      const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
-      const [totalPages, setTotalPages] = useState(5); // Total number of pages (example)
+    const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
+    const [totalPages, setTotalPages] = useState(5); // Total number of pages (example)
   
-      const handlePreviousFunction = async () => {
-          if (paginationIndex > 0) { 
-              const newPaginationIndex = paginationIndex - 1;
-              setPaginationIndex(newPaginationIndex);
-              const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}`);
+    const handlePreviousFunction = async () => {
+        if (paginationIndex > 0) { 
+            const newPaginationIndex = paginationIndex - 1;
+            setPaginationIndex(newPaginationIndex);
+            const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}`);
       
-              if (response.data.result) {
-                  console.log("fetched data", response.data.result)
-                  setCustomers(response.data.result);
-                  
-              }
-          }
-      };
+            if (response.data.result) {
+                console.log("fetched data", response.data.result)
+                setCustomers(response.data.result); 
+            }
+        }
+    };
   
-      const handleNextFunction = async () => {
-          if (paginationIndex < totalPages - 1) {
-              const newPaginationIndex = paginationIndex + 1;
-              setPaginationIndex(newPaginationIndex);
-              const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}`);
+    const handleNextFunction = async () => {
+        if (paginationIndex < totalPages - 1) {
+            const newPaginationIndex = paginationIndex + 1;
+            setPaginationIndex(newPaginationIndex);
+            const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}`);
           
-              if (response.data) {
-                  console.log("fetched data", response.data.result)
-                  setCustomers(response.data.result);
-              }
-          }
+            if (response.data) {
+                console.log("fetched data", response.data.result)
+                setCustomers(response.data.result);
+            }
+        }
           
-      };
+    };
   
   
-      const fetchCustomers = async () => {
-          const response = await axios.get(`/admin/fetch-customers?page=${paginationIndex}`);
-  console.log('customer own', response.data.result)
-          if (response.data) {
-              console.log("fetched data", response.data.result)
-              setCustomers(response.data.result);
-              setTotalPages(response.data.totalPages)
-          }
-      }
+    const handleFetchCustomers = async () => {
+        const response = await axios.get(`/admin/fetch-customers?page=${paginationIndex}`);
+        console.log('customer own', response.data.result)
+        if (response.data) {
+            console.log("fetched data", response.data.result)
+            setCustomers(response.data.result);
+            setTotalPages(response.data.totalPages)
+        }
+    }
   
-      useEffect(() => {
-        fetchCustomers();
-      }, [])
+    useEffect(() => {
+        handleFetchCustomers();
+    }, [])
   
   
-      const filterArr = ['status', 'pending', 'completed', 'shipped'];
+    const filterArr = ['status', 'pending', 'completed', 'shipped'];
 
-      const handleFilterDropdownClick = () => {
-          setShowFilterDrop(!showFilterDropDown);
-      };
+    const handleFilterDropdownClick = () => {
+        setShowFilterDrop(!showFilterDropDown);
+    };
     
       
-      const handleFilterClick = (item) => {
+    const handleFilterClick = (item) => {
         setFilterPicked(item);
         setShowFilterDrop(false);
-      };
+    };
   
   
-
-
-
-
-
-
-
-
+    const handleDeleteCustomerAccount = async (customerId) => {
+        try {
+            // Call the DELETE API with the customer's ID
+            const response = await axios.delete(`/admin/delete-customer/${customerId}`);
+            
+            // Check if the deletion was successful
+            if (response.status === 200) {
+                // console.log('Customer account deleted successfully:', response.data.message);
+                // alert('Customer account deleted successfully!');
+                handleFetchCustomers();
+            }
+        } catch (error) {
+            console.error('Error deleting customer account:', error);
+    
+            if (error.response) {
+                // Handle server errors
+                alert(error.response.data.error || 'Failed to delete customer account.');
+            } else {
+                // Handle network or unexpected errors
+                alert('An unexpected error occurred. Please try again later.');
+            }
+        } finally {
+            setModalOpen(false);
+            setSelectedItem(null);
+        }
+    };
 
 
    
@@ -181,7 +149,7 @@ function CustomersPage () {
                         <tr>
                             <th>Username</th>
                             <th>Phone/Email</th>
-                            <th>Password</th>
+                            {/* <th>Password</th> */}
                             <th>Country</th>
                             <th>DOB (DD/MM/YY)</th>
                             <th>Joinging Date</th>
@@ -201,12 +169,19 @@ function CustomersPage () {
                                         <div>{customer.phoneNumber}</div>
                                         <div>{customer.email}</div>
                                     </td>
-                                    <td>{customer.password}</td>
+                                    {/* <td>{customer.password}</td> */}
                                     <td>{customer.country}</td>
                                     <td>{customer.dob}</td>
                                     <td>{customer.createdAt}</td>
                     
-                                    <td><FaRegTrashCan className="customers-delete-icon"/></td>
+                                    <td>
+                                        <FaRegTrashCan 
+                                            className="customers-delete-icon"
+                                            onClick={() =>{ 
+                                                handleDeleteClick(customer)
+                                            }}
+                                        />
+                                    </td>
                                 </tr>
                             ))
                         ) : (
@@ -246,11 +221,14 @@ function CustomersPage () {
                 </button>
             </div>
 
+            {/* Modal */}
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={handleCancelDelete}
+                onConfirm={() => handleDeleteCustomerAccount(selectedItem?._id)}
+                message={`Are you sure you want to delete "${selectedItem?.firstName} ${selectedItem?.lastName}"?`}
+            /> 
 
-
-
-
-            
 
         </div>
     )

@@ -3,18 +3,18 @@ import { GrAddCircle } from "react-icons/gr";
 import { FiPackage } from "react-icons/fi";
 import { PiDotsThreeVertical } from "react-icons/pi";
 import { RiTruckLine } from "react-icons/ri";
-import "../styles/pages-styles/HomePage.css";
-import img1 from "../images/img1.jpg"
-import { useEffect, useState } from "react";
+import "../../styles/pages-styles/home-pages-styles/HomePage.css";
+import { useContext, useEffect, useState } from "react";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import DeleteConfirmationModal from "../components/ConfirmationModal";
-import ConfirmationModal from "../components/ConfirmationModal";
+import DeleteConfirmationModal from "../../components/ConfirmationModal";
+import ConfirmationModal from "../../components/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Alert from "../components/Alert";
+import Alert from "../../components/Alert";
+import { ModalContext } from "../../contexts/ModalContext";
 
 
 // Register necessary chart.js components
@@ -23,105 +23,40 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 function HomePage () {
     const navigate = useNavigate();
+    const {
+                isModalOpen, 
+                setModalOpen, 
+                selectedItem, 
+                setSelectedItem, 
+                handleDeleteClick, 
+                handleCancelDelete
+            } = useContext(ModalContext); 
     const [customAlert, setCustomAlert] = useState({ visibility: false, status: "", title: "", message: ""});
-    const [products, setProducts] = useState([
-        // {
-        //     img: img1,
-        //     id: 1,
-        //     productName: 'Apple iPhone 13',
-        //     category: 'Electronics',
-        //     subCategory: 'Smartphones',
-        //     price: '$999.99',
-        //   },
-        //   {
-        //     img: img1,
-        //     id: 2,
-        //     productName: 'Samsung 4K Smart TV',
-        //     category: 'Electronics',
-        //     subCategory: '4K TVs',
-        //     price: '$1,299.99',
-        //   },
-        //   {
-        //     img: img1,
-        //     id: 3,
-        //     productName: 'Nike Air Max 270',
-        //     category: 'Fashion',
-        //     subCategory: 'Sneakers',
-        //     price: '$149.99',
-        //   },
-        //   {
-        //     img: img1,
-        //     id: 4,
-        //     productName: 'Sony PlayStation 5',
-        //     category: 'Gaming',
-        //     subCategory: 'Consoles',
-        //     price: '$499.99',
-        //   },
-        //   {
-        //     img: img1,
-        //     id: 5,
-        //     productName: 'Canon EOS Rebel T8i',
-        //     category: 'Electronics',
-        //     subCategory: 'DSLR Cameras',
-        //     price: '$749.99',
-        //   },
-        //   {
-        //     img: img1,
-        //     id: 6,
-        //     productName: 'Apple MacBook Air',
-        //     category: 'Electronics',
-        //     subCategory: 'Laptops',
-        //     price: '$999.99',
-        //   },
-        //   {
-        //     img: img1,
-        //     id: 7,
-        //     productName: 'Samsung Galaxy Watch',
-        //     category: 'Electronics',
-        //     subCategory: 'Smartwatches',
-        //     price: '$299.99',
-        //   },
-        //   {
-        //     img: img1,
-        //     id: 8,
-        //     productName: 'Nike Air Jordan 1',
-        //     category: 'Fashion',
-        //     subCategory: 'Sneakers',
-        //     price: '$199.99',
-        //   },
-        //   {
-        //     img: img1,
-        //     id: 9,
-        //     productName: 'Sony WH-1000XM4 Headphones',
-        //     category: 'Electronics',
-        //     subCategory: 'Headphones',
-        //     price: '$349.99',
-        //   },
-        //   {
-        //     img: img1,
-        //     id: 10,
-        //     productName: 'Canon PIXMA TS202 Printer',
-        //     category: 'Electronics',
-        //     subCategory: 'Printers',
-        //     price: '$49.99',
-        //   },
-      ]);
-
-      // Delete Modal
-      const [isModalOpen, setModalOpen] = useState(false);
-      const [selectedProduct, setSelectedProduct] = useState(null);
-
-
-
-
-
-      // Data for the chart
-      const data = {
-        labels: ["Purple", "Orange", "Black", "Red", "Blue", "Green"],
+    const [products, setProducts] = useState([]);
+    const [homePageProductStatuses, setHomePageProductStatuses] = useState({});
+    const [homePageOrderStatuses, setHomePageOrderStatuses] = useState({});
+    
+    // Data for the chart
+    const data = {
+        labels: [
+            "All Orders",
+            "Pending",
+            "Processing",
+            "Cancelled",
+            "Shipped",
+            "Delivered"
+        ],
         datasets: [
           {
-            label: "Votes",
-            data: [12, 19, 3, 5, 2, 3],
+            label: "Total",
+            data: [
+                homePageOrderStatuses.allOrders,
+                homePageOrderStatuses.pendingOrders,
+                homePageOrderStatuses.processingOrders,
+                homePageOrderStatuses.cancelledOrders,
+                homePageOrderStatuses.shippedOrders,
+                homePageOrderStatuses.deliveredOrders
+            ],
             backgroundColor: [
               "#A020F0", // Purple
               "#FFA500", // Orange
@@ -141,7 +76,7 @@ function HomePage () {
             borderWidth: 1,
           },
         ],
-      };
+    };
       
 
     // Options for customization
@@ -155,10 +90,11 @@ function HomePage () {
         },
     };
 
-    const firstBoxProgress = 50;
-    const secondBoxProgress = 70;
-    const thirdBoxProgress = 60;
-    const fourthBoxProgress = 90;
+    // CONVERT THE VALUES FOR EACH ITEMS IN homePageProductStatuses state TO PERCENTAGE
+    const firstBoxProgress = (homePageProductStatuses.allProducts / homePageProductStatuses.allProducts) * 100;
+    const secondBoxProgress = (homePageProductStatuses.outOfStock / homePageProductStatuses.allProducts) * 100;
+    const thirdBoxProgress = (homePageProductStatuses.limitedStock / homePageProductStatuses.allProducts) * 100;
+    const fourthBoxProgress = (homePageProductStatuses.availableStock / homePageProductStatuses.allProducts) * 100;
 
     const firstBoxStyles = {
         bar: {
@@ -194,85 +130,87 @@ function HomePage () {
     }
 
 
+    const handleFetchHomePageProductStatuses = async () => {
 
-    
-    const handleDeleteClick = (product) => {
-        setSelectedProduct(product);
-        setModalOpen(true);
-      };
-    
-      const handleConfirmDelete = () => {
-        // Perform delete operation here
-        console.log(`Deleted product: ${selectedProduct.productName}`);
-        setModalOpen(false);
-        setSelectedProduct(null);
-      };
-    
-      const handleCancelDelete = () => {
-        setModalOpen(false);
-        setSelectedProduct(null);
-      };
+        try {
+            const response = await axios.get("/admin/fetch-home-page-product-statuses");
+
+            if (response.status === 200) {
+                console.log('home product statuses', response.data)
+                setHomePageProductStatuses(response.data)
+            }
+        } catch (err) {
+            console.log("err fetch-home-page-order-statuses", err)
+        }
+    };
 
 
+    const handleFetchHomePageOrderStatuses = async () => {
 
+        try {
+            const response = await axios.get("/admin/fetch-home-page-order-statuses");
+
+            if (response.status === 200) {
+                console.log('home order statuses', response.data)
+                setHomePageOrderStatuses(response.data)
+            }
+        } catch (err) {
+            console.log("err fetch-home-page-order-statuses", err)
+        }
+    };
 
     // PAGINATION
     const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
     const [totalPages, setTotalPages] = useState(5); // Total number of pages (example)
 
-    useEffect(() => {
-        const fetchProducts = async () => {
+    const handleFetchProducts = async () => {
 
-            try {
-                const response = await axios.get(`/admin/fetch-products?page=${paginationIndex}`);
+        try {
+            const response = await axios.get(`/admin/fetch-products?page=${paginationIndex}`);
 
-                if (response.status === 200) {
-                    console.log('product are', response.data.result)
-                    setProducts(response.data.result)
-                }
-            } catch (error) {
-                if (error.response) {
-                    console.log("error fetching products", error);
-                    const status = error.response.data.status;
-                    const errMessage = error.response.data.error;
-    
-                
-                    if (status === 400 || status === 500) {
-                        setCustomAlert(
-                            { 
-                                visibility: true, 
-                                status: "error", 
-                                title: "Error", 
-                                message: errMessage
-                            }
-                        );
-                    }
-                    if (status === 401) {
-                        setCustomAlert(
-                            { 
-                                visibility: true, 
-                                status: "error", 
-                                title: "Error", 
-                                message: errMessage
-                            }
-                        );
-                    }
-                } else {
+            if (response.status === 200) {
+                console.log('product are', response.data.result)
+                setProducts(response.data.result)
+            }
+        } catch (error) {
+            if (error.response) {
+                console.log("error fetching products", error);
+                const status = error.response.data.status;
+                const errMessage = error.response.data.error;
+
+            
+                if (status === 400 || status === 500) {
                     setCustomAlert(
                         { 
                             visibility: true, 
                             status: "error", 
                             title: "Error", 
-                            message: "An unknown error occured!"
+                            message: errMessage
                         }
                     );
                 }
+                if (status === 401) {
+                    setCustomAlert(
+                        { 
+                            visibility: true, 
+                            status: "error", 
+                            title: "Error", 
+                            message: errMessage
+                        }
+                    );
+                }
+            } else {
+                setCustomAlert(
+                    { 
+                        visibility: true, 
+                        status: "error", 
+                        title: "Error", 
+                        message: "An unknown error occured!"
+                    }
+                );
             }
         }
-
-        fetchProducts();
-        
-    }, [])
+    }
   
     const handlePreviousFunction = async () => {
         if (paginationIndex > 0) { 
@@ -303,10 +241,35 @@ function HomePage () {
     };
 
 
+    const handleDeleteProduct = async (productId) => {
+    
+        try {
+            const response = await axios.delete(`/admin/delete-product/${productId}`);
+
+            if (response.status === 200) {
+                handleFetchProducts()
+            }
+        } catch (err) {
+            console.error("Error deleting product:", err);
+           
+        } finally {
+            setModalOpen(false);
+            setSelectedItem(null);
+        }
+    };
 
 
 
 
+
+    useEffect(() => {
+        handleFetchProducts();
+        handleFetchHomePageProductStatuses();
+        handleFetchHomePageOrderStatuses()
+    }, []);
+
+
+    
 
     return(
         <div className="home-page-container">
@@ -346,7 +309,7 @@ function HomePage () {
                         <div className="home-page-overview-first-box-progress-bar-container">
                             <div style={firstBoxStyles.bar}></div>
                         </div>
-                        <p className="home-page-overview-first-box-number">20 Products</p>
+                        <p className="home-page-overview-first-box-number">{homePageProductStatuses.allProducts} Products</p>
                     </div>
                     <div className="home-page-overview-second-box">
                         <div className="home-page-overview-box-head">
@@ -355,11 +318,11 @@ function HomePage () {
                             </span>
                             <PiDotsThreeVertical className="home-page-overview-box-menu-icon"/>
                         </div>
-                        <p className="home-page-overview-second-box-title">All Products</p>
+                        <p className="home-page-overview-second-box-title">Out of stock</p>
                         <div className="home-page-overview-second-box-progress-bar-container">
                             <div style={secondsBoxStyles.bar}></div>
                         </div>
-                        <p className="home-page-overview-second-box-number">20 Products</p>
+                        <p className="home-page-overview-second-box-number">{homePageProductStatuses.outOfStock} Products</p>
                     </div>
                     <div className="home-page-overview-third-box">
                         <div className="home-page-overview-box-head">
@@ -368,11 +331,11 @@ function HomePage () {
                             </span>
                             <PiDotsThreeVertical className="home-page-overview-box-menu-icon"/>
                         </div>
-                        <p className="home-page-overview-third-box-title">All Products</p>
+                        <p className="home-page-overview-third-box-title">Limited stock</p>
                         <div className="home-page-overview-third-box-progress-bar-container">
                             <div style={thirdBoxStyles.bar}></div>
                         </div>
-                        <p className="home-page-overview-third-box-number">20 Products</p>
+                        <p className="home-page-overview-third-box-number">{homePageProductStatuses.limitedStock} Products</p>
                     </div>
                     <div className="home-page-overview-fourth-box">
                         <div className="home-page-overview-box-head">
@@ -381,11 +344,11 @@ function HomePage () {
                             </span>
                             <PiDotsThreeVertical className="home-page-overview-box-menu-icon"/>
                         </div>
-                        <p className="home-page-overview-fourth-box-title">All Products</p>
+                        <p className="home-page-overview-fourth-box-title">Available stock</p>
                         <div className="home-page-overview-fourth-box-progress-bar-container">
                             <div style={fourthBoxStyles.bar}></div>
                         </div>
-                        <p className="home-page-overview-fourth-box-number">20 Products</p>
+                        <p className="home-page-overview-fourth-box-number">{homePageProductStatuses.availableStock} Products</p>
                     </div>
                 </div>
                 <div className="home-page-order-details-section">
@@ -400,7 +363,7 @@ function HomePage () {
                         </div>
                         <div className="home-page-order-status-description-container">
                             <p>All Orders</p>
-                            <p>4 Done</p>
+                            <p>{homePageOrderStatuses.allOrders} Done</p>
                         </div>
                     </div>
                     <div className="home-page-order-status-container">
@@ -408,8 +371,8 @@ function HomePage () {
                             <RiTruckLine className="home-page-order-status-second-list-logo"/>
                         </div>
                         <div className="home-page-order-status-description-container">
-                            <p>All Orders</p>
-                            <p>4 Done</p>
+                            <p>Pending Orders</p>
+                            <p>{homePageOrderStatuses.pendingOrders} Done</p>
                         </div>
                     </div>
                     <div className="home-page-order-status-container">
@@ -417,8 +380,8 @@ function HomePage () {
                             <RiTruckLine className="home-page-order-status-third-list-logo"/>
                         </div>
                         <div className="home-page-order-status-description-container">
-                            <p>All Orders</p>
-                            <p>4 Done</p>
+                            <p>Processing Orders</p>
+                            <p>{homePageOrderStatuses.processingOrders} Done</p>
                         </div>
                     </div>
                     <div className="home-page-order-status-container">
@@ -426,8 +389,8 @@ function HomePage () {
                             <RiTruckLine className="home-page-order-status-fourth-list-logo"/>
                         </div>
                         <div className="home-page-order-status-description-container">
-                            <p>All Orders</p>
-                            <p>4 Done</p>
+                            <p>Cancelled Orders</p>
+                            <p>{homePageOrderStatuses.cancelledOrders} Done</p>
                         </div>
                     </div>
                     <div className="home-page-order-status-container">
@@ -435,8 +398,8 @@ function HomePage () {
                             <RiTruckLine className="home-page-order-status-fifth-list-logo"/>
                         </div>
                         <div className="home-page-order-status-description-container">
-                            <p>All Orders</p>
-                            <p>4 Done</p>
+                            <p>Shipped Orders</p>
+                            <p>{homePageOrderStatuses.shippedOrders} Done</p>
                         </div>
                     </div>
                     <div className="home-page-order-status-container">
@@ -444,8 +407,8 @@ function HomePage () {
                             <RiTruckLine className="home-page-order-status-sixth-list-logo"/>
                         </div>
                         <div className="home-page-order-status-description-container">
-                            <p>All Orders</p>
-                            <p>4 Done</p>
+                            <p>Delivered Orders</p>
+                            <p>{homePageOrderStatuses.deliveredOrders} Done</p>
                         </div>
                     </div>
                     </div>
@@ -479,13 +442,19 @@ function HomePage () {
                                         <td>{product.productCategory}</td>
                                         <td>{product.productSubCategory}</td>
                                         <td>{product.productPrice}</td>
-                                        <td><FiEdit 
+                                        <td>
+                                            <FiEdit 
                                                 className="home-page-table-edit-icon"
-                                                onClick= { () => navigate(`/admin/edit-product-page/${product._id}`) }/></td>
+                                                onClick={() => {
+                                                    navigate(`/admin/edit-product-page/${product._id}`) 
+                                                }}/>
+                                        </td>
                                         <td>
                                             <FaRegTrashCan 
                                                 className="home-page-delete-icon"
-                                                onClick={() => handleDeleteClick(product)}
+                                                onClick={() => {
+                                                    handleDeleteClick(product)
+                                                }}
                                             />
                                         </td>
                                     </tr>
@@ -529,13 +498,14 @@ function HomePage () {
             {/* Modal */}
             <ConfirmationModal
                 isOpen={isModalOpen}
-                onClose={() => setModalOpen(false)}
-                onConfirm={handleConfirmDelete}
-                message={`Are you sure you want to delete "${selectedProduct?.productName}"?`}
+                onClose={handleCancelDelete}
+                onConfirm={() => handleDeleteProduct(selectedItem?._id)}
+                message={`Are you sure you want to delete "${selectedItem?.productName}"?`}
             />
 
         </div>
     )
 }
+
 
 export default HomePage;

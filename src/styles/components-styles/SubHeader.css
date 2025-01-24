@@ -1,18 +1,17 @@
 .sub-header-container {
     position: absolute;
     top: 100%; /* Position it directly below the Header */
-        right: 0;
-        width: 200px; /* Smaller width for smaller screens */
-        height: auto; 
-        z-index: 1000; /* Ensure it overlays properly */
-        border-left: 1px solid #ccc; /* Optional: add a dividing line */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for distinction */
-        transform: translateY(-100%);
-        transition: transform 0.3s ease-in-out;
-        visibility: hidden;
-        background: green;
-        opacity: 0; /* Invisible */
-        
+    right: 0;
+    width: 210px; /* Smaller width for smaller screens */
+    height: auto; 
+    z-index: 90; /* Ensure it overlays properly */
+    border-left: 1px solid #ccc; /* Optional: add a dividing line */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for distinction */
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-in-out;
+    visibility: hidden;
+    background: #FFFFFF;
+    opacity: 0; /* Invisible */       
 }
 
 .sub-header-container.active {
@@ -42,20 +41,22 @@
 }
 
 
-
-
 .sub-header-container ul {
     display: block;
     list-style-type: none;
     padding: 0;
+    align-items: center;
+    padding-top: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .sub-header-container ul li {
-    display: block;
+    display: flex;
     align-items: center;
     line-height: 24px;
     font-weight: 400;
-    padding-right: 30px;
+    padding-bottom: 15px;
 }
 
 .sub-header-icon {
@@ -63,7 +64,7 @@
     padding-right: 15px;
 }
 
-@media (min-width: 800px) {
+@media (min-width: 986px) {
     .sub-header-container {
         position: relative;
         display: flex; 
@@ -82,7 +83,9 @@
         display: inline-flex;
         align-items: center;
         list-style-type: none;
-        padding: 0;
+        padding-top: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
     }
     
     .sub-header-container ul li {
@@ -91,6 +94,7 @@
         line-height: 24px;
         font-weight: 400;
         padding-right: 30px;
+        padding-bottom: 0px;
     }
     
     .sub-header-icon {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../styles/pages-styles/order-pages-styles/OrdersPage.css"
 import { TfiReload } from "react-icons/tfi";
 import { TiArrowSortedDown } from "react-icons/ti";
@@ -7,40 +7,48 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { TiArrowSortedUp } from "react-icons/ti";
+import { ModalContext } from "../../contexts/ModalContext";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 function OrdersPage () {
     const navigate = useNavigate();
+    const {
+            isModalOpen, 
+            setModalOpen, 
+            selectedItem, 
+            setSelectedItem, 
+            handleDeleteClick, 
+            handleCancelDelete
+        } = useContext(ModalContext);
+    const [orders, setOrders] = useState([]);  
     const [showFilterDropDown, setShowFilterDrop] = useState(false);
     const [filterPicked, setFilterPicked] = useState('All Orders');
-    const [orders, setOrders] = useState([
-        // {
-        //     billingName: "Daniel Wilson",
-        //     orderAccount: "DW33445",
-        //     payment: "$500.00",
-        //     status: "Processing",
-        //     date: "2024-10-10",
-        //     id: 5
-        //     },
-        //     { 
-        //     billingName: "Daniel Wilson",
-        //     orderAccount: "DW33445",
-        //     payment: "$500.00",
-        //     status: "Processing",
-        //     date: "2024-10-10",
-        //     id: 5
-        //     },
-    ]);  
     const [color, setColor] = useState(['#007AFF', '#008C00', '#FFA500', '#B80000', '#A020F0']);
-
 
     const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
     const [totalPages, setTotalPages] = useState(5); // Total number of pages (example)
+
+
+    const filterArr = ['All orders', 'Pending', 'Processing', 'Shipped'];
+
+    const handleFilterDropdownClick = () => {
+        setShowFilterDrop(!showFilterDropDown);
+    };
+  
+    
+    const handleFilterClick = (item) => {
+      setFilterPicked(item);
+      setShowFilterDrop(false);
+    };
+
 
     const handlePreviousFunction = async () => {
         if (paginationIndex > 0) { 
             const newPaginationIndex = paginationIndex - 1;
             setPaginationIndex(newPaginationIndex);
-            const response = await axios.get(`/admin/fetch-orders?page=${newPaginationIndex}`);
+            const response = await axios.get(
+                `/admin/fetch-orders?page=${newPaginationIndex}&orderStatus=${filterPicked.toLowerCase()}`
+            );
     
             if (response.data.result) {
                 console.log("fetched data", response.data.result)
@@ -54,7 +62,9 @@ function OrdersPage () {
         if (paginationIndex < totalPages - 1) {
             const newPaginationIndex = paginationIndex + 1;
             setPaginationIndex(newPaginationIndex);
-            const response = await axios.get(`/admin/fetch-orders?page=${newPaginationIndex}`);
+            const response = await axios.post(
+                `/admin/fetch-orders?page=${newPaginationIndex}&orderStatus=${filterPicked.toLowerCase()}`
+            );
         
             if (response.data) {
                 console.log("fetched data", response.data.result)
@@ -65,8 +75,10 @@ function OrdersPage () {
     };
 
 
-    const fetchOrders = async () => {
-        const response = await axios.get(`/admin/fetch-orders?page=${paginationIndex}`);
+    const handleFetchOrders = async () => {
+        const response = await axios.get(
+            `/admin/fetch-orders?page=${paginationIndex}&orderStatus=${filterPicked.toLowerCase()}`
+        );
 
         if (response.data) {
             console.log("fetched data", response.data.result)
@@ -76,33 +88,45 @@ function OrdersPage () {
     }
 
     useEffect(() => {
-        fetchOrders();
+        handleFetchOrders();
     }, [])
 
 
-    
-    const filterArr = ['status', 'pending', 'completed', 'shipped'];
+    useEffect(() => {
+        handleFetchOrders();
+    }, [filterPicked])
 
-    const handleFilterDropdownClick = () => {
-        setShowFilterDrop(!showFilterDropDown);
+
+    const handleConfirmDeleteOrder = async (orderId) => {
+       
+        try {
+
+            // Call the DELETE API
+            const response = await axios.delete(
+                `/admin/delete-order/${orderId}`
+            );
+
+            if (response.status === 200) {
+                console.log(response.data.message);
+                handleFetchOrders();
+                // setCoupons(response.data);
+                // setCouponId(""); 
+            }
+        } catch (err) {
+            console.log('err deleting coupon', err)
+            if (err.response) {
+
+                // Handle server errors
+                // setError(err.response.data.error || "Failed to delete coupon.");
+            } else {
+                // Handle network or unexpected errors
+                // setError("An unexpected error occurred. Please try again later.");
+            }
+        } finally {
+            setModalOpen(false);
+            setSelectedItem(null);
+        }
     };
-  
-    
-    const handleFilterClick = (item) => {
-      setFilterPicked(item);
-      setShowFilterDrop(false);
-    };
-
-
-
-
-
-
-
-
-
-
-
 
 
     return(
@@ -134,7 +158,10 @@ function OrdersPage () {
                         ) : <></>} 
                     </div>
 
-                    <TfiReload className="order-refresh-icon"/>
+                    <TfiReload 
+                        className="order-refresh-icon"
+                        onClick={handleFetchOrders}
+                    />
                 </div>
             </div>
 
@@ -155,20 +182,32 @@ function OrdersPage () {
                     <tbody className="orders-page-table-body">
                         {orders.length > 0 ? (
                             orders.map((order, index) => (
-                                <tr onClick={() => navigate("/admin/order-details-page")}>
-                                    <td style={{ display: 'flex', alignItems: 'center' }}>
-                                        <span style={{
-                                        background: color[Math.floor(Math.random() * color.length)]
-                                        }}
-                                        className="orders-page-table-index">{orders.findIndex(i => i.id === order.id)}</span> 
-                                        {order.customerFirstName} {order.customerLastName}
+                                <tr>
+                                    <td style={{ display: 'flex', alignItems: 'center' }}
+                                        onClick={() => navigate(`/admin/order-details-page/${order._id}`)}>
+                                        <span 
+                                            style={{
+                                                background: color[Math.floor(Math.random() * color.length)]
+                                            }}
+                                            className="orders-page-table-index"
+                                        >
+                                            {orders.findIndex(i => i._id === order._id) + 1}
+                                        </span> 
+                                            {order.customerRef.firstName} {order.customerRef.lastName}
                                         </td>
-                                    <td>{order.orderAmount}</td>
-                                    <td>{order.payment}</td>
-                                    <td>{order.status}</td>
+                                    <td>{order.orderTotalAmount}</td>
+                                    <td>{order.paymentStatus}</td>
+                                    <td>{order.orderStatus}</td>
                                     <td>{order.createdAt}</td>
                                     <td><FiEdit className="order-edit-icon"/></td>
-                                    <td><FaRegTrashCan className="order-delete-icon"/></td>
+                                    <td>
+                                        <FaRegTrashCan 
+                                            className="order-delete-icon"
+                                            onClick={() =>{ 
+                                                handleDeleteClick(order)
+                                            }}
+                                        />
+                                    </td>
                                 </tr>
                             ))
                         ) : (
@@ -207,7 +246,13 @@ function OrdersPage () {
             </div>
 
   
-
+            {/* Modal */}
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={handleCancelDelete}
+                onConfirm={() => handleConfirmDeleteOrder(selectedItem?._id)}
+                message={`Are you sure you want to delete this order?`}
+            /> 
 
 
 

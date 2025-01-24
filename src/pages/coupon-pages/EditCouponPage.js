@@ -13,9 +13,9 @@ function EditCouponPage () {
 
     const [couponName, setCouponName] = useState('');
     const [couponCode, setCouponCode] = useState('');
-    const [product, setProduct] = useState('');
+    // const [product, setProduct] = useState('');
     const [couponDiscountAmount, setCouponDiscountAmount] = useState('');
-    // const [usageLimit, setUsageLimit] = useState(0)
+    const [usageLimit, setUsageLimit] = useState(0)
     const [expirationDate, setExpirationDate] = useState('');
     const [minimumPurchaseAmount, setMinimumPurchaseAmount] = useState(0);
     const [couponDiscountType, setCouponDiscountType] = useState('Select Discount');
@@ -79,21 +79,20 @@ function EditCouponPage () {
 
 
     const editCouponFunction = async () => {
-        console.log(couponName,couponCode,product, couponDiscountAmount, expirationDate, minimumPurchaseAmount, couponDiscountType, couponStatus, couponCategory, couponSubCategory)
+        console.log(couponName,couponCode, couponDiscountAmount, expirationDate, minimumPurchaseAmount, couponDiscountType, couponStatus, couponCategory, couponSubCategory)
         try {
             const response = await axios.post("/admin/edit-coupon", {
                 couponId,
                 couponName: couponName.toUpperCase(),
                 couponCode: couponCode.toUpperCase(),
-                discountType: couponDiscountType,
+                discountType: couponDiscountType.replace(/\s+/g, ''),
                 discountAmount: couponDiscountAmount,
                 minimumPurchaseAmount,
-                status: couponStatus,
+                status: couponStatus.replace(/\s+/g, ''),
                 category: couponCategory,
                 subCategory: couponSubCategory,
-                product,
                 expirationDate,
-                // usageLimit,
+                usageLimit,
             });
     
             if (response.data) {
@@ -160,22 +159,22 @@ function EditCouponPage () {
                         discountType,
                         expirationDate,
                         minimumPurchaseAmount,
-                        product,
                         status,
-                        subCategory
+                        subCategory,
+                        usageLimit
                     } = response.data;
           
 
                     setCouponName(couponName)
                     setCouponCode(couponCode);
-                    setProduct(product);
                     setCouponDiscountAmount(discountAmount);
                     setExpirationDate(expirationDate);
                     setMinimumPurchaseAmount(minimumPurchaseAmount);
                     setCouponDiscountType(discountType);
                     setCouponStatus(status);
                     setCouponCategory(category);
-                    setCouponSubCategory(subCategory)
+                    setCouponSubCategory(subCategory);
+                    setUsageLimit(usageLimit)
                 }
 
             } catch (error) {
@@ -305,9 +304,17 @@ function EditCouponPage () {
                     </div>
                     <div className="edit-coupon-first-section-input-div">
                         <input type="number" 
+                            min={0}
                             value={minimumPurchaseAmount}
                             placeholder="Enter min purchase amount"
-                            onChange={(e) => setMinimumPurchaseAmount(e.target.value)}
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value >= 0) {
+                                    setMinimumPurchaseAmount(value);
+                                } else {
+                                    setMinimumPurchaseAmount(0); // or some other default value
+                                }
+                            }}
                         />
                     </div>
                 </div>
@@ -401,13 +408,21 @@ function EditCouponPage () {
                 </div>
                 <div className="edit-coupon-second-section-input-container">
                     <div className="add-coupon-label">
-                        <label>Product</label>
+                        <label>Usage limit</label>
                     </div>
                     <div className="edit-coupon-second-section-input-container">
-                        <input type="text" 
-                            placeholder="Enter product name" 
-                            value={product}
-                            onChange={(e) => setProduct(e.target.value)} 
+                        <input type="number" 
+                            min={1}
+                            value={usageLimit}
+                            placeholder="Eg: 15" 
+                            onChange={(e) => {
+                                const value = e.target.value;
+                                if (value >= 0) {
+                                    setUsageLimit(value);
+                                } else {
+                                    setUsageLimit(1); // or some other default value
+                                }
+                            }}  
                         />
                     </div>
                 </div>

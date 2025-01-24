@@ -1,8 +1,9 @@
 .success-alert-container {
     width: 309px;
     height: 60px;
-    position: absolute;
-    top: 33%;
+    position: fixed;
+    z-index: 100;
+    top: 9%;
     left: 50%;
     transform: translate(-50%, -50%);
     

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../styles/pages-styles/coupon-pages-styles/CouponCodePage.css";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { TiArrowSortedUp } from "react-icons/ti";
@@ -8,56 +8,22 @@ import { FiEdit } from "react-icons/fi";
 import { GrAddCircle } from "react-icons/gr";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ConfirmationModal from "../../components/ConfirmationModal";
+import { ModalContext } from "../../contexts/ModalContext";
 
 function CouponCodePage () {
     const navigate = useNavigate();
+    const {
+        isModalOpen, 
+        setModalOpen, 
+        selectedItem, 
+        setSelectedItem, 
+        handleDeleteClick, 
+        handleCancelDelete
+    } = useContext(ModalContext);
     const [showFilterDropDown, setShowFilterDrop] = useState(false);
-    const [filterPicked, setFilterPicked] = useState('All Orders');
-    const [coupons, setCoupons] = useState([
-        // {
-        //     couponName: "SUMMER2024",
-        //     status: "Active",
-        //     type: "Percentage",
-        //     amount: 15,
-        //   },
-        //   {
-        //     couponName: "WELCOME10",
-        //     status: "Inactive",
-        //     type: "Fixed",
-        //     amount: 10,
-        //   },
-        //   {
-        //     couponName: "FREESHIP50",
-        //     status: "Active",
-        //     type: "Fixed",
-        //     amount: 50,
-        //   },
-        //   {
-        //     couponName: "BLACKFRIDAY",
-        //     status: "Active",
-        //     type: "Percentage",
-        //     amount: 25,
-        //   },
-        //   {
-        //     couponName: "VIPSALE",
-        //     status: "Expired",
-        //     type: "Fixed",
-        //     amount: 100,
-        //   },
-        //   {
-        //     couponName: "NEWYEAR25",
-        //     status: "Active",
-        //     type: "Percentage",
-        //     amount: 25,
-        //   },
-        //   {
-        //     couponName: "FALLSAVINGS",
-        //     status: "Inactive",
-        //     type: "Fixed",
-        //     amount: 20,
-        //   },
-          
-      ]);
+    const [filterPicked, setFilterPicked] = useState('All Types');
+    const [coupons, setCoupons] = useState([]);
     const [emptyResult, setEmptyResult] = useState("");
 
     const [color, setColor] = useState(['#007AFF', '#008C00']);
@@ -65,11 +31,28 @@ function CouponCodePage () {
     const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
     const [totalPages, setTotalPages] = useState(5); // Total number of pages (example)
 
+
+    const filterArr = ['All Types', 'Percentage Off', 'Flat Discount'];
+
+    const handleFilterDropdownClick = () => {
+        setShowFilterDrop(!showFilterDropDown);
+    };
+  
+    
+    const handleFilterClick = (item) => {
+      setFilterPicked(item);
+      setShowFilterDrop(false);
+    };
+
+
+
     const handlePreviousFunction = async () => {
         if (paginationIndex > 0) { 
             const newPaginationIndex = paginationIndex - 1;
             setPaginationIndex(newPaginationIndex);
-            const response = await axios.get(`/admin/fetch-coupons?page=${newPaginationIndex}`);
+            const response = await axios.get(
+                `/admin/fetch-coupons?page=${newPaginationIndex}&discountType=${filterPicked.toLowerCase()}`
+            );
     
             if (response.data.result) {
                 console.log("fetched data", response.data.result)
@@ -83,7 +66,9 @@ function CouponCodePage () {
         if (paginationIndex < totalPages - 1) {
             const newPaginationIndex = paginationIndex + 1;
             setPaginationIndex(newPaginationIndex);
-            const response = await axios.get(`/admin/fetch-coupons?page=${newPaginationIndex}`);
+            const response = await axios.get(
+                `/admin/fetch-coupons?page=${newPaginationIndex}&discountType=${filterPicked.toLowerCase()}`
+            );
         
             if (response.data) {
                 console.log("fetched data", response.data.result)
@@ -94,10 +79,12 @@ function CouponCodePage () {
     };
 
 
-    const fetchCoupons = async () => {
+    const handleFetchCoupons = async () => {
         
         try {
-            const response = await axios.get(`/admin/fetch-coupons?page=${paginationIndex}`);
+            const response = await axios.get(
+                `/admin/fetch-coupons?page=${paginationIndex}&discountType=${filterPicked.replace(/\s+/g, '')}`
+            );
 
             if (response.data) {
                 console.log("fetched data", response.data.result)
@@ -134,28 +121,49 @@ function CouponCodePage () {
         
     }
 
+
+    const handleConfirmDeleteCoupon = async (couponId) => {
+       
+        try {
+
+            // Call the DELETE API
+            const response = await axios.delete(
+                `/admin/delete-coupon/${couponId}`
+            );
+
+            if (response.status === 200) {
+                console.log(response.data.message);
+                handleFetchCoupons();
+                // setCoupons(response.data);
+                // setCouponId(""); 
+            }
+        } catch (err) {
+            console.log('err deleting coupon', err)
+            if (err.response) {
+
+                // Handle server errors
+                // setError(err.response.data.error || "Failed to delete coupon.");
+            } else {
+                // Handle network or unexpected errors
+                // setError("An unexpected error occurred. Please try again later.");
+            }
+        } finally {
+            setModalOpen(false);
+            setSelectedItem(null);
+        }
+    };
+
+
+
+
     useEffect(() => {
-        fetchCoupons();
+        handleFetchCoupons();
     }, [])
 
 
-
-    const filterArr = ['status', 'pending', 'completed', 'shipped'];
-
-    const handleFilterDropdownClick = () => {
-        setShowFilterDrop(!showFilterDropDown);
-    };
-  
-    
-    const handleFilterClick = (item) => {
-      setFilterPicked(item);
-      setShowFilterDrop(false);
-    };
-
-
-
-
-
+    useEffect(() => {
+        handleFetchCoupons();
+    }, [filterPicked])
 
 
       
@@ -174,7 +182,7 @@ function CouponCodePage () {
                 <div className="coupon-code-page-filter-and-refresh-container">
                     <div className="coupon-code-page-filter-drop-down-container">
                         <div className="coupon-code-page-drop-down-filter-box" onClick={handleFilterDropdownClick}>
-                            <small className="coupon-code-page-drop-down-filter-small-border-text">filter order by status</small>
+                            <small className="coupon-code-page-drop-down-filter-small-border-text">filter coupon by type</small>
                        
                             <p>{filterPicked}</p>
                             
@@ -196,7 +204,10 @@ function CouponCodePage () {
                         ) : <></>} 
                     </div>
                
-                    <TfiReload  className="coupon-code-page-refresh-icon"/>
+                    <TfiReload 
+                        className="coupon-code-page-refresh-icon"
+                        onClick={handleFetchCoupons}
+                    />
                 </div>
             </div>
 
@@ -234,10 +245,22 @@ function CouponCodePage () {
                                     </td>
                                     <td>{coupon.discountType}</td>
                                     <td>{coupon.discountAmount}</td>
-                                    <td><FiEdit
+                                    <td>
+                                        <FiEdit
                                             className="coupon-code-edit-icon"
-                                            onClick={() => navigate(`/admin/edit-coupon-code-page/${coupon._id}`)}/></td>
-                                    <td><FaRegTrashCan className="coupon-code-delete-icon"/></td>
+                                            onClick={() => {
+                                                navigate(`/admin/edit-coupon-code-page/${coupon._id}`)
+                                            }}
+                                        />
+                                    </td>
+                                    <td>
+                                        <FaRegTrashCan 
+                                            className="coupon-code-delete-icon"
+                                            onClick={() =>{ 
+                                                handleDeleteClick(coupon)
+                                            }}
+                                        />
+                                    </td>
                                 </tr>
                             ))
                         ) : (
@@ -273,6 +296,14 @@ function CouponCodePage () {
                     Next
                 </button>
             </div>
+
+            {/* Modal */}
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={handleCancelDelete}
+                onConfirm={() => handleConfirmDeleteCoupon(selectedItem?._id)}
+                message={`Are you sure you want to delete "${selectedItem?.couponName}"?`}
+            />  
 
         </div>
     )

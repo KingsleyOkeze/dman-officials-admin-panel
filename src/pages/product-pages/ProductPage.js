@@ -453,7 +453,7 @@ console.log(
                             value={productName}
                             placeholder="Enter product name"
                             onChange={(e) => {
-                                if (e.target.value.length <= 50) {
+                                if (e.target.value.length <= 30) {
                                     setProductName(e.target.value);
                                 }
                             }}
@@ -467,7 +467,7 @@ console.log(
                             value={productDescription}
                             placeholder="Product description"
                             onChange={(e) => {
-                                if (e.target.value.length <= 250) {
+                                if (e.target.value.length <= 500) {
                                     setProductDescription(e.target.value);
                                 }
                             }}

@@ -58,7 +58,6 @@
 }
 
 
-
 .home-page-main-header-add-new-icon {
     border: 0.51px;
     font-size: 13.67px;
@@ -72,19 +71,17 @@
 }
 
 
-
 .home-page-main-content-container {
     display: grid;
     gap: 10px; 
 }
 
 
-
 .home-page-overview-boxes-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 5px;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    justify-content: center;
+    gap: 15px;
 }
 
 
@@ -92,7 +89,6 @@
 .home-page-overview-second-box,
 .home-page-overview-third-box,
 .home-page-overview-fourth-box{
-    width: 100%;
     height: 165px;
     border-radius: 12px;
     background: #FFFFFF;
@@ -231,18 +227,12 @@
 }
 
 
-
 .home-page-order-details-section-head {
     font-weight: 700;
     font-size: 16px;
     line-height: 24px;
     padding-bottom: 20px;
 }
-
-
-
-
-
 
 
 .home-page-order-item-container {
@@ -252,13 +242,6 @@
     border: 1px solid #808080;
     display: flex;
 }
-
-
-
-
-
-
-
 
 
 
@@ -410,6 +393,7 @@
 
 
 .home-page-table-body tr {
+    height: 60px; /* Set a consistent height for table rows */
     vertical-align: middle; /* Ensure all rows are vertically aligned */
 }
 
@@ -422,6 +406,8 @@
     text-overflow: ellipsis; /* Add ellipsis for overflowing text */
     vertical-align: middle;
     border-bottom: 1px solid black;
+    text-align: left; /* Align text to the left */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing content */
 }
 
 /* Handle Empty Cells */
@@ -449,11 +435,13 @@
     vertical-align: middle;
 }
 
+
 .home-page-table-img {
     width: 50px;
     height: 45px;
     margin-right: 10px;
     object-fit: cover; /* Ensure the image scales correctly */
+    border-radius: 6px;
 }
 
 
@@ -468,9 +456,6 @@
     align-items: center;
     font-size: 24px;
 }
-
-
-
 
 
 .home-page-no-records-message {
@@ -544,29 +529,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @media (min-width: 800px) {
 
     .home-page-main-content-container {
@@ -605,24 +567,16 @@
         margin-right: 0px;
     }
     
-    
-
-
-
 
     .home-page-overview-boxes-container {
         grid-column: 1/2;
         grid-row: 1/2;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
     }
 
     .home-page-overview-first-box,
     .home-page-overview-second-box,
     .home-page-overview-third-box,
     .home-page-overview-fourth-box{
-        flex-basis: 20%;
         height: 165px;
         border-radius: 12px;
         background: #FFFFFF;
@@ -631,7 +585,6 @@
         flex-direction: column;
         justify-content: space-between;
     }
-
 
     
     .home-page-order-details-section {
@@ -652,7 +605,6 @@
     .home-page-order-status-container {
         margin-bottom: 0px;
     }
-
 
 
     .home-page-table-container {
