@@ -21,10 +21,10 @@
     width: 309px;
     height: 60px;
     position: absolute;
-    top: 33%;
+    z-index: 100;
+    top: 9%;
     left: 50%;
     transform: translate(-50%, -50%);
-    
     display: block;
     background: #B80000;
     border-radius: 10px;

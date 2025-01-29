@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../styles/pages-styles/coupon-pages-styles/EditCouponCodePage.css"
 import { SlCalender } from "react-icons/sl";
 import { TiArrowSortedDown } from "react-icons/ti";
@@ -6,10 +6,13 @@ import { TiArrowSortedUp } from "react-icons/ti";
 import axios from "axios";
 import Alert from "../../components/Alert";
 import { useParams } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
+import { AlertContext } from "../../contexts/AlertContext";
 
 function EditCouponPage () {
+    const { accessToken, refreshAccessToken } = useContext(AuthContext);
     const { couponId } = useParams();
-    const [customAlert, setCustomAlert] = useState({ visibility: false, status: "", title: "", message: ""});
+    const { showAlert, customAlert } = useContext(AlertContext);
 
     const [couponName, setCouponName] = useState('');
     const [couponCode, setCouponCode] = useState('');
@@ -93,41 +96,30 @@ function EditCouponPage () {
                 subCategory: couponSubCategory,
                 expirationDate,
                 usageLimit,
+            },
+            {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                },
             });
     
             if (response.data) {
-                setCustomAlert(
-                    { 
-                        visibility: true, 
-                        status: "success", 
-                        title: "Success", 
-                        message: response.data.message
-                    }
-                );  
+                showAlert("success", response.data.message);  
             } 
-        } catch (error) {
-            console.error(error);
-            const status = error.response?.data.status;
-            const errMessage = error.response?.data.error;
+        } catch (err) {
+            console.error(err);
+         
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
 
-            if (status === 404 || status === 401 || status === 500) {
-                setCustomAlert(
-                    { 
-                        visibility: true, 
-                        status: "error", 
-                        title: "Error", 
-                        message: errMessage
-                    }
-                );  
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(editCouponFunction);
+                }
             } else {
-                setCustomAlert(
-                    { 
-                        visibility: true, 
-                        status: "error", 
-                        title: "Error", 
-                        message: "An unknown error occured!"
-                    }
-                );  
+                showAlert("Error", "An Unknow Error Occured!")
             }
         }
     };
@@ -144,7 +136,7 @@ function EditCouponPage () {
 
     useEffect(() => {
         console.log('coupon is ', couponId)
-        const fetchProductById = async () => {
+        const handleFetchProductById = async () => {
             try {
                 const response = await axios.get(`/admin/fetch-coupon-by-id/${couponId}`);
                 
@@ -177,61 +169,31 @@ function EditCouponPage () {
                     setUsageLimit(usageLimit)
                 }
 
-            } catch (error) {
-                if (error.response) {
-                    console.log("error fetching coupon by id", error);
-                    const status = error.response.data.status;
-                    const errMessage = error.response.data.error;
+            } catch (err) {
+                if (err.response) {
+                    const status = err.response.status;
+                    const errMessage = err.response.data.error;
     
-                
-                    if (status === 400 || status === 500) {
-                        setCustomAlert(
-                            { 
-                                visibility: true, 
-                                status: "error", 
-                                title: "Error", 
-                                message: errMessage
-                            }
-                        );
-                    }
-                    if (status === 401) {
-                        setCustomAlert(
-                            { 
-                                visibility: true, 
-                                status: "error", 
-                                title: "Error", 
-                                message: errMessage
-                            }
-                        );
+                    if (status === 400 || status === 403 || status === 404 || status === 500) {
+                        showAlert(status, errMessage)
+                    } else if (status === 401) {
+                        refreshAccessToken(handleFetchProductById);
                     }
                 } else {
-                    setCustomAlert(
-                        { 
-                            visibility: true, 
-                            status: "error", 
-                            title: "Error", 
-                            message: "An unknown error occured!"
-                        }
-                    );
+                    showAlert("Error", "An Unknow Error Occured!")
                 }
             } finally {
                 // setLoading(false);
             }
         };
 
-        fetchProductById();
+        handleFetchProductById();
     }, [couponId]);
 
 
     return(
         <div className="edit-coupon-page-container">
-            {customAlert.visibility === true && (
-                <Alert
-                    status={customAlert.status}
-                    title={customAlert.title}
-                    message={customAlert.message}
-                />
-            )}
+            {customAlert.type ? (<Alert />) : "" }
             <h3 className="edit-coupon-page-h3">Edit Coupon</h3>
             <p className="edit-coupon-page-sub-head">Creating new Coupon</p>
             <div className="edit-coupon-first-section-container">

@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { useRef } from "react";
 
 export const AlertContext = createContext();
@@ -6,7 +6,7 @@ export const AlertContext = createContext();
 export const AlertProvider = ({ children }) => {
     const [customAlert, setCustomAlert] = useState({ type: null, message: null });
     const alertTimeout = useRef(null);
-
+// useEffect(() => {alert(customAlert.type)}, [customAlert])
     const showAlert = (type, message) => {
         setCustomAlert({ type, message });
 

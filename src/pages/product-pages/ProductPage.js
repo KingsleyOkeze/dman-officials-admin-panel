@@ -2,15 +2,18 @@ import "../../styles/pages-styles/product-pages-styles/ProductPage.css";
 import image from "../../images/image.png";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { CiImageOn } from "react-icons/ci";
-import { useEffect, useState, useRef} from "react";
+import { useEffect, useState, useRef, useContext} from "react";
 import { LiaTimesSolid } from "react-icons/lia";
 import axios from "axios";
 import { TiArrowSortedUp } from "react-icons/ti";
 import Alert from "../../components/Alert";
+import { AuthContext } from "../../contexts/AuthContext";
+import { AlertContext } from "../../contexts/AlertContext";
 
 
 function ProductPage () {
-    const [customAlert, setCustomAlert] = useState({ visibility: false, status: "", title: "", message: ""});
+    const { accessToken, refreshAccessToken } = useContext(AuthContext);
+    const { showAlert, customAlert } = useContext(AlertContext);
 
     const [image, setImage] = useState(null);
     const [firstImagePreview, setFirstImagePreview] = useState(null);
@@ -245,74 +248,36 @@ console.log(
     ,addTimer);
         try {
             const response = await axios.post("/admin/add-product", formData, 
-                // {
-                // headers: {
-
-                // },          
-            // }
-             );
+                {
+                    headers: {
+                      Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                },
+            });
 
             if (response.status === 201) {
                 console.log("successfully added product", response.data)
-                setCustomAlert(
-                    { 
-                        visibility: true, 
-                        status: "success", 
-                        title: "Success", 
-                        message: response.data.message
-                    }
-                ); 
+                showAlert("success", response.data.message); 
                 
             } 
-        } catch (error) {
-            if (error.response) {
-                console.log("error uploading", error);
-                const status = error.response.data.status;
-                const errMessage = error.response.data.error;
+        } catch (err) {
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
 
-            
-                if (status === 400 || status === 500) {
-                    setCustomAlert(
-                        { 
-                            visibility: true, 
-                            status: "error", 
-                            title: "Error", 
-                            message: errMessage
-                        }
-                    );
-                }
-                if (status === 401) {
-                    setCustomAlert(
-                        { 
-                            visibility: true, 
-                            status: "error", 
-                            title: "Error", 
-                            message: errMessage
-                        }
-                    );
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(handleAddProduct);
                 }
             } else {
-                setCustomAlert(
-                    { 
-                        visibility: true, 
-                        status: "error", 
-                        title: "Error", 
-                        message: "An unknown error occured!"
-                    }
-                );
+                showAlert("Error", "An Unknow Error Occured!")
             }
         }
     };
 
     return(
         <div className="product-page-container">
-            {customAlert.visibility === true && (
-                <Alert
-                    status={customAlert.status}
-                    title={customAlert.title}
-                    message={customAlert.message}
-                />
-            )}
+            {customAlert.type ? (<Alert />) : "" }
             <h3 className="product-page-head-h3">Add Product</h3>
             <p className="product-page-sub-head">Creating new Product</p>
             <div className="product-images-container">

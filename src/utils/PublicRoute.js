@@ -1,10 +1,12 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../contexts/AuthContext';
 
 const PublicRoute = () => {
-  const isAuthenticated = localStorage.getItem('accessToken'); // Check for access token
+  const { accessToken } = useContext(AuthContext); // Check for access token
 
   // If the user is authenticated, redirect to the dashboard
-  if (isAuthenticated) {
+  if (accessToken) {
     return <Navigate to="/admin" />;
   }
 

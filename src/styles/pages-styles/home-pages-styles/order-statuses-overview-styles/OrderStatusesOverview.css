@@ -1,0 +1,143 @@
+
+.home-page-order-details-section-head {
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 24px;
+    padding-bottom: 20px;
+}
+
+
+.home-page-order-item-container {
+    width: 100%;
+    height: 80px;
+    border-radius: 12px;
+    border: 1px solid #808080;
+    display: flex;
+}
+
+
+
+.home-page-order-details-section {
+    background: #FFFFFF;
+    /* width: 100%; */
+    padding: 10px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+.home-page-order-details-section-head {
+    margin-top: 10px;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 700;
+}
+
+.home-page-order-details-section-doughnut-container {
+    margin-top: 10px;
+    margin-bottom: 25px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+    width: 100%; 
+}
+
+
+.home-page-page-order-all-statuses-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.home-page-order-status-container {
+    border: 1px solid #808080;
+    border-radius: 12px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.home-page-order-status-first-list-logo {
+    font-size: 24px;
+    color: #A020F0;
+    margin-left: 15px;
+}
+
+.home-page-order-status-second-list-logo {
+    font-size: 24px;
+    color: #FFA500;
+    margin-left: 15px;
+}
+
+.home-page-order-status-third-list-logo {
+    font-size: 24px;
+    color: #000000;
+    margin-left: 15px;
+}
+
+.home-page-order-status-fourth-list-logo {
+    font-size: 24px;
+    color: #B80000;
+    margin-left: 15px;
+}
+
+.home-page-order-status-fifth-list-logo {
+    font-size: 24px;
+    color: #007AFF;
+    margin-left: 15px;
+}
+
+.home-page-order-status-sixth-list-logo {
+    font-size: 24px;
+    color: #008C00;
+    margin-left: 15px;
+}
+
+.home-page-order-status-description-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 42px;
+    margin-left: 20px;
+}
+
+
+.home-page-order-status-description-container p:nth-child(1){
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.home-page-order-status-description-container p:nth-child(2){
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+}
+
+
+@media (min-width: 986px) {
+    .home-page-order-details-section {
+        grid-column: 2/3;
+        grid-row: 1/3;
+    }
+    
+
+    .home-page-order-all-statuses-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        flex-grow: 1;
+        background: green;
+        padding-bottom: 20px;
+    }
+
+    .home-page-order-status-container {
+        margin-bottom: 0px;
+    }
+}

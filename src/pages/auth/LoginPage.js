@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import "../../styles/auth-pages-styles/LoginPage.css"
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../contexts/AuthContext';
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const { setAccessToken, setAdminId } = useContext(AuthContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [message, setMessage] = useState('');
@@ -21,7 +23,10 @@ const LoginPage = () => {
             const response = await axios.post('/admin/login', { email, password });
             setMessage(response.data.message);
             // Handle successful login, such as redirecting or storing tokens.
-            localStorage.setItem("accessToken", response.data.accessToken);
+            sessionStorage.setItem('accessToken', response.data.accessToken); // Store new access token in sessionStorage
+            sessionStorage.setItem("adminId", response.data.userId);
+            setAdminId(response.data.userId);
+            setAccessToken(response.data.accessToken);
             navigate("/admin");
         } catch (err) {
             if (err.response) {

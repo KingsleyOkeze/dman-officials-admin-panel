@@ -10,9 +10,14 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { ModalContext } from "../../contexts/ModalContext";
+import { AuthContext } from "../../contexts/AuthContext";
+import { AlertContext } from "../../contexts/AlertContext";
+import Alert from "../../components/Alert";
 
 function CouponCodePage () {
     const navigate = useNavigate();
+    const { accessToken, refreshAccessToken } = useContext(AuthContext);
+    const { showAlert, customAlert } = useContext(AlertContext);
     const {
         isModalOpen, 
         setModalOpen, 
@@ -29,7 +34,7 @@ function CouponCodePage () {
     const [color, setColor] = useState(['#007AFF', '#008C00']);
   
     const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
-    const [totalPages, setTotalPages] = useState(5); // Total number of pages (example)
+    const [totalPages, setTotalPages] = useState(0); // Total number of pages (example)
 
 
     const filterArr = ['All Types', 'Percentage Off', 'Flat Discount'];
@@ -47,32 +52,71 @@ function CouponCodePage () {
 
 
     const handlePreviousFunction = async () => {
+        try {
         if (paginationIndex > 0) { 
             const newPaginationIndex = paginationIndex - 1;
             setPaginationIndex(newPaginationIndex);
             const response = await axios.get(
-                `/admin/fetch-coupons?page=${newPaginationIndex}&discountType=${filterPicked.toLowerCase()}`
+                `/admin/fetch-coupons?page=${newPaginationIndex}&discountType=${filterPicked.replace(/\s+/g, '')}`,
+                {
+                    headers: {
+                      Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                    },
+                }
             );
     
             if (response.data.result) {
                 console.log("fetched data", response.data.result)
                 setCoupons(response.data.result);
-                
+            }
+        }
+        } catch (err) {
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
+
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(handlePreviousFunction);
+                }
+            } else {
+                showAlert("Error", "An Unknow Error Occured!")
             }
         }
     };
 
     const handleNextFunction = async () => {
+        try {
         if (paginationIndex < totalPages - 1) {
             const newPaginationIndex = paginationIndex + 1;
             setPaginationIndex(newPaginationIndex);
             const response = await axios.get(
-                `/admin/fetch-coupons?page=${newPaginationIndex}&discountType=${filterPicked.toLowerCase()}`
+                `/admin/fetch-coupons?page=${newPaginationIndex}&discountType=${filterPicked.toLowerCase()}`,
+                {
+                    headers: {
+                      Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                    },
+                }
             );
         
             if (response.data) {
                 console.log("fetched data", response.data.result)
                 setCoupons(response.data.result);
+            }
+        }
+        } catch (err) {
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
+
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(handleNextFunction);
+                }
+            } else {
+                showAlert("Error", "An Unknow Error Occured!")
             }
         }
         
@@ -83,39 +127,31 @@ function CouponCodePage () {
         
         try {
             const response = await axios.get(
-                `/admin/fetch-coupons?page=${paginationIndex}&discountType=${filterPicked.replace(/\s+/g, '')}`
+                `/admin/fetch-coupons?page=${paginationIndex}&discountType=${filterPicked.replace(/\s+/g, '')}`,
+                {
+                    headers: {
+                      Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                    },
+                }
             );
 
             if (response.data) {
                 console.log("fetched data", response.data.result)
                 setCoupons(response.data.result);
-                setTotalPages(response.data.totalPages)
+                setTotalPages(response.data.totalPages);
             }
-        } catch (error) {
-            const status = error.response?.data.status;
-            const errMessage = error.response?.data.error;
+        } catch (err) {
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
 
-            if (status === 404) {
-                setEmptyResult(errMessage)
-            }
-            if (status === 401 || status === 500) {
-                // setCustomAlert(
-                //     { 
-                //         visibility: true, 
-                //         status: "error", 
-                //         title: "Error", 
-                //         message: errMessage
-                //     }
-                // );  
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(handleFetchCoupons);
+                }
             } else {
-                // setCustomAlert(
-                //     { 
-                //         visibility: true, 
-                //         status: "error", 
-                //         title: "Error", 
-                //         message: "An unknown error occured!"
-                //     }
-                // );  
+                showAlert("Error", "An Unknow Error Occured!")
             }
         }
         
@@ -123,29 +159,36 @@ function CouponCodePage () {
 
 
     const handleConfirmDeleteCoupon = async (couponId) => {
-       
         try {
 
             // Call the DELETE API
             const response = await axios.delete(
-                `/admin/delete-coupon/${couponId}`
+                `/admin/delete-coupon/${couponId}`,
+                {
+                    headers: {
+                      Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                    },
+                }
             );
 
             if (response.status === 200) {
                 console.log(response.data.message);
                 handleFetchCoupons();
-                // setCoupons(response.data);
-                // setCouponId(""); 
+                showAlert("success", response.data.message) 
             }
         } catch (err) {
             console.log('err deleting coupon', err)
             if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
 
-                // Handle server errors
-                // setError(err.response.data.error || "Failed to delete coupon.");
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(() => handleConfirmDeleteCoupon(couponId));
+                }
             } else {
-                // Handle network or unexpected errors
-                // setError("An unexpected error occurred. Please try again later.");
+                showAlert("Error", "An Unknow Error Occured!")
             }
         } finally {
             setModalOpen(false);
@@ -169,6 +212,7 @@ function CouponCodePage () {
       
     return(
         <div className="coupon-code-page-container">
+            {customAlert.type ? (<Alert />) : "" }
             <div className="coupon-code-page-header">
                 <div className="coupon-code-page-header-and-add-new-container">  
                 <h3>Coupon Code</h3>

@@ -20,6 +20,7 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import HomePage from './pages/home/HomePage';
 import AdminAccountPage from './pages/account-pages/AdminAccountPage';
+import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
 
@@ -28,6 +29,7 @@ function App() {
 
   return (
     <Router>
+    <AuthProvider>
       <Routes>
         {/* Public Routes */}
         <Route element={<PublicRoute />}>
@@ -40,7 +42,13 @@ function App() {
         
         </Route>
         {/* Protected Routes */}
-        <Route path="/admin" element={<ProtectedRoute />}>
+        
+        <Route path="/admin" element={
+           
+                <ProtectedRoute allowedRoles={['Admin']}/>
+           
+            }
+        >
           <Route index element={<Navigate to="/admin/home-page" replace />} /> {/* Redirect to HomePage */}
           <Route element={<Dashboard />}>
             <Route path="home-page" element={<HomePage />} />
@@ -59,6 +67,7 @@ function App() {
         {/* Fallback Route for Unknown Paths */}
         <Route path="*" element={<NotFoundPage />} /> {/* This will catch all unknown routes and show the NotFoundPage */}
       </Routes>
+      </AuthProvider>
     </Router>
   );
 }

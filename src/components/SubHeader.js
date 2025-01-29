@@ -11,9 +11,11 @@ import { RiLogoutCircleRLine } from "react-icons/ri";
 import { LuUser2 } from "react-icons/lu";
 import { useContext } from 'react';
 import { SubHeaderContext } from '../contexts/SubHeaderContext';
+import { AuthContext } from '../contexts/AuthContext';
 
 function SubHeader () {
     const navigate = useNavigate();
+    const { handleLogout } = useContext(AuthContext);
     const { isSubHeaderOpen, setIsSubHeaderOpen, toggleSubHeader } = useContext(SubHeaderContext);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
@@ -36,24 +38,24 @@ function SubHeader () {
     }, []);
 
 
-    const handleLogout = async () => {
-        try {
-            const response = await axios.post(
-                "/admin/logout",
-                {},
-                { withCredentials: true } // Include credentials for cookies
-            );
+    // const handleLogout = async () => {
+    //     try {
+    //         const response = await axios.post(
+    //             "/admin/logout",
+    //             {},
+    //             { withCredentials: true } // Include credentials for cookies
+    //         );
   
-            if (response.status === 200) {
-                localStorage.removeItem("accessToken");
-                // localStorage.removeItem("adminId");
-                navigate("/admin/login")
-            }
+    //         if (response.status === 200) {
+    //             localStorage.removeItem("accessToken");
+    //             // localStorage.removeItem("adminId");
+    //             navigate("/admin/login")
+    //         }
             
-        } catch (error) {
-            console.error("Error during logout:", error);
-        }
-    };
+    //     } catch (error) {
+    //         console.error("Error during logout:", error);
+    //     }
+    // };
 
     return(
         <div

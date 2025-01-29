@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../styles/pages-styles/coupon-pages-styles/AddCouponPage.css"
 import { SlCalender } from "react-icons/sl";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { TiArrowSortedUp } from "react-icons/ti";
 import axios from "axios";
 import Alert from "../../components/Alert";
+import { AuthContext } from "../../contexts/AuthContext";
+import { AlertContext } from "../../contexts/AlertContext";
 
 
 function AddCouponPage () {
-
-    const [customAlert, setCustomAlert] = useState({ visibility: false, status: "", title: "", message: ""});
+    const { accessToken, refreshAccessToken } = useContext(AuthContext);
+    const { showAlert, customAlert } = useContext(AlertContext);
 
     const [couponName, setCouponName] = useState('');
     const [couponCode, setCouponCode] = useState('');
@@ -91,54 +93,28 @@ function AddCouponPage () {
                 subCategory: couponSubCategory.replace(/\s+/g, ''),
                 expirationDate,
                 usageLimit,
+            },
+            {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                },
             });
     
             if (response.data) {
-                setCustomAlert(
-                    { 
-                        visibility: true, 
-                        status: "success", 
-                        title: "Success", 
-                        message: response.data.message
-                    }
-                );  
+                showAlert("success", response.data.message);  
             } 
-        } catch (error) {
-            if (error.response) {
-                console.log("add coupon error", error);
-                const status = error.response.data.status;
-                const errMessage = error.response.data.error;
+        } catch (err) {
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
 
-            
-                if (status === 400 || status === 500) {
-                    setCustomAlert(
-                        { 
-                            visibility: true, 
-                            status: "error", 
-                            title: "Error", 
-                            message: errMessage
-                        }
-                    );
-                }
-                if (status === 401) {
-                    setCustomAlert(
-                        { 
-                            visibility: true, 
-                            status: "error", 
-                            title: "Error", 
-                            message: errMessage
-                        }
-                    );
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(addCouponFunction);
                 }
             } else {
-                setCustomAlert(
-                    { 
-                        visibility: true, 
-                        status: "error", 
-                        title: "Error", 
-                        message: "An unknown error occured!"
-                    }
-                );
+                showAlert("Error", "An Unknow Error Occured!")
             }
         }
     };
@@ -155,13 +131,7 @@ function AddCouponPage () {
 
     return(
         <div className="add-coupon-page-container">
-            {customAlert.visibility === true && (
-                <Alert
-                    status={customAlert.status}
-                    title={customAlert.title}
-                    message={customAlert.message}
-                />
-            )}
+            {customAlert.type ? (<Alert />) : "" }
             <h3 className="add-coupon-page-h3">Add Coupon</h3>
             <p className="add-coupon-page-sub-head">Creating new Coupon</p>
             <div className="add-coupon-first-section-container">

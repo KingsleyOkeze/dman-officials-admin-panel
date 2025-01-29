@@ -5,6 +5,8 @@ import "../styles/dashboard-style/Dashboard.css";
 import { useEffect, useState } from "react";
 import { SubHeaderProvider } from "../contexts/SubHeaderContext";
 import { ModalProvider } from "../contexts/ModalContext";
+import { AuthProvider } from "../contexts/AuthContext";
+import { AlertProvider } from "../contexts/AlertContext";
 
 function Dashboard () {
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -28,6 +30,7 @@ function Dashboard () {
     
 
     return(
+        <AlertProvider>
         <ModalProvider>
            <SubHeaderProvider>
                 <div className="dashboard-container">
@@ -41,6 +44,7 @@ function Dashboard () {
                 </div>
             </SubHeaderProvider>
         </ModalProvider>
+        </AlertProvider>
     )
 }
 

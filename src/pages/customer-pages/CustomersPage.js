@@ -8,8 +8,12 @@ import { TiArrowSortedUp } from "react-icons/ti";
 import axios from "axios";
 import { ModalContext } from "../../contexts/ModalContext";
 import ConfirmationModal from "../../components/ConfirmationModal";
+import { AuthContext } from "../../contexts/AuthContext";
+import Alert from "../../components/Alert";
+import { AlertContext } from "../../contexts/AlertContext";
 
 function CustomersPage () {
+    const { accessToken, adminId, refreshAccessToken } = useContext(AuthContext);
     const {
             isModalOpen, 
             setModalOpen, 
@@ -18,34 +22,78 @@ function CustomersPage () {
             handleDeleteClick, 
             handleCancelDelete
         } = useContext(ModalContext); 
+    const { showAlert, customAlert } = useContext(AlertContext);
     const [customers, setCustomers] = useState([]);
     const [showFilterDropDown, setShowFilterDrop] = useState(false);
     const [filterPicked, setFilterPicked] = useState('All Orders');
     const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
-    const [totalPages, setTotalPages] = useState(5); // Total number of pages (example)
+    const [totalPages, setTotalPages] = useState(0); // Total number of pages (example)
   
     const handlePreviousFunction = async () => {
-        if (paginationIndex > 0) { 
-            const newPaginationIndex = paginationIndex - 1;
-            setPaginationIndex(newPaginationIndex);
-            const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}`);
+        try {
+            if (paginationIndex > 0) { 
+                const newPaginationIndex = paginationIndex - 1;
+                setPaginationIndex(newPaginationIndex);
+                const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                },
+                });
       
-            if (response.data.result) {
-                console.log("fetched data", response.data.result)
-                setCustomers(response.data.result); 
+                if (response.data.result) {
+                    console.log("fetched data", response.data.result)
+                    setCustomers(response.data.result); 
+                }
             }
+        } catch (err) {
+            console.log("error fetching customer", err);
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
+
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(handleFetchCustomers);
+                }
+            } else {
+                showAlert("Error", "An Unknow Error Occured!")
+            }
+
         }
     };
   
     const handleNextFunction = async () => {
-        if (paginationIndex < totalPages - 1) {
-            const newPaginationIndex = paginationIndex + 1;
-            setPaginationIndex(newPaginationIndex);
-            const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}`);
+        try {
+            if (paginationIndex < totalPages - 1) {
+                const newPaginationIndex = paginationIndex + 1;
+                setPaginationIndex(newPaginationIndex);
+                const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                },
+                });
           
-            if (response.data) {
-                console.log("fetched data", response.data.result)
-                setCustomers(response.data.result);
+                if (response.data) {
+                    console.log("fetched data", response.data.result)
+                    setCustomers(response.data.result);
+                }
+            }
+        } catch (err) {
+            console.log("error fetching customer", err);
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
+
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(handleFetchCustomers);
+                }
+            } else {
+                showAlert("Error", "An Unknow Error Occured!")
             }
         }
           
@@ -53,12 +101,34 @@ function CustomersPage () {
   
   
     const handleFetchCustomers = async () => {
-        const response = await axios.get(`/admin/fetch-customers?page=${paginationIndex}`);
-        console.log('customer own', response.data.result)
-        if (response.data) {
-            console.log("fetched data", response.data.result)
-            setCustomers(response.data.result);
-            setTotalPages(response.data.totalPages)
+        try { 
+            const response = await axios.get(`/admin/fetch-customers?page=${paginationIndex}&limit=7`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                },
+            });
+            console.log('customer own', response.data.result)
+            if (response.data) {
+                console.log("fetched data", response.data.result)
+                setCustomers(response.data.result);
+                setTotalPages(response.data.totalPages)
+            }
+        } catch (err) {
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
+
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(handleFetchCustomers);
+                }
+            } else {
+                showAlert("Error", "An Unknow Error Occured!")
+            }
+            
+            console.log("error fetching customer", err)
         }
     }
   
@@ -67,7 +137,7 @@ function CustomersPage () {
     }, [])
   
   
-    const filterArr = ['status', 'pending', 'completed', 'shipped'];
+    const filterArr = ['Status', 'Pending', 'Completed', 'Shipped'];
 
     const handleFilterDropdownClick = () => {
         setShowFilterDrop(!showFilterDropDown);
@@ -83,23 +153,32 @@ function CustomersPage () {
     const handleDeleteCustomerAccount = async (customerId) => {
         try {
             // Call the DELETE API with the customer's ID
-            const response = await axios.delete(`/admin/delete-customer/${customerId}`);
+            const response = await axios.delete(`/admin/delete-customer/${customerId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                },
+            });
             
             // Check if the deletion was successful
             if (response.status === 200) {
-                // console.log('Customer account deleted successfully:', response.data.message);
-                // alert('Customer account deleted successfully!');
                 handleFetchCustomers();
+                showAlert("success", response.data.message)
             }
-        } catch (error) {
-            console.error('Error deleting customer account:', error);
+        } catch (err) {
+            console.error('Error deleting customer account:', err);
     
-            if (error.response) {
-                // Handle server errors
-                alert(error.response.data.error || 'Failed to delete customer account.');
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
+
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(() => handleDeleteCustomerAccount(customerId));
+                }
             } else {
-                // Handle network or unexpected errors
-                alert('An unexpected error occurred. Please try again later.');
+                showAlert("Error", "An Unknow Error Occured!")
             }
         } finally {
             setModalOpen(false);
@@ -111,6 +190,7 @@ function CustomersPage () {
    
     return(
         <div className="customers-page-container">
+            {customAlert.type ? (<Alert />) : "" }
             <div className="customers-page-header">
                 <h3>Customers</h3>
                 <div className="customers-page-filter-and-refresh-container">

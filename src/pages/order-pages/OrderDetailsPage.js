@@ -1,11 +1,16 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import "../../styles/pages-styles/order-pages-styles/OrderDetailsPage.css"
 import { TiArrowSortedDown } from "react-icons/ti";
 import { TiArrowSortedUp } from "react-icons/ti";
 import axios from "axios";
 import { useParams } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
+import { AlertContext } from "../../contexts/AlertContext";
+import Alert from "../../components/Alert";
 
 function OrderDetailsPage () {
+    const { accessToken, refreshAccessToken } = useContext(AuthContext);
+    const { showAlert, customAlert } = useContext(AlertContext);
     const { orderId } = useParams(); 
     const [orderDetails, setOrderDetails] = useState({});
 
@@ -42,15 +47,33 @@ function OrderDetailsPage () {
 
     const handleFetchOrderDetails = async () => {
         try {
-            const response = await axios.get(`/admin/fetch-order-details/${orderId}`);
+            const response = await axios.get(`/admin/fetch-order-details/${orderId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                },
+            });
 
             if (response.status === 200) {
                 console.log("order details", response.data.order)
                 setOrderDetails(response.data.order);
-                setOrderStatusPicked(response.data.order.orderStatus)
+                setOrderStatusPicked(response.data.order.orderStatus);
+                showAlert("success", response.data.message); 
             }
         } catch (err) {
             console.log("err getting order details", err)
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
+
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(handleFetchOrderDetails);
+                }
+            } else {
+                showAlert("Error", "An Unknow Error Occured!")
+            }
         }
         
     }
@@ -64,15 +87,33 @@ function OrderDetailsPage () {
             const response = await axios.post("/admin/update-order-status", {
                 orderId,
                 orderCurrentStatus: orderStatusPicked
+            },
+            {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                },
             });
 
             if (response.status === 200) {
                 console.log("updated order status!", response.data.orderStatus);
-                setOrderStatusPicked(response.data.orderStatus)
+                setOrderStatusPicked(response.data.orderStatus);
+                showAlert("success", response.data.message); 
             } 
 
         } catch (err) {
-            console.log("error updating order status", err)
+            console.log("error updating order status", err);
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
+
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(handleUpdateOrderStatus);
+                }
+            } else {
+                showAlert("Error", "An Unknow Error Occured!")
+            }
         }
     }
     
@@ -91,6 +132,7 @@ function OrderDetailsPage () {
 
     return(
         <div className="order-details-page-container">
+            {customAlert.type ? (<Alert />) : "" }
             <h3 className="order-details-head-h3">Order Details</h3>
             
             <div className="order-details-body-container">

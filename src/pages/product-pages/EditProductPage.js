@@ -7,13 +7,16 @@ import { LiaTimesSolid } from "react-icons/lia";
 import axios from "axios";
 import { TiArrowSortedUp } from "react-icons/ti";
 import Alert from "../../components/Alert";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
+import { AlertContext } from "../../contexts/AlertContext";
 
 
 function EditProductPage () {
+    const { accessToken, refreshAccessToken } = useContext(AuthContext);
     const { productId } = useParams(); // Get product ID from URL
-    const [customAlert, setCustomAlert] = useState({ visibility: false, status: "", title: "", message: ""});
+    const { showAlert, customAlert } = useContext(AlertContext);
 
     const [image, setImage] = useState(null);
     const [firstImagePreview, setFirstImagePreview] = useState(null);
@@ -147,7 +150,7 @@ function EditProductPage () {
     const [colorDropDownListIsOpen, setColorDropDownListIsOpen] = useState(false);
     
 
-    const categories = ['Men wear', 'Women wear', 'Accessory'];
+    const categories = ['Men Wear', 'Foot wear', 'Accessory'];
     const subCategories = ['Top', 'Undies', 'Watch'];
     const sizes = ['small', 'medium', 'large', 'extra large'];
     const colors = ['Black ', 'White'];
@@ -248,73 +251,47 @@ console.log(
     ,addTimer);
         try {
             const response = await axios.post(`/admin/edit-product/${productId}`, formData, 
-                // {
-                // headers: {
-
-                // },          
-            // }
-             );
+                {
+                    headers: {
+                      Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                },
+            });
 
             if (response.status === 200) {
                 console.log("successfully updated product", response.data)
-                setCustomAlert(
-                    { 
-                        visibility: true, 
-                        status: "success", 
-                        title: "Success", 
-                        message: response.data.message
-                    }
-                ); 
+                showAlert("success", response.data.message); 
                 
             } 
-        } catch (error) {
-            if (error.response) {
-                console.log("error uploading", error);
-                const status = error.response.data.status;
-                const errMessage = error.response.data.error;
+        } catch (err) {
+            if (err.response) {
+                const status = err.response.status;
+                const errMessage = err.response.data.error;
 
-            
-                if (status === 400 || status === 500) {
-                    setCustomAlert(
-                        { 
-                            visibility: true, 
-                            status: "error", 
-                            title: "Error", 
-                            message: errMessage
-                        }
-                    );
-                }
-                if (status === 401) {
-                    setCustomAlert(
-                        { 
-                            visibility: true, 
-                            status: "error", 
-                            title: "Error", 
-                            message: errMessage
-                        }
-                    );
+                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    showAlert(status, errMessage)
+                } else if (status === 401) {
+                    refreshAccessToken(handleEditProduct);
                 }
             } else {
-                setCustomAlert(
-                    { 
-                        visibility: true, 
-                        status: "error", 
-                        title: "Error", 
-                        message: "An unknown error occured!"
-                    }
-                );
+                showAlert("Error", "An Unknow Error Occured!")
             }
         }
     };
 
 
     useEffect(() => {
-        const fetchProductById = async () => {
+        const handleFetchProductById = async () => {
             try {
-                const response = await axios.get(`/admin/fetch-product-by-id/${productId}`);
+                const response = await axios.get(`/admin/fetch-product-by-id/${productId}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                    },
+                });
                 
                 if (response.status === 200) {
-                    // console.log("successfully added product", response.data)
+                    showAlert("success", response.data.message);
+
                     const {
                         addedTimer,
                         createdAt,
@@ -358,61 +335,31 @@ console.log('type of size', typeof productSize);
                     setAddTimer(addedTimer)
                 }
 
-            } catch (error) {
-                if (error.response) {
-                    console.log("error fetching product by id", error);
-                    const status = error.response.data.status;
-                    const errMessage = error.response.data.error;
+            } catch (err) {
+                if (err.response) {
+                    const status = err.response.status;
+                    const errMessage = err.response.data.error;
     
-                
-                    if (status === 400 || status === 500) {
-                        setCustomAlert(
-                            { 
-                                visibility: true, 
-                                status: "error", 
-                                title: "Error", 
-                                message: errMessage
-                            }
-                        );
-                    }
-                    if (status === 401) {
-                        setCustomAlert(
-                            { 
-                                visibility: true, 
-                                status: "error", 
-                                title: "Error", 
-                                message: errMessage
-                            }
-                        );
+                    if (status === 400 || status === 403 || status === 404 || status === 500) {
+                        showAlert(status, errMessage)
+                    } else if (status === 401) {
+                        refreshAccessToken(handleFetchProductById);
                     }
                 } else {
-                    setCustomAlert(
-                        { 
-                            visibility: true, 
-                            status: "error", 
-                            title: "Error", 
-                            message: "An unknown error occured!"
-                        }
-                    );
+                    showAlert("Error", "An Unknow Error Occured!")
                 }
             } finally {
                 // setLoading(false);
             }
         };
 
-        fetchProductById();
+        handleFetchProductById();
     }, [productId]);
 
 
     return(
         <div className="edit-product-page-container">
-            {customAlert.visibility === true && (
-                <Alert
-                    status={customAlert.status}
-                    title={customAlert.title}
-                    message={customAlert.message}
-                />
-            )}
+            {customAlert.type ? (<Alert />) : "" }
             <h3 className="edit-product-page-head-h3">Edit Product</h3>
             <p className="edit-product-page-sub-head">Creating new Product</p>
             <div className="edit-product-images-container">
