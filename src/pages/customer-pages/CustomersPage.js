@@ -25,7 +25,7 @@ function CustomersPage () {
     const { showAlert, customAlert } = useContext(AlertContext);
     const [customers, setCustomers] = useState([]);
     const [showFilterDropDown, setShowFilterDrop] = useState(false);
-    const [filterPicked, setFilterPicked] = useState('All Orders');
+    const [filterPicked, setFilterPicked] = useState('Newest');
     const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
     const [totalPages, setTotalPages] = useState(0); // Total number of pages (example)
   
@@ -34,8 +34,11 @@ function CustomersPage () {
             if (paginationIndex > 0) { 
                 const newPaginationIndex = paginationIndex - 1;
                 setPaginationIndex(newPaginationIndex);
-                const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}`,
+                const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}&limit=7`,
                 {
+                    params: {
+                        sortBy: filterPicked
+                    },
                     headers: {
                         Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
                 },
@@ -69,8 +72,11 @@ function CustomersPage () {
             if (paginationIndex < totalPages - 1) {
                 const newPaginationIndex = paginationIndex + 1;
                 setPaginationIndex(newPaginationIndex);
-                const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}`,
+                const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}&limit=7`,
                 {
+                    params: {
+                        sortBy: filterPicked
+                    },
                     headers: {
                         Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
                 },
@@ -104,6 +110,9 @@ function CustomersPage () {
         try { 
             const response = await axios.get(`/admin/fetch-customers?page=${paginationIndex}&limit=7`,
             {
+                params: {
+                    sortBy: filterPicked
+                },
                 headers: {
                     Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
                 },
@@ -137,7 +146,7 @@ function CustomersPage () {
     }, [])
   
   
-    const filterArr = ['Status', 'Pending', 'Completed', 'Shipped'];
+    const filterArr = ['Oldest', 'Newest'];
 
     const handleFilterDropdownClick = () => {
         setShowFilterDrop(!showFilterDropDown);
@@ -149,6 +158,9 @@ function CustomersPage () {
         setShowFilterDrop(false);
     };
   
+    useEffect(() => {
+        handleFetchCustomers()
+    }, [filterPicked]);
   
     const handleDeleteCustomerAccount = async (customerId) => {
         try {
@@ -218,7 +230,10 @@ function CustomersPage () {
                         ) : <></>} 
                     </div>
                
-                    <TfiReload  className="customers-page-refresh-icon"/>
+                    <TfiReload 
+                        className="customers-page-refresh-icon"
+                        onClick={() => handleFetchCustomers()}
+                    />
                 </div>
             </div>
 
@@ -232,7 +247,7 @@ function CustomersPage () {
                             {/* <th>Password</th> */}
                             <th>Country</th>
                             <th>DOB (DD/MM/YY)</th>
-                            <th>Joinging Date</th>
+                            <th>Joining Date</th>
                             <th>Delete</th>
                         </tr>
                     </thead>

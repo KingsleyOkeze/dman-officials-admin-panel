@@ -20,7 +20,7 @@ function OrderDetailsPage () {
     const [trackingPicked, setTrackingPicked] = useState('url');
 
 
-    const orderStatusArr = ['Status', 'Pending', 'Completed', 'Shipped'];
+    const orderStatusArr = ['Status', 'Pending', 'Processing', 'Completed', 'Shipped'];
     const trackingArr = ['url', 'url1'];
 
     const handleOrderStatusDropdownClick = () => {

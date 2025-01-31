@@ -14,6 +14,7 @@ import { AlertContext } from "../../contexts/AlertContext";
 function ProductPage () {
     const { accessToken, refreshAccessToken } = useContext(AuthContext);
     const { showAlert, customAlert } = useContext(AlertContext);
+    const [loading, setLoading] = useState(false);
 
     const [image, setImage] = useState(null);
     const [firstImagePreview, setFirstImagePreview] = useState(null);
@@ -25,14 +26,14 @@ function ProductPage () {
     const [productImages, setProductImages] = useState({ firstImage: "", secondImage: "", thirdImage: "", fourthImage: ""});
     const [productName, setProductName] = useState("");
     const [productDescription, setProductDescription] = useState();
-    const [productCategory, setProductCategory] = useState('Select category');
-    const [productSubCategory, setProductSubCategory] = useState('Sub category');
-    const [productSize, setProductSize] = useState(['Selected size']);
+    const [productCategory, setProductCategory] = useState('Select Category');
+    const [productSubCategory, setProductSubCategory] = useState('Sub Category');
+    const [productSize, setProductSize] = useState(['Selected Size']);
     const [productPrice, setProductPrice] = useState('');
     const [productBrand, setProductBrand] = useState('');
     const [productOfferPrice, setProductOfferPrice] = useState();
     const [productQuantity, setProductQuantity] = useState();
-    const [productColor, setProductColor] = useState(['Select color']);
+    const [productColor, setProductColor] = useState(['Select Color']);
     const [productTimer, setProductTimer] = useState({ hrs: 0, min: 0, sec: 0});
 
 
@@ -147,9 +148,9 @@ function ProductPage () {
     const [colorDropDownListIsOpen, setColorDropDownListIsOpen] = useState(false);
     
 
-    const categories = ['Men wear', 'Women wear', 'Accessory'];
-    const subCategories = ['Top', 'Undies', 'Watch'];
-    const sizes = ['small', 'medium', 'large', 'extra large'];
+    const categories = ['Mens Wear', 'Foot Wear', 'Accessories'];
+    const subCategories = ['T Shirt', 'Hoodie', 'Sweat Shirt', 'Bullup 500'];
+    const sizes = ['Small', 'Medium', 'Large', 'Extra Large'];
     const colors = ['Black ', 'White'];
   
 
@@ -209,6 +210,7 @@ function ProductPage () {
 
 
     const handleAddProduct = async () => {
+        setLoading(true); // Enable loading state
 
         //Emsure we send only colors selected and not the select text word
         const actualProductColorArr = productColor.filter(i => i !== productColor[0]);
@@ -234,8 +236,8 @@ function ProductPage () {
         // Append all fields to FormData
         formData.append("productName", productName);
         formData.append("productDescription", productDescription);
-        formData.append("productCategory", productCategory);
-        formData.append("productSubCategory", productSubCategory);
+        formData.append("productCategory", productCategory.replace(/\s+/g, ''));
+        formData.append("productSubCategory", productSubCategory.replace(/\s+/g, ''));
         formData.append("productSize", actualProductSizeArr);
         formData.append("productColor", actualProductColorArr);
         formData.append("productBrand", productBrand);
@@ -272,6 +274,8 @@ console.log(
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
+        } finally {
+            setLoading(false); // Disable loading state
         }
     };
 
@@ -534,7 +538,14 @@ console.log(
                         <div className="product-sub-input-container">
                             <input type="number" 
                                 className="product-sub-input" 
-                                onChange={(e) => setProductPrice(e.target.value)}
+                                value={productPrice}
+                                min="0" // Ensures the input value cannot be negative
+                                onChange={(e) => {
+                                    const value = parseFloat(e.target.value); // Convert the input value to a number
+                                    if (!isNaN(value) && value >= 0) { // Check if the value is a valid number and non-negative
+                                        setProductPrice(value); // Update state only if the value is valid
+                                    }
+                                }}
                                 required
                             />
                         </div>
@@ -552,7 +563,7 @@ console.log(
                     <div className="product-sub-specs">
                         <p>Quantity</p>
                         <div className="product-sub-input-container">
-                            <input type="text" 
+                            <input type="number" 
                                 className="product-sub-input"
                                 onChange={(e) => setProductQuantity(e.target.value)}
                                 required
@@ -677,11 +688,16 @@ console.log(
 
                     </div>
                 </div> 
-                <button 
-                    className="product-create-button"
+                <button
+                    className={`product-create-button ${loading ? "loading" : ""}`}
                     onClick={handleAddProduct}
-                    >
-                        Submit
+                    disabled={loading} // Disable the button while loading
+                >
+                    {loading ? (
+                       <div className="add-product-spinner"></div> // Show spinner when loading
+                    ) : (
+                        "Submit" // Show "Submit" text when not loading
+                    )}
                 </button>
 
             </div>

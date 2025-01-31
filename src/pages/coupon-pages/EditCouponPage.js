@@ -33,7 +33,7 @@ function EditCouponPage () {
     const [subCategoryDropDownListIsOpen, setSubCategoryDropDownListIsOpen] = useState(false);
     
 
-    const discounts = ['Percentage off', 'Flat discount'];
+    const discounts = ['Percentage Off', 'Flat Discount'];
     const status = ['Active', 'Inactive', 'Expired'];
     const categories = ['Men', 'Women', 'Accessory'];
     const subCategories = ['Top', 'Undies', 'Watch'];
@@ -138,7 +138,13 @@ function EditCouponPage () {
         console.log('coupon is ', couponId)
         const handleFetchProductById = async () => {
             try {
-                const response = await axios.get(`/admin/fetch-coupon-by-id/${couponId}`);
+                const response = await axios.get(`/admin/fetch-coupon-by-id/${couponId}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                        },
+                    }    
+                );
                 
                 if (response.status === 200) {
                     console.log("successfully fetched coupon product", response.data)

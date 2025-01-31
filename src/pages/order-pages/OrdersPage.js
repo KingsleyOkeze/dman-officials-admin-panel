@@ -34,7 +34,14 @@ function OrdersPage () {
     const [totalPages, setTotalPages] = useState(0); // Total number of pages (example)
 
 
-    const filterArr = ['All orders', 'Pending', 'Processing', 'Shipped'];
+    const filterArr = [
+        'All Orders', 
+        'Pending', 
+        'Processing',  
+        'Shipped', 
+        'Delivered', 
+        'Cancelled'
+    ];
 
     const handleFilterDropdownClick = () => {
         setShowFilterDrop(!showFilterDropDown);
@@ -238,7 +245,7 @@ function OrdersPage () {
 
             <div className="orders-page-table-container">
                 <p>ALL ORDER</p>
-                <table className="orders-page-table" style={{ height: orders.length === 0 ? '75vh' : ''}}>
+                <table className="orders-page-table" style={{ height: orders?.length === 0 ? '75vh' : ''}}>
                     <thead className="orders-page-table-head">
                         <tr>
                             <th>Billing Name</th>
@@ -251,7 +258,7 @@ function OrdersPage () {
                         </tr>
                     </thead>
                     <tbody className="orders-page-table-body">
-                        {orders.length > 0 ? (
+                        {orders && orders?.length > 0 ? (
                             orders.map((order, index) => (
                                 <tr>
                                     <td style={{ display: 'flex', alignItems: 'center' }}
@@ -305,7 +312,7 @@ function OrdersPage () {
                     Previous
                 </button>
                     <span className="order-page-pagination-status">
-                        {paginationIndex + 1} / {totalPages}
+                        {paginationIndex + 1} / {totalPages ? totalPages : 0}
                     </span>
                 <button
                     className="order-page-pagination-button pagination-next"
@@ -332,10 +339,8 @@ function OrdersPage () {
 }
 
 
+
+
 export default OrdersPage;
-
-
-
-
 
 
