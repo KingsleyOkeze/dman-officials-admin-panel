@@ -1,5 +1,4 @@
-import "../../styles/pages-styles/product-pages-styles/ProductPage.css";
-import image from "../../images/image.png";
+import "../../styles/pages-styles/product-pages-styles/AddProductPage.css";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { CiImageOn } from "react-icons/ci";
 import { useEffect, useState, useRef, useContext} from "react";
@@ -11,7 +10,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { AlertContext } from "../../contexts/AlertContext";
 
 
-function ProductPage () {
+function AddProductPage () {
     const { accessToken, refreshAccessToken } = useContext(AuthContext);
     const { showAlert, customAlert } = useContext(AlertContext);
     const [loading, setLoading] = useState(false);
@@ -21,7 +20,6 @@ function ProductPage () {
     const [secondImagePreview, setSecondImagePreview] = useState(null);
     const [thirdImagePreview, setThirdImagePreview] = useState(null);
     const [fourthImagePreview, setFourthImagePreview] = useState(null);
-
 
     const [productImages, setProductImages] = useState({ firstImage: "", secondImage: "", thirdImage: "", fourthImage: ""});
     const [productName, setProductName] = useState("");
@@ -36,7 +34,6 @@ function ProductPage () {
     const [productColor, setProductColor] = useState(['Select Color']);
     const [productTimer, setProductTimer] = useState({ hrs: 0, min: 0, sec: 0});
 
-
     const [addTimer, setAddTimer] = useState(false)
              
     // Create refs for each file input element to directly access and reset them    
@@ -44,9 +41,6 @@ function ProductPage () {
     const secondImageInputRef = useRef(null); // Ref for the second image file input
     const thirdImageInputRef = useRef(null); // Ref for the third image file input
     const fourthImageInputRef = useRef(null); // Ref for the fourth image file input
-    
-
-
 
     const handleFirstImageChange = (event) => {
         const file = event.target.files[0];
@@ -57,9 +51,9 @@ function ProductPage () {
           }));
           setFirstImagePreview(URL.createObjectURL(file)); // Generate a preview URL
         }
-      };
+    };
     
-      const handleSecondImageChange = (event) => {
+    const handleSecondImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
           setProductImages((prevState) => ({
@@ -68,9 +62,9 @@ function ProductPage () {
           }));
           setSecondImagePreview(URL.createObjectURL(file)); // Generate a preview URL
         }
-      };
+    };
     
-      const handleThirdImageChange = (event) => {
+    const handleThirdImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
           setProductImages((prevState) => ({
@@ -79,9 +73,9 @@ function ProductPage () {
           }));
           setThirdImagePreview(URL.createObjectURL(file)); // Generate a preview URL
         }
-      };
+    };
     
-      const handleFourthImageChange = (event) => {
+    const handleFourthImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
           setProductImages((prevState) => ({
@@ -90,56 +84,50 @@ function ProductPage () {
           }));
           setFourthImagePreview(URL.createObjectURL(file)); // Generate a preview URL
         }
-      };
+    };
     
-      // Log productImages after it changes
-      useEffect(() => {
+    // Log productImages after it changes
+    useEffect(() => {
         console.log("Updated productImages:", productImages);
-      }, [productImages]);
+    }, [productImages]);
 
 
-
-   
-      const clearFirstImage = () => {
+    const clearFirstImage = () => {
         setProductImages((prevState) => ({
           ...prevState,
           firstImage: null, // Clear first image
         }));
         setFirstImagePreview(null); // Clear preview URL
         firstImageInputRef.current.value = null; // Reset the file input
-      };
+    };
       
-      const clearSecondImage = () => {
+    const clearSecondImage = () => {
         setProductImages((prevState) => ({
           ...prevState,
           secondImage: null, // Clear second image
         }));
         setSecondImagePreview(null); // Clear preview URL
         secondImageInputRef.current.value = null; // Reset the file input
-      };
+    };
       
-      const clearThirdImage = () => {
+    const clearThirdImage = () => {
         setProductImages((prevState) => ({
           ...prevState,
           thirdImage: null, // Clear third image
         }));
         setThirdImagePreview(null); // Clear preview URL
         thirdImageInputRef.current.value = null; // Reset the file input
-      };
+    };
       
-      const clearFourthImage = () => {
+    const clearFourthImage = () => {
         setProductImages((prevState) => ({
           ...prevState,
           fourthImage: null, // Clear fourth image
         }));
         setFourthImagePreview(null); // Clear preview URL
         fourthImageInputRef.current.value = null; // Reset the file input
-      };
+    };
       
-
-
-
-
 
     // DROP DOWNS CATEGORY
     const [categoryDropDownListIsOpen, setCategoryDropDownListIsOpen] = useState(false);
@@ -150,10 +138,9 @@ function ProductPage () {
 
     const categories = ['Mens Wear', 'Foot Wear', 'Accessories'];
     const subCategories = ['T Shirt', 'Hoodie', 'Sweat Shirt', 'Bullup 500'];
-    const sizes = ['Small', 'Medium', 'Large', 'Extra Large'];
+    const sizes = ['S', 'M', 'L', 'XL'];
     const colors = ['Black ', 'White'];
   
-
 
     const handleCategoryDropdownClick = () => {
         setCategoryDropDownListIsOpen(!categoryDropDownListIsOpen);
@@ -207,24 +194,26 @@ function ProductPage () {
     }
 
 
-
-
     const handleAddProduct = async () => {
         setLoading(true); // Enable loading state
 
-        //Emsure we send only colors selected and not the select text word
+        //Ensure we send only Product Category selected and not the "Select Category" placeholder word
+        const actualProductCategory = productCategory === 'Select Category' ? '' : productCategory.replace(/\s+/g, '');
+
+        //Ensure we send only Product SubCategory selected and not the "Sub Category" placeholder word
+        const actualProductSubCategory = productSubCategory === 'Sub Category' ? '' : productSubCategory.replace(/\s+/g, '');
+
+        //Ensure we send only colors selected and not the "select color" placeholder word
         const actualProductColorArr = productColor.filter(i => i !== productColor[0]);
         console.log('colors is ', actualProductColorArr);
 
-       //Emsure we send only sizes selected and not the select text word
+       //Ensure we send only sizes selected and not the "select size" placeholder word
        const actualProductSizeArr = productSize.filter(i => i !== productSize[0]);
        console.log('size is ', actualProductSizeArr);
 
-
         // // Create a FormData instance
         const formData = new FormData();
-
-        
+   
         // Append image files (only if they exist)
         Object.keys(productImages).forEach((key) => {
            const image = productImages[key];
@@ -233,13 +222,24 @@ function ProductPage () {
              formData.append("images", image); // "images" is the key on the backend
            }
         });
+
+        // Append the size array
+        actualProductSizeArr.forEach((size) => {
+            formData.append("productSize[]", size);
+        });
+
+        // Append colors array
+        actualProductColorArr.forEach((color) => {
+            formData.append("productColor[]", color);
+        });
+
         // Append all fields to FormData
         formData.append("productName", productName);
         formData.append("productDescription", productDescription);
-        formData.append("productCategory", productCategory.replace(/\s+/g, ''));
-        formData.append("productSubCategory", productSubCategory.replace(/\s+/g, ''));
-        formData.append("productSize", actualProductSizeArr);
-        formData.append("productColor", actualProductColorArr);
+        formData.append("productCategory", actualProductCategory.replace(/\s+/g, ''));
+        formData.append("productSubCategory", actualProductSubCategory.replace(/\s+/g, ''));
+        // formData.append("productSize", actualProductSizeArr);
+        // formData.append("productColor", actualProductColorArr);
         formData.append("productBrand", productBrand);
         formData.append("productPrice", productPrice);
         formData.append("productOfferPrice", productOfferPrice);
@@ -279,16 +279,17 @@ console.log(
         }
     };
 
+
     return(
-        <div className="product-page-container">
+        <div className="add-product-page-container">
             {customAlert.type ? (<Alert />) : "" }
-            <h3 className="product-page-head-h3">Add Product</h3>
-            <p className="product-page-sub-head">Creating new Product</p>
-            <div className="product-images-container">
-                <div className="product-image-div">
+            <h3 className="add-product-page-head-h3">Add Product</h3>
+            <p className="add-product-page-sub-head">Creating new Product</p>
+            <div className="add-product-images-container">
+                <div className="add-product-image-div">
                     {firstImagePreview && (
                         <LiaTimesSolid
-                            className="product-img-remove-image-icon"
+                            className="add-product-img-remove-image-icon"
                             onClick={clearFirstImage}
                         />
                     )}
@@ -299,7 +300,7 @@ console.log(
                             newTab.focus();}}
                         />
                     ) : (
-                        <CiImageOn className="product-image-icon" />
+                        <CiImageOn className="add-product-image-icon" />
                     )}
                     <label htmlFor="file-input-1" className="custom-file-label">
                         Pick Image
@@ -309,17 +310,17 @@ console.log(
                         id="file-input-1"
                         accept="image/*"
                         onChange={handleFirstImageChange}
-                        className="product-image-pick-input"
+                        className="add-product-image-pick-input"
                         ref={firstImageInputRef}
                     />
                     <p className="file-name-text">
                         {firstImagePreview ? "Image Selected" : "No file chosen"}
                     </p>
                 </div>
-                <div className="product-image-div">
+                <div className="add-product-image-div">
                     {secondImagePreview && (
                     <LiaTimesSolid
-                        className="product-img-remove-image-icon"
+                        className="add-product-img-remove-image-icon"
                         onClick={clearSecondImage}
                     />
                     )}
@@ -331,7 +332,7 @@ console.log(
                         }} 
                     />
                     ) : (
-                        <CiImageOn className="product-image-icon" />
+                        <CiImageOn className="add-product-image-icon" />
                     )}
                     <label htmlFor="file-input-2" className="custom-file-label">
                         Pick Image
@@ -341,17 +342,17 @@ console.log(
                         id="file-input-2"
                         accept="image/*"
                         onChange={handleSecondImageChange}
-                        className="product-image-pick-input"
+                        className="add-product-image-pick-input"
                         ref={secondImageInputRef}
                     />
                     <p className="file-name-text">
                         {secondImagePreview ? "Image Selected" : "No file chosen"}
                     </p>
                 </div>
-                <div className="product-image-div">
+                <div className="add-product-image-div">
                     {thirdImagePreview && (
                         <LiaTimesSolid
-                            className="product-img-remove-image-icon"
+                            className="add-product-img-remove-image-icon"
                             onClick={clearThirdImage}
                         />
                     )}
@@ -363,7 +364,7 @@ console.log(
                             }}
                         />
                     ) : (
-                        <CiImageOn className="product-image-icon" />
+                        <CiImageOn className="add-product-image-icon" />
                     )}
                     <label htmlFor="file-input-3" className="custom-file-label">
                         Pick Image
@@ -373,17 +374,17 @@ console.log(
                         id="file-input-3"
                         accept="image/*"
                         onChange={handleThirdImageChange}
-                        className="product-image-pick-input"
+                        className="add-product-image-pick-input"
                         ref={thirdImageInputRef}
                     />
                     <p className="file-name-text">
                         {thirdImagePreview ? "Image Selected" : "No file chosen"}
                     </p>
                 </div>
-                <div className="product-image-div">
+                <div className="add-product-image-div">
                     {fourthImagePreview && (
                         <LiaTimesSolid
-                            className="product-img-remove-image-icon"
+                            className="add-product-img-remove-image-icon"
                             onClick={clearFourthImage}
                         />
                     )}
@@ -395,7 +396,7 @@ console.log(
                             }}
                         />
                         ) : (
-                        <CiImageOn className="product-image-icon" />
+                        <CiImageOn className="add-product-image-icon" />
                     )}
                     <label htmlFor="file-input-4" className="custom-file-label">
                         Pick Image
@@ -405,7 +406,7 @@ console.log(
                         id="file-input-4"
                         accept="image/*"
                         onChange={handleFourthImageChange}
-                        className="product-image-pick-input"
+                        className="add-product-image-pick-input"
                         ref={fourthImageInputRef}
                     />
                     <p className="file-name-text">
@@ -414,8 +415,8 @@ console.log(
                 </div>
             </div>
 
-            <div className="product-input-section">
-                <div className="product-input-container">
+            <div className="add-product-input-section">
+                <div className="add-product-input-container">
                     <label>Product Name * </label>
                     <div>
                         <input type="text" 
@@ -429,7 +430,7 @@ console.log(
                         />
                     </div>
                 </div>
-                <div className="product-input-container">
+                <div className="add-product-input-container">
                     <label>Product Details * </label>
                     <div>
                         <textarea type="text" 
@@ -443,17 +444,16 @@ console.log(
                         />
                     </div>
                 </div>
-                <div className="product-specs-section">
-                    <div className="product-sub-specs">
+                <div className="add-product-specs-section">
+                    <div className="add-product-sub-specs">
                         <p>Category</p>
-                        <div className="product-select-drop-down" onClick={handleCategoryDropdownClick}>
+                        <div className="add-product-select-drop-down" onClick={handleCategoryDropdownClick}>
                             <p>{productCategory}</p>
                             {
                                 categoryDropDownListIsOpen ? 
                                     <TiArrowSortedUp />
                                 : 
-                                    <TiArrowSortedDown />
-                                    
+                                    <TiArrowSortedDown />             
                             }
                         </div>
                         {categoryDropDownListIsOpen === true ? (
@@ -466,9 +466,9 @@ console.log(
                             </ul>
                         ) : <></>} 
                     </div>
-                    <div className="product-sub-specs">
+                    <div className="add-product-sub-specs">
                         <p>Sub - Category</p>
-                        <div className="product-select-drop-down" onClick={handleSubCategoryDropdownClick}>
+                        <div className="add-product-select-drop-down" onClick={handleSubCategoryDropdownClick}>
                             <p>{productSubCategory}</p>
                             {
                                 subCategoryDropDownListIsOpen ? 
@@ -488,9 +488,9 @@ console.log(
                             </ul>
                         ) : <></>}
                     </div>
-                    <div className="product-sub-specs">
+                    <div className="add-product-sub-specs">
                         <p>Size</p>
-                        <div className="product-select-drop-down" onClick={handleSizeDropdownClick}>
+                        <div className="add-product-select-drop-down" onClick={handleSizeDropdownClick}>
                             <p>{productSize.length > 1 ? handleShowMultiDropdownSelection(productSize) : productSize[0]}</p>
                             {
                                sizeDropDownListIsOpen ? 
@@ -505,81 +505,115 @@ console.log(
                                 {sizes.map((size) => (
                                     <li key={size} /*onClick={() => handleSizeClick(size)}*/>
                                         <input type="checkbox" 
-                                            className="product-timer-checkbox"
+                                            className="add-product-timer-checkbox"
+                                            value={size}
+                                            checked={productSize.includes(size)} // Keeps checkmark when reopening
                                             onChange={(e) => {
-                                                if (!productSize.includes(size)) {
-                                                    // Add the size to the array
-                                                    setProductSize((prevState) => [...prevState, size]); // Fixed spread syntax
-                                                } else {
-                                                    // Remove the size from the array
-                                                    setProductSize((prevState) =>
-                                                        prevState.filter((i) => i !== size)
-                                                    );
-                                                }
+                                                const value = e.target.value; // Get the size value from checkbox
+                                                setProductSize((prevSizes) =>
+                                                    prevSizes.includes(value)
+                                                        ? prevSizes.filter((s) => s !== value) // Remove size
+                                                        : [...prevSizes, value] // Add size
+                                                );
                                             }}
-                                            /> {size}
+                                        /> 
+                                            {size}
                                     </li>
                                 ))}
                             </ul>
                         ) : <></>}
                     </div>
-                    <div className="product-sub-specs">
+                    <div className="add-product-sub-specs">
                         <p>Brand</p>
-                        <div className="product-sub-input-container">
+                        <div className="add-product-sub-input-container">
                             <input type="text" 
-                                className="product-sub-input"
+                                className="add-product-sub-input"
                                 onChange={(e) => setProductBrand(e.target.value)}
                                 required
                             />
                         </div>
                     </div>
-                    <div className="product-sub-specs">
+                    <div className="add-product-sub-specs">
                         <p>Price</p>
-                        <div className="product-sub-input-container">
+                        <div className="add-product-sub-input-container">
                             <input type="number" 
-                                className="product-sub-input" 
+                                className="add-product-sub-input" 
                                 value={productPrice}
                                 min="0" // Ensures the input value cannot be negative
-                                onChange={(e) => {
-                                    const value = parseFloat(e.target.value); // Convert the input value to a number
-                                    if (!isNaN(value) && value >= 0) { // Check if the value is a valid number and non-negative
-                                        setProductPrice(value); // Update state only if the value is valid
+                                onKeyDown={(e) => {
+                                    if (e.key === '-') {
+                                        e.preventDefault();
                                     }
+                                }}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (Number(value) < 0) {
+                                        e.target.value = "";
+                                        return;
+                                    }
+                                    setProductPrice(Number(value));
                                 }}
                                 required
                             />
                         </div>
                     </div>
-                    <div className="product-sub-specs">
+                    <div className="add-product-sub-specs">
                         <p>Offer price</p>
-                        <div className="product-sub-input-container">
-                            <input type="text" 
-                                className="product-sub-input"
-                                onChange={(e) => setProductOfferPrice(e.target.value)}
-                                required
-                            />
-                        </div>
-                    </div>
-                    <div className="product-sub-specs">
-                        <p>Quantity</p>
-                        <div className="product-sub-input-container">
+                        <div className="add-product-sub-input-container">
                             <input type="number" 
-                                className="product-sub-input"
-                                onChange={(e) => setProductQuantity(e.target.value)}
+                                className="add-product-sub-input"
+                                value={productOfferPrice}
+                                min="0" // Ensures the input value cannot be negative
+                                onKeyDown={(e) => {
+                                    if (e.key === '-') {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (Number(value) < 0) {
+                                        e.target.value = "";
+                                        return;
+                                    }
+                                    setProductOfferPrice(Number(value));
+                                }}
                                 required
                             />
                         </div>
                     </div>
-                    <div className="product-sub-specs">
+                    <div className="add-product-sub-specs">
+                        <p>Quantity</p>
+                        <div className="add-product-sub-input-container">
+                            <input 
+                                type="number" 
+                                className="add-product-sub-input"
+                                onKeyDown={(e) => {
+                                    if (e.key === '-') {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (Number(value) < 0) {
+                                        e.target.value = "";
+                                        return;
+                                    }
+                                    setProductQuantity(Number(value));
+                                }}
+                                min="0"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div className="add-product-sub-specs">
                         <p>Color</p>
-                        <div className="product-select-drop-down" onClick={handleColorDropdownClick}>
+                        <div className="add-product-select-drop-down" onClick={handleColorDropdownClick}>
                             <p>{productColor.length > 1 ? handleShowMultiDropdownSelection(productColor) : productColor[0]}</p>
                             {
                                 colorDropDownListIsOpen ? 
                                     <TiArrowSortedUp />
                                 : 
                                     <TiArrowSortedDown />
-                                    
                             }
                         </div>
                         {colorDropDownListIsOpen === true ? (
@@ -587,26 +621,25 @@ console.log(
                                 {colors.map((color) => (
                                     <li key={color} /*onClick={() => handleColorClick(color)}*/>
                                         <input type="checkbox" 
-                                            className="product-timer-checkbox"
+                                            className="add-product-timer-checkbox"
+                                            value={color} 
+                                            checked={productColor.includes(color)} // Keeps checkmark when reopening
                                             onChange={(e) => {
-                                                if (!productColor.includes(color)) {
-                                                    // Add the color to the array
-                                                    setProductColor((prevState) => [...prevState, color]); // Fixed spread syntax
-                                                } else {
-                                                    // Remove the color from the array
-                                                    setProductColor((prevState) =>
-                                                        prevState.filter((i) => i !== color)
-                                                    );
-                                                }
+                                                const value = e.target.value; // Get selected color
+                                                setProductColor((prevColors) =>
+                                                    prevColors.includes(value)
+                                                        ? prevColors.filter((c) => c !== value) // Remove color
+                                                        : [...prevColors, value] // Add color
+                                                );
                                             }}
-                                            /> <span>{color}</span>
+                                        /> <span>{color}</span>
                                     </li>
                                 ))}
                             </ul>
                         ) : <></>}
                     </div>
                 </div>
-                <div className="product-timer-container">
+                <div className="add-product-timer-container">
                     <p>Timer 
                         <input type="checkbox" 
                         checked={addTimer}
@@ -619,7 +652,7 @@ console.log(
                               setProductTimer({ hrs: 0, min: 0, sec: 0 });
                             }
                         }} 
-                        className="product-timer-checkbox"/></p>
+                        className="add-product-timer-checkbox"/></p>
                     <div className="all-time-container">
                         <div>
                             <p>
@@ -639,7 +672,8 @@ console.log(
                                       }}
                                       style={{ background: addTimer === false ? 'lightgrey' : '#F5F3F5'}}
                                     />
-                                </span> Hrs </p>
+                                </span> Hrs 
+                            </p>
                         </div>
                         <div>
                             <p>
@@ -661,7 +695,8 @@ console.log(
                                     }}
                                     style={{ background: addTimer === false ? 'lightgrey' : '#F5F3F5'}}
                                     />
-                                </span> Mins </p>
+                                </span> Mins 
+                            </p>
                         </div>
                         <div>
                             <p>
@@ -683,13 +718,14 @@ console.log(
                                     }}
                                     style={{ background: addTimer === false ? 'lightgrey' : '#F5F3F5'}}
                                     />
-                                </span> Secs</p>
+                                </span> Secs
+                            </p>
                         </div>
 
                     </div>
                 </div> 
                 <button
-                    className={`product-create-button ${loading ? "loading" : ""}`}
+                    className={`add-product-create-button ${loading ? "loading" : ""}`}
                     onClick={handleAddProduct}
                     disabled={loading} // Disable the button while loading
                 >
@@ -702,12 +738,10 @@ console.log(
 
             </div>
 
-
-
         </div>
     )
 
 }
 
 
-export default ProductPage;
+export default AddProductPage;

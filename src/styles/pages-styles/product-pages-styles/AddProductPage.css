@@ -1,30 +1,30 @@
-.product-page-container {
+.add-product-page-container {
     background: #F5F3F5;
     padding: 15px;
 }
 
-.product-page-head-h3 {
+.add-product-page-head-h3 {
     font-size: 25px;
     font-weight: 700;
     line-height: 54px;
     padding-bottom: 10px;
 }
 
-.product-page-sub-head {
+.add-product-page-sub-head {
     font-size: 16px;
     font-weight: 400;
     line-height: 24px;
     padding-bottom: 10px;
 }
 
-.product-images-container {
+.add-product-images-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     justify-content: center;
     gap: 15px;
 }
 
-.product-image-div {
+.add-product-image-div {
     background: #FFFFFF;
     border-radius: 10px;
     height: 150px; /* Set a fixed height to prevent layout shifting */
@@ -37,7 +37,7 @@
     position: relative; /* For absolute positioning of children if needed */
 }
 
-.product-img-remove-image-icon {
+.add-product-img-remove-image-icon {
     position: absolute;
     top: 5px; /* Adjust position as needed */
     right: 5px; /* Adjust position as needed */
@@ -46,7 +46,7 @@
     cursor: pointer;
 }
 
-.product-image-div img {
+.add-product-image-div img {
     width: 78px;
     height: 78px;
     object-fit: contain; /* Ensure the image fits within its container */
@@ -54,14 +54,14 @@
 }
 
 
-.product-image-div .product-image-icon {
+.add-product-image-div .add-product-image-icon {
     font-size: 76px;
     padding-bottom: 15px;
 }
 
 
 /* Hide the default input */
-.product-image-pick-input {
+.add-product-image-pick-input {
     display: none;
 }
 
@@ -91,23 +91,23 @@
 }
 
 
-.product-input-section {
+.add-product-input-section {
     padding-top: 30px;
     padding-bottom: 10px;
 }
 
-.product-input-container {
+.add-product-input-container {
     display: block;
 }
 
-.product-input-container label {
+.add-product-input-container label {
     font-size: 16px;
     font-weight: 400;
     line-height: 24px;
     color: #000000;
 }
 
-.product-input-container input {
+.add-product-input-container input {
     border-radius: 12px;
     border: 1px solid #808080;
     height: 40px;
@@ -118,7 +118,7 @@
     background: #F5F3F5;
 }
 
-.product-input-container textarea {
+.add-product-input-container textarea {
     border-radius: 12px;
     border: 1px solid #808080;
     height: 74px;
@@ -127,11 +127,12 @@
     margin-top: 10px;
     margin-bottom: 15px;
     background: #F5F3F5;
+    resize: none;
 }
 
 
 
-.product-specs-section {
+.add-product-specs-section {
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -139,11 +140,12 @@
 
 }
 
-.product-sub-specs {
+.add-product-sub-specs {
     width: 45%;
     position: relative;
 }
-.product-sub-specs p {
+
+.add-product-sub-specs p {
     font-size: 16px;
     font-weight: 400;
     line-height: 24px;
@@ -151,7 +153,8 @@
     padding-top: 10px;
     padding-bottom: 10px;
 }
-.product-select-drop-down {
+
+.add-product-select-drop-down {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -197,13 +200,13 @@
 
 
 
-.product-sub-input-container {
+.add-product-sub-input-container {
     width: 100%;
     height: 40px;
 }
 
 
-.product-sub-input {
+.add-product-sub-input {
     width: 100%;
     height: 40px;
     border-radius: 12px;
@@ -212,15 +215,21 @@
     text-indent: 10px;
 }
 
+/* Remove spinner arrows in Chrome, Safari, Edge, Opera */
+.add-product-sub-input::-webkit-inner-spin-button,
+.add-product-sub-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
-.product-timer-container {
+.add-product-timer-container {
     padding-top: 30px;
     padding-bottom: 15px;
     width: 100%;
 }
 
 
-.product-timer-container p {
+.add-product-timer-container p {
     padding-bottom: 15px;
     font-weight: 400;
     font-size: 16px;
@@ -230,7 +239,7 @@
 }
 
 
-.product-timer-checkbox {
+.add-product-timer-checkbox {
     border: 1px solid #808080;
     border-radius: 6.67px;
     width: 24px;
@@ -298,7 +307,7 @@
   }
   
 
-.product-create-button {
+.add-product-create-button {
     display: grid;
     place-items: center;
     background: #000000;
@@ -317,12 +326,12 @@
 
 
 
-.product-create-button:hover {
+.add-product-create-button:hover {
     background: #333333; /* Dark gray background on hover */
     transform: scale(1.05); /* Slightly scale up the button */
 }
 
-.product-create-button:active {
+.add-product-create-button:active {
     background: #555555; /* Even lighter gray when clicked */
     transform: scale(0.95); /* Slightly scale down when clicked */
 }
@@ -352,15 +361,15 @@
 
 
 @media (min-width: 986px) {
-    .product-page-head-h3 {
+    .add-product-page-head-h3 {
         font-size: 36px;
     }
     
-    .product-image-div {
+    .add-product-image-div {
         /* width: 200px; */
     }
 
-    .product-sub-specs {
+    .add-product-sub-specs {
         flex-basis: 22%;
         /* gap: 5px; */
     }

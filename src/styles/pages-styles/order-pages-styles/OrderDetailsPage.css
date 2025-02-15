@@ -32,9 +32,10 @@
 
 }
 
-.order-details-body-top-header p span {
+.order-details-body-top-header p .order-details-body-top-header-title {
     font-weight: 700;
     font-size: 16px;
+    margin-right: 5px;
 }
 
 .order-details-sub-container {
@@ -63,11 +64,12 @@
     font-weight: 400;
 }
 
-.order-list-span {
+.order-list-span-title {
     font-weight: 600;
     font-size: 16px;
     line-height: 32px;
     color: #000000;
+    margin-right: 5px;
 }
 
 .order-details-bottom-status-container {

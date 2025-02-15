@@ -1,8 +1,6 @@
 import "../../styles/pages-styles/product-pages-styles/EditProductPage.css";
-import image from "../../images/image.png";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { CiImageOn } from "react-icons/ci";
-import { MdError } from "react-icons/md";
 import { LiaTimesSolid } from "react-icons/lia";
 import axios from "axios";
 import { TiArrowSortedUp } from "react-icons/ti";
@@ -11,6 +9,7 @@ import { useEffect, useState, useRef, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import { AlertContext } from "../../contexts/AlertContext";
+import urlToFile from "../../utils/urlToFile";
 
 
 function EditProductPage () {
@@ -18,7 +17,8 @@ function EditProductPage () {
     const { productId } = useParams(); // Get product ID from URL
     const { showAlert, customAlert } = useContext(AlertContext);
 
-    const [image, setImage] = useState(null);
+    const [loading, setLoading] = useState(false);
+
     const [firstImagePreview, setFirstImagePreview] = useState(null);
     const [secondImagePreview, setSecondImagePreview] = useState(null);
     const [thirdImagePreview, setThirdImagePreview] = useState(null);
@@ -27,15 +27,15 @@ function EditProductPage () {
 
     const [productImages, setProductImages] = useState({ firstImage: "", secondImage: "", thirdImage: "", fourthImage: ""});
     const [productName, setProductName] = useState("");
-    const [productDescription, setProductDescription] = useState();
-    const [productCategory, setProductCategory] = useState('Select category');
-    const [productSubCategory, setProductSubCategory] = useState('Sub category');
+    const [productDescription, setProductDescription] = useState('');
+    const [productCategory, setProductCategory] = useState('');
+    const [productSubCategory, setProductSubCategory] = useState('');
     const [productSize, setProductSize] = useState([]);
     const [productPrice, setProductPrice] = useState('');
     const [productBrand, setProductBrand] = useState('');
     const [productOfferPrice, setProductOfferPrice] = useState();
     const [productQuantity, setProductQuantity] = useState();
-    const [productColor, setProductColor] = useState([]);
+    const [productColor, setProductColor] = useState(['']);
     const [productTimer, setProductTimer] = useState({ hrs: 0, min: 0, sec: 0});
 
 
@@ -140,9 +140,6 @@ function EditProductPage () {
       
 
 
-
-
-
     // DROP DOWNS CATEGORY
     const [categoryDropDownListIsOpen, setCategoryDropDownListIsOpen] = useState(false);
     const [subCategoryDropDownListIsOpen, setSubCategoryDropDownListIsOpen] = useState(false);
@@ -150,12 +147,11 @@ function EditProductPage () {
     const [colorDropDownListIsOpen, setColorDropDownListIsOpen] = useState(false);
     
 
-    const categories = ['Men Wear', 'Foot wear', 'Accessory'];
-    const subCategories = ['Top', 'Undies', 'Watch'];
-    const sizes = ['small', 'medium', 'large', 'extra large'];
+    const categories = ['Mens Wear', 'Foot Wear', 'Accessories'];
+    const subCategories = ['T Shirt', 'Hoodie', 'Sweat Shirt', 'Bullup 500'];
+    const sizes = ['S', 'M', 'L', 'XL'];
     const colors = ['Black ', 'White'];
   
-
 
     const handleCategoryDropdownClick = () => {
         setCategoryDropDownListIsOpen(!categoryDropDownListIsOpen);
@@ -167,7 +163,6 @@ function EditProductPage () {
       setCategoryDropDownListIsOpen(false);
     };
     
-
     const handleSubCategoryDropdownClick = () => {
         setSubCategoryDropDownListIsOpen(!subCategoryDropDownListIsOpen);
     };
@@ -177,7 +172,6 @@ function EditProductPage () {
       setProductSubCategory(subCategory);
       setSubCategoryDropDownListIsOpen(false);
     };
-
 
     const handleSizeDropdownClick = () => {
         setSizeDropDownListIsOpen(!sizeDropDownListIsOpen);
@@ -201,46 +195,50 @@ function EditProductPage () {
 
 
     const handleShowMultiDropdownSelection = (item) => {
-        if (item.length > 1) {
-            const newArr = item.filter(i => i !== item[0]);
-            const formattedNewArr = newArr.join(", ");
-            return formattedNewArr;
-        }
-    }
-
-
-
+        return item.join(", "); // ✅ Correctly joins all selected sizes
+    };
+    
 
     const handleEditProduct = async () => {
-
-//         //Ensure we send only colors selected and not the select text word
-//         const actualProductColorArr = productColor.filter(i => i !== productColor[0]);
-//         console.log('colors is ', actualProductColorArr);
-
-// //         //Ensure we send only sizes selected and not the select text word
-//         const actualProductSizeArr = productSize.filter(i => i !== productSize[0]);
-//         console.log('size is ', actualProductSizeArr);
-
+        setLoading(true); // Enable loading state
 
         // // Create a FormData instance
         const formData = new FormData();
+ 
+        // Iterate over the productImages object using a standard for loop
+        // to handle both existing URLs and newly uploaded File objects.
+        const keys = Object.keys(productImages);
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i];
+            let image = productImages[key]; 
+            if (typeof image === 'string') {
+                // It's a URL, convert to File object
+                const filename = image.split('/').pop(); // Extract filename from URL
+                const file = await urlToFile(image, filename, 'image/jpeg'); // Adjust mimeType as needed
+                formData.append('images', file);
+            } else if (image instanceof File) {
+                // It's a new file uploaded by the user
+                formData.append('images', image);
+            }
+        }
 
-        
-        // Append image files (only if they exist)
-        Object.keys(productImages).forEach((key) => {
-           const image = productImages[key];
-           console.log("Appending image:", image); // Debug the file object
-           if (image) {
-             formData.append("images", image); // "images" is the key on the backend
-           }
+        // Append the size array
+        productSize.forEach((size) => {
+            formData.append("productSize[]", size);
         });
+
+        // Append colors array
+        productColor.forEach((color) => {
+            formData.append("productColor[]", color);
+        });
+
         // Append all fields to FormData
         formData.append("productName", productName);
         formData.append("productDescription", productDescription);
         formData.append("productCategory", productCategory);
         formData.append("productSubCategory", productSubCategory);
-        formData.append("productSize", productSize);
-        formData.append("productColor", productColor);
+        // formData.append("productSize", productSize);
+        // formData.append("productColor", productColor);
         formData.append("productBrand", productBrand);
         formData.append("productPrice", productPrice);
         formData.append("productOfferPrice", productOfferPrice);
@@ -321,11 +319,18 @@ console.log('fetch for edit', response.data)
 console.log('type of color', typeof productColor);
 console.log('type of size', typeof productSize);
 
+                    setProductImages({
+                        firstImage: productImageUrl[0] || "",
+                        secondImage: productImageUrl[1] || "",
+                        thirdImage: productImageUrl[2] || "",
+                        fourthImage: productImageUrl[3] || ""
+                    });
+
                     setProductName(productName)
                     setProductDescription(productDescription)
                     setProductCategory(productCategory)
                     setProductSubCategory(productSubCategory)
-                    setProductSize(productSize)
+                    setProductSize(Array.isArray(productSize) ? productSize : [productSize]);
                     setProductPrice(productPrice)
                     setProductBrand(productBrand)
                     setProductOfferPrice(productOfferPrice)
@@ -493,14 +498,14 @@ console.log('type of size', typeof productSize);
             </div>
 
             <div className="edit-product-input-section">
-                <div className="product-input-container">
+                <div className="edit-product-input-container">
                     <label>Product Name * </label>
                     <div>
                         <input type="text" 
                             value={productName}
                             placeholder="Enter product name"
                             onChange={(e) => {
-                                if (e.target.value.length <= 50) {
+                                if (e.target.value.length <= 30) {
                                     setProductName(e.target.value);
                                 }
                             }}
@@ -514,7 +519,7 @@ console.log('type of size', typeof productSize);
                             value={productDescription}
                             placeholder="Product description"
                             onChange={(e) => {
-                                if (e.target.value.length <= 250) {
+                                if (e.target.value.length <= 500) {
                                     setProductDescription(e.target.value);
                                 }
                             }}
@@ -522,7 +527,7 @@ console.log('type of size', typeof productSize);
                     </div>
                 </div>
                 <div className="edit-product-specs-section">
-                    <div className="product-sub-specs">
+                    <div className="edit-product-sub-specs">
                         <p>Category</p>
                         <div className="edit-product-select-drop-down" onClick={handleCategoryDropdownClick}>
                             <p>{productCategory}</p>
@@ -531,7 +536,6 @@ console.log('type of size', typeof productSize);
                                     <TiArrowSortedUp />
                                 : 
                                     <TiArrowSortedDown />
-                                    
                             }
                         </div>
                         {categoryDropDownListIsOpen === true ? (
@@ -553,7 +557,6 @@ console.log('type of size', typeof productSize);
                                     <TiArrowSortedUp />
                                 : 
                                     <TiArrowSortedDown />
-                                    
                             }
                         </div>
                         {subCategoryDropDownListIsOpen === true ? (
@@ -575,7 +578,6 @@ console.log('type of size', typeof productSize);
                                     <TiArrowSortedUp />
                                 : 
                                     <TiArrowSortedDown />
-                                    
                             }
                         </div>
                         {sizeDropDownListIsOpen === true ? (
@@ -584,18 +586,18 @@ console.log('type of size', typeof productSize);
                                     <li key={size} /*onClick={() => handleSizeClick(size)}*/>
                                         <input type="checkbox" 
                                             className="edit-product-timer-checkbox"
+                                            value={size} 
+                                            checked={productSize.includes(size)} 
                                             onChange={(e) => {
-                                                if (!productSize.includes(size)) {
-                                                    // Add the size to the array
-                                                    setProductSize((prevState) => [...prevState, size]); // Fixed spread syntax
-                                                } else {
-                                                    // Remove the size from the array
-                                                    setProductSize((prevState) =>
-                                                        prevState.filter((i) => i !== size)
-                                                    );
-                                                }
+                                                const value = e.target.value;
+                                                setProductSize((prevSizes) =>
+                                                    prevSizes.includes(value)
+                                                        ? prevSizes.filter((s) => s !== value) // Remove size
+                                                        : [...prevSizes, value] // Add size
+                                                );
                                             }}
-                                            /> {size}
+                                                 
+                                        /> {size}
                                     </li>
                                 ))}
                             </ul>
@@ -618,7 +620,20 @@ console.log('type of size', typeof productSize);
                             <input type="number" 
                                 value={productPrice}
                                 className="edit-product-sub-input" 
-                                onChange={(e) => setProductPrice(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === '-') {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (Number(value) < 0) {
+                                        e.target.value = "";
+                                        return;
+                                    }
+                                    setProductPrice(Number(value));
+                                }}
+                                min="0"
                                 required
                             />
                         </div>
@@ -629,7 +644,20 @@ console.log('type of size', typeof productSize);
                             <input type="text" 
                                 value={productOfferPrice}
                                 className="edit-product-sub-input"
-                                onChange={(e) => setProductOfferPrice(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === '-') {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (Number(value) < 0) {
+                                        e.target.value = "";
+                                        return;
+                                    }
+                                    setProductOfferPrice(Number(value));
+                                }}
+                                min="0"
                                 required
                             />
                         </div>
@@ -640,7 +668,20 @@ console.log('type of size', typeof productSize);
                             <input type="text" 
                                 value={productQuantity}
                                 className="edit-product-sub-input"
-                                onChange={(e) => setProductQuantity(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === '-') {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (Number(value) < 0) {
+                                        e.target.value = "";
+                                        return;
+                                    }
+                                    setProductQuantity(Number(value));
+                                }}
+                                min="0"
                                 required
                             />
                         </div>
@@ -663,16 +704,15 @@ console.log('type of size', typeof productSize);
                                     <li key={color} /*onClick={() => handleColorClick(color)}*/>
                                         <input type="checkbox" 
                                             className="edit-product-timer-checkbox"
+                                            value={color} 
+                                            checked={productColor.includes(color)} 
                                             onChange={(e) => {
-                                                if (!productColor.includes(color)) {
-                                                    // Add the color to the array
-                                                    setProductColor((prevState) => [...prevState, color]); // Fixed spread syntax
-                                                } else {
-                                                    // Remove the color from the array
-                                                    setProductColor((prevState) =>
-                                                        prevState.filter((i) => i !== color)
-                                                    );
-                                                }
+                                                const value = e.target.value;
+                                                setProductColor((prevColors) =>
+                                                    prevColors.includes(value)
+                                                        ? prevColors.filter((c) => c !== value) // Remove color
+                                                        : [...prevColors, value] // Add color
+                                                );
                                             }}
                                             /> <span>{color}</span>
                                     </li>
@@ -714,7 +754,8 @@ console.log('type of size', typeof productSize);
                                       }}
                                       style={{ background: addTimer === false ? 'lightgrey' : '#F5F3F5'}}
                                     />
-                                </span> Hrs </p>
+                                </span> Hrs 
+                            </p>
                         </div>
                         <div>
                             <p>
@@ -736,7 +777,8 @@ console.log('type of size', typeof productSize);
                                     }}
                                     style={{ background: addTimer === false ? 'lightgrey' : '#F5F3F5'}}
                                     />
-                                </span> Mins </p>
+                                </span> Mins 
+                            </p>
                         </div>
                         <div>
                             <p>
@@ -758,7 +800,8 @@ console.log('type of size', typeof productSize);
                                     }}
                                     style={{ background: addTimer === false ? 'lightgrey' : '#F5F3F5'}}
                                     />
-                                </span> Secs</p>
+                                </span> Secs
+                            </p>
                         </div>
 
                     </div>
@@ -780,12 +823,10 @@ console.log('type of size', typeof productSize);
             </div>
 
 
-
-
-
-
         </div>
     )
 }
+
+
 
 export default EditProductPage;

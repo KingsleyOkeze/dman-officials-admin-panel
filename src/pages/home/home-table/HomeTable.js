@@ -10,8 +10,9 @@ import { ModalContext } from "../../../contexts/ModalContext";
 import ConfirmationModal from "../../../components/ConfirmationModal";
 import { AlertContext } from "../../../contexts/AlertContext";
 import Alert from "../../../components/Alert";
+// import { SearchContext } from "../../../contexts/SearchContext";
 
-function HomeTable () {
+function HomeTable ({ searchTotalPages, searchResult, searchInput }) {
     const navigate = useNavigate();
     const { accessToken, refreshAccessToken } = useContext(AuthContext);
     const { showAlert, customAlert } = useContext(AlertContext);
@@ -167,6 +168,22 @@ function HomeTable () {
 
 
     useEffect(() => {
+        setProducts(searchResult);
+    }, [searchResult]);
+
+    useEffect(() => {
+        if (searchTotalPages) {
+            setTotalPages(searchTotalPages);
+        }
+    }, [searchTotalPages]);
+
+    useEffect(() => {
+        if (searchInput.length === 0) {
+            handleFetchProducts();
+        }
+    }, [searchInput])
+
+    useEffect(() => {
         handleFetchProducts();
     }, [accessToken]);
 
@@ -175,7 +192,9 @@ function HomeTable () {
             {customAlert.type ? (<Alert />) : "" }
             <div 
                 className="home-page-table-container" 
-                style={{ height: products.length < 7 ? '100vh' : ''}} 
+                style={{ 
+                    height: products.length < 7 ? '100vh' : '',
+                }} 
             >
                    <p>ALL PRODUCT</p>
                    <table className="home-page-table">

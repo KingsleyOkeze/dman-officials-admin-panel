@@ -4,7 +4,7 @@ import OrdersPage from './pages/order-pages/OrdersPage';
 import CustomersPage from './pages/customer-pages/CustomersPage';
 import CouponCodePage from './pages/coupon-pages/CouponCodePage';
 import OrderDetailsPage from './pages/order-pages/OrderDetailsPage';
-import ProductPage from './pages/product-pages/ProductPage';
+import AddProductPage from './pages/product-pages/AddProductPage';
 import EditProductPage from './pages/product-pages/EditProductPage';
 import AddCouponPage from './pages/coupon-pages/AddCouponPage';
 import EditCouponPage from './pages/coupon-pages/EditCouponPage';
@@ -21,6 +21,7 @@ import ResetPassword from './pages/auth/ResetPassword';
 import HomePage from './pages/home/HomePage';
 import AdminAccountPage from './pages/account-pages/AdminAccountPage';
 import { AuthProvider } from './contexts/AuthContext';
+import { AlertProvider } from './contexts/AlertContext';
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
   return (
     <Router>
     <AuthProvider>
+    <AlertProvider>
       <Routes>
         {/* Public Routes */}
         <Route element={<PublicRoute />}>
@@ -54,7 +56,7 @@ function App() {
             <Route path="home-page" element={<HomePage />} />
             <Route path="order-page" element={<OrdersPage />} />
             <Route path="order-details-page/:orderId" element={<OrderDetailsPage />} />
-            <Route path="product-page" element={<ProductPage />} />
+            <Route path="product-page" element={<AddProductPage />} />
             <Route path="edit-product-page/:productId" element={<EditProductPage />} />
             <Route path="customers-page" element={<CustomersPage />} />
             <Route path="coupon-code-page" element={<CouponCodePage />} />
@@ -67,6 +69,7 @@ function App() {
         {/* Fallback Route for Unknown Paths */}
         <Route path="*" element={<NotFoundPage />} /> {/* This will catch all unknown routes and show the NotFoundPage */}
       </Routes>
+      </AlertProvider>
       </AuthProvider>
     </Router>
   );

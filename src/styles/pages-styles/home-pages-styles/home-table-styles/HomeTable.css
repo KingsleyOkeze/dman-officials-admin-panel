@@ -3,8 +3,12 @@
     background: #FFFFFF;
     border-radius: 12px;
     padding: 15px;
-    min-height: 300px; /* Set to your desired minimum height */
-    max-width: 100%;
+    /* min-height: 300px;  */
+    /* Adjust the value below to match the desired height */
+    /* min-height: 100vh; */
+    /* height: 100vh;  */
+
+    margin-top: 0;
     overflow-x: auto;
     position: relative;
 }
@@ -178,6 +182,7 @@
     .home-page-table-container {
         grid-column: 1/2;
         grid-row: 2/3;
+        /* min-height: 100vh; */
     }
 
 
