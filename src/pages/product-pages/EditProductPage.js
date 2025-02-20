@@ -36,11 +36,10 @@ function EditProductPage () {
     const [productOfferPrice, setProductOfferPrice] = useState();
     const [productQuantity, setProductQuantity] = useState();
     const [productColor, setProductColor] = useState(['']);
-    const [productTimer, setProductTimer] = useState({ hrs: 0, min: 0, sec: 0});
+    const [addTimer, setAddTimer] = useState(null);
+    const [productAddedTimer, setProductAddedTimer] = useState({ hrs: 0, min: 0, sec: 0});
+    
 
-
-    const [addTimer, setAddTimer] = useState(false)
-             
     // Create refs for each file input element to directly access and reset them    
     const firstImageInputRef = useRef(null); // Ref for the first image file input
     const secondImageInputRef = useRef(null); // Ref for the second image file input
@@ -237,16 +236,19 @@ function EditProductPage () {
         formData.append("productDescription", productDescription);
         formData.append("productCategory", productCategory);
         formData.append("productSubCategory", productSubCategory);
-        // formData.append("productSize", productSize);
-        // formData.append("productColor", productColor);
         formData.append("productBrand", productBrand);
         formData.append("productPrice", productPrice);
         formData.append("productOfferPrice", productOfferPrice);
         formData.append("productQuantity", productQuantity);
-        formData.append("productTimer", productTimer);
-console.log(
-    productImages, productName, productDescription, productCategory, productSubCategory, productSize, productColor, productBrand, productPrice, productOfferPrice, productQuantity, productTimer
+        // When appending an object to FormData, use JSON.stringify() to convert it into a JSON string. 
+        // This ensures the object is correctly transmitted and can be parsed on the server side. 
+        formData.append("productAddedTimer", JSON.stringify(productAddedTimer));
+
+        console.log(
+    productImages, productName, productDescription, productCategory, productSubCategory, productSize, productColor, productBrand, productPrice, productOfferPrice, productQuantity, productAddedTimer
     ,addTimer);
+    console.log('added timer is', productAddedTimer)
+
         try {
             const response = await axios.post(`/admin/edit-product/${productId}`, formData, 
                 {
@@ -304,20 +306,21 @@ console.log(
                         productQuantity,
                         productSize,
                         productSubCategory,
-                        timerExpires,
-                        timerExpiryDate
+                        timerExpiryDate,
+                        productAddedTimer
                         
                     } = response.data;
-console.log('fetch for edit', response.data)
-                    
+                    console.log('fetch for edit', response.data)
+                    console.log("type of timerExpiryDate, is", typeof timerExpiryDate, timerExpiryDate)
                     // Images... 
                     setFirstImagePreview(productImageUrl[0]);
                     setSecondImagePreview(productImageUrl[1]);
                     setThirdImagePreview(productImageUrl[2]);
                     setFourthImagePreview(productImageUrl[3]);
                 
-console.log('type of color', typeof productColor);
-console.log('type of size', typeof productSize);
+                    console.log('type of color', typeof productColor);
+                    console.log('type of size', typeof productSize);
+                    console.log('added timer is', productAddedTimer)
 
                     setProductImages({
                         firstImage: productImageUrl[0] || "",
@@ -336,7 +339,7 @@ console.log('type of size', typeof productSize);
                     setProductOfferPrice(productOfferPrice)
                     setProductQuantity(productQuantity)
                     setProductColor(productColor);
-                    // setProductTimer(); 
+                    setProductAddedTimer(productAddedTimer); 
                     setAddTimer(addedTimer)
                 }
 
@@ -724,17 +727,19 @@ console.log('type of size', typeof productSize);
                 <div className="edit-product-timer-container">
                     <p>Timer 
                         <input type="checkbox" 
-                        checked={addTimer}
-                        onChange={() => {
-                            const newAddTimer = !addTimer; // Toggle the addTimer state
-                            setAddTimer(newAddTimer); 
+                            checked={addTimer}
+                            onChange={() => {
+                                const newAddTimer = !addTimer; // Toggle the addTimer state
+                                setAddTimer(newAddTimer); 
                     
-                            // If the checkbox is unchecked, reset the timer values to 0
-                            if (!newAddTimer) {
-                              setProductTimer({ hrs: 0, min: 0, sec: 0 });
-                            }
-                        }} 
-                        className="edit-product-timer-checkbox"/></p>
+                                // If the checkbox is unchecked, reset the timer values to 0
+                                if (!newAddTimer) {
+                                    setProductAddedTimer({ hrs: 0, min: 0, sec: 0 });
+                                }
+                            }} 
+                            className="edit-product-timer-checkbox"
+                        />
+                    </p>
                     <div className="all-time-container">
                         <div>
                             <p>
@@ -742,13 +747,13 @@ console.log('type of size', typeof productSize);
                                     <input type="number" 
                                     placeholder="12"
                                     disabled={addTimer === false ? true : false}
-                                    value={productTimer.hrs}
+                                    value={productAddedTimer.hrs}
                                     onChange={(e) => {
                                         const inputValue = e.target.value;
                                         if (inputValue.length <= 2 || inputValue === '') {
                                           const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
                                           if (!isNaN(numericValue) && numericValue <= 99) {
-                                            setProductTimer({...productTimer, hrs: numericValue});
+                                            setProductAddedTimer({...productAddedTimer, hrs: numericValue});
                                           }
                                         }
                                       }}
@@ -765,13 +770,13 @@ console.log('type of size', typeof productSize);
                                     min={0}
                                     max={59}
                                     disabled={addTimer === false ? true : false}
-                                    value={productTimer.min}
+                                    value={productAddedTimer.min}
                                     onChange={(e) => {
                                       const inputValue = e.target.value;
                                       if (inputValue.length <= 2 || inputValue === '') {
                                         const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
                                         if (!isNaN(numericValue) && numericValue <= 59) {
-                                          setProductTimer({...productTimer, min: numericValue});
+                                          setProductAddedTimer({...productAddedTimer, min: numericValue});
                                         }
                                       }
                                     }}
@@ -788,13 +793,13 @@ console.log('type of size', typeof productSize);
                                     min={0}
                                     max={59}
                                     disabled={addTimer === false ? true : false}
-                                    value={productTimer.sec}
+                                    value={productAddedTimer.sec}
                                     onChange={(e) => {
                                       const inputValue = e.target.value;
                                       if (inputValue.length <= 2 || inputValue === '') {
                                         const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
                                         if (!isNaN(numericValue) && numericValue <= 59) {
-                                          setProductTimer({...productTimer, sec: numericValue});
+                                          setProductAddedTimer({...productAddedTimer, sec: numericValue});
                                         }
                                       }
                                     }}

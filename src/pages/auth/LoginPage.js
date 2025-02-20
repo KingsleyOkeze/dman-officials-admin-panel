@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import axios from 'axios';
 import "../../styles/auth-pages-styles/LoginPage.css"
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 
 const LoginPage = () => {
@@ -67,6 +67,11 @@ const LoginPage = () => {
             </form>
             {message && <p className="message">{message}</p>}
             {error && <p className="error">{error}</p>}
+            <p 
+                className="login-page-bottom-sign-up-instruction-text"
+            >
+                Don't have an account? <Link to="/admin/sign-up">Sign up</Link>
+            </p>
         </div>
     );
 };

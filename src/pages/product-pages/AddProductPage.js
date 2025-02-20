@@ -32,7 +32,7 @@ function AddProductPage () {
     const [productOfferPrice, setProductOfferPrice] = useState();
     const [productQuantity, setProductQuantity] = useState();
     const [productColor, setProductColor] = useState(['Select Color']);
-    const [productTimer, setProductTimer] = useState({ hrs: 0, min: 0, sec: 0});
+    const [productAddedTimer, setProductAddedTimer] = useState({ hrs: 0, min: 0, sec: 0});
 
     const [addTimer, setAddTimer] = useState(false)
              
@@ -238,16 +238,16 @@ function AddProductPage () {
         formData.append("productDescription", productDescription);
         formData.append("productCategory", actualProductCategory.replace(/\s+/g, ''));
         formData.append("productSubCategory", actualProductSubCategory.replace(/\s+/g, ''));
-        // formData.append("productSize", actualProductSizeArr);
-        // formData.append("productColor", actualProductColorArr);
         formData.append("productBrand", productBrand);
         formData.append("productPrice", productPrice);
         formData.append("productOfferPrice", productOfferPrice);
         formData.append("productQuantity", productQuantity);
-        formData.append("productTimer", productTimer);
+        // When appending an object to FormData, use JSON.stringify() to convert it into a JSON string. 
+        // This ensures the object is correctly transmitted and can be parsed on the server side. 
+        formData.append("productAddedTimer", JSON.stringify(productAddedTimer));
+
 console.log(
-    productImages, productName, productDescription, productCategory, productSubCategory, productSize, productColor, productBrand, productPrice, productOfferPrice, productQuantity, productTimer
-    ,addTimer);
+    productImages, productName, productDescription, productCategory, productSubCategory, productSize, productColor, productBrand, productPrice, productOfferPrice, productQuantity, productAddedTimer,addTimer);
         try {
             const response = await axios.post("/admin/add-product", formData, 
                 {
@@ -649,7 +649,7 @@ console.log(
                     
                             // If the checkbox is unchecked, reset the timer values to 0
                             if (!newAddTimer) {
-                              setProductTimer({ hrs: 0, min: 0, sec: 0 });
+                              setProductAddedTimer({ hrs: 0, min: 0, sec: 0 });
                             }
                         }} 
                         className="add-product-timer-checkbox"/></p>
@@ -660,13 +660,13 @@ console.log(
                                     <input type="number" 
                                     placeholder="12"
                                     disabled={addTimer === false ? true : false}
-                                    value={productTimer.hrs}
+                                    value={productAddedTimer.hrs}
                                     onChange={(e) => {
                                         const inputValue = e.target.value;
                                         if (inputValue.length <= 2 || inputValue === '') {
                                           const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
                                           if (!isNaN(numericValue) && numericValue <= 99) {
-                                            setProductTimer({...productTimer, hrs: numericValue});
+                                            setProductAddedTimer({...productAddedTimer, hrs: numericValue});
                                           }
                                         }
                                       }}
@@ -683,13 +683,13 @@ console.log(
                                     min={0}
                                     max={59}
                                     disabled={addTimer === false ? true : false}
-                                    value={productTimer.min}
+                                    value={productAddedTimer.min}
                                     onChange={(e) => {
                                       const inputValue = e.target.value;
                                       if (inputValue.length <= 2 || inputValue === '') {
                                         const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
                                         if (!isNaN(numericValue) && numericValue <= 59) {
-                                          setProductTimer({...productTimer, min: numericValue});
+                                          setProductAddedTimer({...productAddedTimer, min: numericValue});
                                         }
                                       }
                                     }}
@@ -706,13 +706,13 @@ console.log(
                                     min={0}
                                     max={59}
                                     disabled={addTimer === false ? true : false}
-                                    value={productTimer.sec}
+                                    value={productAddedTimer.sec}
                                     onChange={(e) => {
                                       const inputValue = e.target.value;
                                       if (inputValue.length <= 2 || inputValue === '') {
                                         const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
                                         if (!isNaN(numericValue) && numericValue <= 59) {
-                                          setProductTimer({...productTimer, sec: numericValue});
+                                          setProductAddedTimer({...productAddedTimer, sec: numericValue});
                                         }
                                       }
                                     }}

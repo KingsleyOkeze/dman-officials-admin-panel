@@ -81,7 +81,7 @@ function OrdersPage () {
                 if (status === 400 || status === 403 || status === 404 || status === 500) {
                     showAlert(status, errMessage)
                 } else if (status === 401) {
-                    refreshAccessToken(handlePreviousFunction);
+                    await refreshAccessToken(handlePreviousFunction);
                 }
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
@@ -149,7 +149,7 @@ function OrdersPage () {
                 if (status === 400 || status === 403 || status === 404 || status === 500) {
                     showAlert(status, errMessage)
                 } else if (status === 401) {
-                    refreshAccessToken(handleFetchOrders);
+                    await refreshAccessToken(handleFetchOrders);
                 }
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
