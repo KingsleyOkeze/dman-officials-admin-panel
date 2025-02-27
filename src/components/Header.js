@@ -4,9 +4,19 @@ import { RiMenu5Fill } from "react-icons/ri";
 import '../styles/components-styles/Header.css';
 import React, { useState, useEffect, useContext } from 'react';
 import { SubHeaderContext } from '../contexts/SubHeaderContext';
+import { AuthContext } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { RiLogoutCircleRLine } from "react-icons/ri";
 
 function Header () {
-    const { isSubHeaderOpen, setIsSubHeaderOpen, toggleSubHeader } = useContext(SubHeaderContext);
+    const navigate = useNavigate();
+    const { handleLogout } = useContext(AuthContext);
+    const { 
+        isSubHeaderOpen, 
+        setIsSubHeaderOpen, 
+        toggleSubHeader,
+        setShowLargeScreenAccountAndLogoutModal
+    } = useContext(SubHeaderContext);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
     useEffect(() => {
@@ -29,19 +39,24 @@ function Header () {
                 <p>Admin Panel</p>
             </div>
             <div>
-            {
-                screenWidth > 986 ? (
-                    <div className="header-account-div">
-                        <LuUser2 />
-                        <p>Account</p>
-                    </div>
-                    ) : (
-                    <RiMenu5Fill 
-                        className="header-icon" 
-                        onClick={toggleSubHeader}
-                    />
-                )
-            }
+                {
+                    screenWidth > 986 ? (
+                        <div 
+                            className="header-account-div" 
+                            onClick={() => {
+                                setShowLargeScreenAccountAndLogoutModal(true)
+                            }}
+                        >
+                            <LuUser2 />
+                            <p>Account</p>
+                        </div>
+                        ) : (
+                            <RiMenu5Fill 
+                                className="header-icon" 
+                                onClick={toggleSubHeader}
+                            />
+                        )
+                }
             </div>
             
         </div>

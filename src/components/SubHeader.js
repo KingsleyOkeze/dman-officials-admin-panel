@@ -16,9 +16,15 @@ import { AuthContext } from '../contexts/AuthContext';
 function SubHeader () {
     const navigate = useNavigate();
     const { handleLogout } = useContext(AuthContext);
-    const { isSubHeaderOpen, setIsSubHeaderOpen, toggleSubHeader } = useContext(SubHeaderContext);
+    const { 
+        isSubHeaderOpen, 
+        setIsSubHeaderOpen, 
+        toggleSubHeader,
+        showLargeScreenAccountAndLogoutModal,
+        setShowLargeScreenAccountAndLogoutModal
+    } = useContext(SubHeaderContext);
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
-
+    
     useEffect(() => {
       const handleResize = () => {
         setScreenWidth(window.innerWidth);
@@ -37,25 +43,6 @@ function SubHeader () {
       };
     }, []);
 
-
-    // const handleLogout = async () => {
-    //     try {
-    //         const response = await axios.post(
-    //             "/admin/logout",
-    //             {},
-    //             { withCredentials: true } // Include credentials for cookies
-    //         );
-  
-    //         if (response.status === 200) {
-    //             localStorage.removeItem("accessToken");
-    //             // localStorage.removeItem("adminId");
-    //             navigate("/admin/login")
-    //         }
-            
-    //     } catch (error) {
-    //         console.error("Error during logout:", error);
-    //     }
-    // };
 
     return(
         <div
@@ -134,9 +121,30 @@ function SubHeader () {
                             </li>
                         </>
                     )
-                    : (
-                        <></>
+                    : 
+                    screenWidth > 986 && showLargeScreenAccountAndLogoutModal ?
+                    (
+                        <div className="sub-header-large-screen-account-and-logout-modal">
+                            <p
+                                onClick={() => {
+                                    navigate("/admin/admin-account-page");
+                                    setShowLargeScreenAccountAndLogoutModal(false);
+                                }}
+                            >
+                                <LuUser2 className="sub-header-large-screen-account-icon"/>Account
+                            </p>
+                            <p
+                                onClick={() => {
+                                    setShowLargeScreenAccountAndLogoutModal(false);
+                                    handleLogout()
+                                }}
+                            >
+                                <RiLogoutCircleRLine className="sub-header-large-screen-logout-icon"/>Logout
+                            </p>
+                        </div>
                     )
+                    : 
+                    (<></>)
                 }
             </ul>
         </div>

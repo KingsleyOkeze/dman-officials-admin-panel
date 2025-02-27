@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { SubHeaderProvider } from "../contexts/SubHeaderContext";
 import { ModalProvider } from "../contexts/ModalContext";
 import { SearchProvider } from "../contexts/SearchContext";
+import Overlay from "./Overlay";
 
 function Dashboard () {
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
@@ -31,7 +32,7 @@ function Dashboard () {
     return(
         <ModalProvider>
            <SubHeaderProvider>
-            {/* <SearchProvider> */}
+                <Overlay />
                 <div className="dashboard-container">
                     <div style={{ position: "relative", width: "100%"  }}>
                         <Header/>
@@ -41,7 +42,6 @@ function Dashboard () {
                         <Outlet/>
                     </div>
                 </div>
-                {/* </SearchProvider> */}
             </SubHeaderProvider>
         </ModalProvider>
     )

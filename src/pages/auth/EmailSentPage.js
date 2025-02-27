@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'; // Assuming React Router is being 
 import axios from 'axios';
 import '../../styles/auth-pages-styles/EmailSentPage.css';
 
-const EmailSentPage = () => {
+function EmailSentPage () {
     const { userId } = useParams(); // Get the user ID from the URL
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
@@ -33,12 +33,17 @@ const EmailSentPage = () => {
                 can resend it.
             </p>
             <button onClick={handleResendEmail} disabled={loading} className="resend-btn">
-                {loading ? <span className="spinner"></span> : 'Resend Email'}
+                {loading ? (
+                    <span className="spinner"></span>
+                ) : (
+                    <span>Resend Email</span>
+                )}
             </button>
             {message && <p className="message">{message}</p>}
             {error && <p className="error">{error}</p>}
         </div>
     );
-};
+    
+}
 
 export default EmailSentPage;

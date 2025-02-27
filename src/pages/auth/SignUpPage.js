@@ -5,7 +5,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 import { Link, useNavigate } from 'react-router-dom';
 
-const SignUpPage = () => {
+function SignUpPage () {
     const navigate = useNavigate();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -125,7 +125,8 @@ const SignUpPage = () => {
             >Already have an account? <Link to="/admin/login">Sign in</Link></p>
         </div>
     );
-};
+    
+}
 
 
 export default SignUpPage;

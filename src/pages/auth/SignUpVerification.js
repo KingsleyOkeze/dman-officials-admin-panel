@@ -3,7 +3,7 @@ import axios from 'axios';
 import '../../styles/auth-pages-styles/SignUpVerification.css';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const SignUpVerification = () => {
+function SignUpVerification () {
     const { token } = useParams(); // Use destructuring to extract the token
     const navigate = useNavigate();
     const [message, setMessage] = useState('');
@@ -38,7 +38,8 @@ const SignUpVerification = () => {
             )}
         </div>
     );
-};
+    
+}
 
 export default SignUpVerification;
 

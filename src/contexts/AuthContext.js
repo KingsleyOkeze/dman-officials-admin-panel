@@ -41,6 +41,13 @@ export const AuthProvider = ({ children }) => {
                 {},
                 { withCredentials: true }
             );
+
+            if (response.status !== 200) {  // Check for non-200 status
+                console.error("Refresh token request failed:", response.status, response.data);
+                handleLogout(); // Logout immediately on refresh failure
+                return null; // Or throw an error
+            }
+
             console.log('Refresh token response:', response.data.accessToken);
             const decoded = jwtDecode( response.data.accessToken);
             sessionStorage.setItem('accessToken', response.data.accessToken); // Store new access token in sessionStorage
@@ -65,15 +72,15 @@ export const AuthProvider = ({ children }) => {
     };
 
     // Check for access token on app load
-    useEffect(() => {
-        const initializeAuth = async () => {
-            if (!accessToken || !adminId) {
-                await refreshAccessToken(null);
-            }
-        };
+    // useEffect(() => {
+    //     const initializeAuth = async () => {
+    //         if (!accessToken || !adminId) {
+    //             await refreshAccessToken(null);
+    //         }
+    //     };
 
-        initializeAuth();
-    }, []);
+    //     initializeAuth();
+    // }, []);
 
 
     return (

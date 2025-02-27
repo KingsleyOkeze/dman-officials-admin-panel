@@ -86,79 +86,22 @@ function AdminAccountPage() {
         }
     };
 
-    const handlePreviousFunction = async () => {
-        try {
-            if (paginationIndex > 0) { 
-                const newPaginationIndex = paginationIndex - 1;
-                setPaginationIndex(newPaginationIndex);
-                const response = await axios.get(
-                    `/admin/fetch-customers-activity?page=${newPaginationIndex}&limit=7`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
-                },
-                });
+    const handlePreviousFunction = () => {
+        if (paginationIndex > 0) {
+          setPaginationIndex(paginationIndex - 1);
+        }
+    };
       
-                if (response.data) {
-                    console.log("fetched data", response.data)
-                    setActivityData(response.data.activities); 
-                }
-            }
-        } catch (err) {
-            console.log("error fetching customers activity", err);
-            if (err.response) {
-                const status = err.response.status;
-                const errMessage = err.response.data.error;
-
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
-                    showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handlePreviousFunction);
-                }
-            } else {
-                showAlert("Error", "An Unknow Error Occured!")
-            }
-
+    const handleNextFunction = () => {
+        if (paginationIndex < totalPages) {
+          setPaginationIndex(paginationIndex + 1);
         }
     };
-  
-    const handleNextFunction = async () => {
-        try {
-            if (paginationIndex < totalPages - 1) {
-                const newPaginationIndex = paginationIndex + 1;
-                setPaginationIndex(newPaginationIndex);
-                const response = await axios.get(
-                    `/admin/fetch-customers-activity?page=${newPaginationIndex}&limit=7`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
-                },
-                });
-          
-                if (response.data) {
-                    console.log("fetched data", response.data)
-                    setActivityData(response.data.activities);
-                }
-            }
-        } catch (err) {
-            console.log("error fetching customers activity", err);
-            if (err.response) {
-                const status = err.response.status;
-                const errMessage = err.response.data.error;
 
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
-                    showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handleNextFunction);
-                }
-            } else {
-                showAlert("Error", "An Unknow Error Occured!")
-            }
-        }
-          
-    };
-
-
+    useEffect(() => {
+        getAdminDetails();
+    }, [paginationIndex]);
+      
     useEffect(() => {
         getAdminDetails();
         getCustomerActivity();
@@ -212,6 +155,8 @@ function AdminAccountPage() {
 
         }
     };
+
+
 
     return (
         <div className="admin-account-page-container">

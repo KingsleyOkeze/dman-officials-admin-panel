@@ -4,7 +4,7 @@ import "../../styles/auth-pages-styles/LoginPage.css"
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 
-const LoginPage = () => {
+function LoginPage () {
     const navigate = useNavigate();
     const { setAccessToken, setAdminId } = useContext(AuthContext);
     const [email, setEmail] = useState('');
@@ -20,7 +20,14 @@ const LoginPage = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post('/admin/login', { email, password });
+            const response = await axios.post('/admin/login', { 
+                email, 
+                password 
+            }, 
+            { 
+                withCredentials: true
+            });
+
             setMessage(response.data.message);
             // Handle successful login, such as redirecting or storing tokens.
             sessionStorage.setItem('accessToken', response.data.accessToken); // Store new access token in sessionStorage
@@ -74,6 +81,7 @@ const LoginPage = () => {
             </p>
         </div>
     );
-};
+}
+
 
 export default LoginPage;

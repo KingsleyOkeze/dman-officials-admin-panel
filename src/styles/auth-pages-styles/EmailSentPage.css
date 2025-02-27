@@ -30,7 +30,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 20px;
     background-color: #000000;
     color: #fff;
     font-size: 1rem;
@@ -38,6 +37,8 @@
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
+    width: 140px;
+    height: 40px;
 }
 
 .resend-btn:hover {
@@ -49,8 +50,9 @@
     cursor: not-allowed;
 }
 
+
 /* Spinner Animation */
-.spinner {
+.resend-btn .spinner {
     width: 18px;
     height: 18px;
     border: 3px solid #fff;

@@ -29,82 +29,6 @@ function CustomersPage () {
     const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
     const [totalPages, setTotalPages] = useState(0); // Total number of pages (example)
   
-    const handlePreviousFunction = async () => {
-        try {
-            if (paginationIndex > 0) { 
-                const newPaginationIndex = paginationIndex - 1;
-                setPaginationIndex(newPaginationIndex);
-                const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}&limit=7`,
-                {
-                    params: {
-                        sortBy: filterPicked
-                    },
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
-                },
-                });
-      
-                if (response.data.result) {
-                    console.log("fetched data", response.data.result)
-                    setCustomers(response.data.result); 
-                }
-            }
-        } catch (err) {
-            console.log("error fetching customer", err);
-            if (err.response) {
-                const status = err.response.status;
-                const errMessage = err.response.data.error;
-
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
-                    showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handleFetchCustomers);
-                }
-            } else {
-                showAlert("Error", "An Unknow Error Occured!")
-            }
-
-        }
-    };
-  
-    const handleNextFunction = async () => {
-        try {
-            if (paginationIndex < totalPages - 1) {
-                const newPaginationIndex = paginationIndex + 1;
-                setPaginationIndex(newPaginationIndex);
-                const response = await axios.get(`/admin/fetch-customers?page=${newPaginationIndex}&limit=7`,
-                {
-                    params: {
-                        sortBy: filterPicked
-                    },
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
-                },
-                });
-          
-                if (response.data) {
-                    console.log("fetched data", response.data.result)
-                    setCustomers(response.data.result);
-                }
-            }
-        } catch (err) {
-            console.log("error fetching customer", err);
-            if (err.response) {
-                const status = err.response.status;
-                const errMessage = err.response.data.error;
-
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
-                    showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handleFetchCustomers);
-                }
-            } else {
-                showAlert("Error", "An Unknow Error Occured!")
-            }
-        }
-          
-    };
-  
   
     const handleFetchCustomers = async () => {
         try { 
@@ -143,7 +67,23 @@ function CustomersPage () {
   
     useEffect(() => {
         handleFetchCustomers();
-    }, [])
+    }, []);
+
+    useEffect(() => {
+        handleFetchCustomers();
+    }, [paginationIndex]);
+      
+    const handlePreviousFunction = () => {
+        if (paginationIndex > 0) {
+          setPaginationIndex(paginationIndex - 1);
+        }
+    };
+      
+    const handleNextFunction = () => {
+        if (paginationIndex < totalPages) {
+          setPaginationIndex(paginationIndex + 1);
+        }
+    };
   
   
     const filterArr = ['Oldest', 'Newest'];
@@ -151,7 +91,6 @@ function CustomersPage () {
     const handleFilterDropdownClick = () => {
         setShowFilterDrop(!showFilterDropDown);
     };
-    
       
     const handleFilterClick = (item) => {
         setFilterPicked(item);
@@ -162,6 +101,7 @@ function CustomersPage () {
         handleFetchCustomers()
     }, [filterPicked]);
   
+
     const handleDeleteCustomerAccount = async (customerId) => {
         try {
             // Call the DELETE API with the customer's ID
@@ -199,7 +139,6 @@ function CustomersPage () {
     };
 
 
-   
     return(
         <div className="customers-page-container">
             {customAlert.type ? (<Alert />) : "" }

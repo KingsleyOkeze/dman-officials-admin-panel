@@ -50,79 +50,6 @@ function CouponCodePage () {
     };
 
 
-
-    const handlePreviousFunction = async () => {
-        try {
-        if (paginationIndex > 0) { 
-            const newPaginationIndex = paginationIndex - 1;
-            setPaginationIndex(newPaginationIndex);
-            const response = await axios.get(
-                `/admin/fetch-coupons?page=${newPaginationIndex}&discountType=${filterPicked.replace(/\s+/g, '')}`,
-                {
-                    headers: {
-                      Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
-                    },
-                }
-            );
-    
-            if (response.data.result) {
-                console.log("fetched data", response.data.result)
-                setCoupons(response.data.result);
-            }
-        }
-        } catch (err) {
-            if (err.response) {
-                const status = err.response.status;
-                const errMessage = err.response.data.error;
-
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
-                    showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handlePreviousFunction);
-                }
-            } else {
-                showAlert("Error", "An Unknow Error Occured!")
-            }
-        }
-    };
-
-    const handleNextFunction = async () => {
-        try {
-        if (paginationIndex < totalPages - 1) {
-            const newPaginationIndex = paginationIndex + 1;
-            setPaginationIndex(newPaginationIndex);
-            const response = await axios.get(
-                `/admin/fetch-coupons?page=${newPaginationIndex}&discountType=${filterPicked.toLowerCase()}`,
-                {
-                    headers: {
-                      Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
-                    },
-                }
-            );
-        
-            if (response.data) {
-                console.log("fetched data", response.data.result)
-                setCoupons(response.data.result);
-            }
-        }
-        } catch (err) {
-            if (err.response) {
-                const status = err.response.status;
-                const errMessage = err.response.data.error;
-
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
-                    showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handleNextFunction);
-                }
-            } else {
-                showAlert("Error", "An Unknow Error Occured!")
-            }
-        }
-        
-    };
-
-
     const handleFetchCoupons = async () => {
         
         try {
@@ -157,6 +84,17 @@ function CouponCodePage () {
         
     }
 
+    const handlePreviousFunction = () => {
+        if (paginationIndex > 0) {
+          setPaginationIndex(paginationIndex - 1);
+        }
+    };
+      
+    const handleNextFunction = () => {
+        if (paginationIndex < totalPages) {
+          setPaginationIndex(paginationIndex + 1);
+        }
+    };
 
     const handleConfirmDeleteCoupon = async (couponId) => {
         try {
@@ -197,8 +135,6 @@ function CouponCodePage () {
     };
 
 
-
-
     useEffect(() => {
         handleFetchCoupons();
     }, [])
@@ -208,6 +144,10 @@ function CouponCodePage () {
         handleFetchCoupons();
     }, [filterPicked])
 
+    useEffect(() => {
+        handleFetchCoupons();
+    }, [paginationIndex]);
+      
 
       
     return(

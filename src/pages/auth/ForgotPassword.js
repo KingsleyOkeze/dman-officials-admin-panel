@@ -3,7 +3,7 @@ import axios from 'axios';
 import "../../styles/auth-pages-styles/ForgotPassword.css";
 import { useNavigate } from 'react-router-dom';
 
-function ForgotPassword() {
+function ForgotPassword () {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');

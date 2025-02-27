@@ -61,75 +61,22 @@ function HomeTable ({ searchTotalPages, searchResult, searchInput }) {
             }
         }
     }
-  
-    const handlePreviousFunction = async () => {
-        try {
-        if (paginationIndex > 0) { 
-            const newPaginationIndex = paginationIndex - 1;
-            setPaginationIndex(newPaginationIndex);
-            const response = await axios.get(`/admin/fetch-products?page=${newPaginationIndex}&limit=7`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
-                },
-            });
+
+    useEffect(() => {
+        handleFetchProducts();
+    }, [paginationIndex]);
       
-            if (response.data.result) {
-                console.log("fetched data", response.data.result)
-                setProducts(response.data.result);
-                  
-            }
-        }
-        } catch (err) {
-            if (err.response) {
-                const status = err.response.status;
-                const errMessage = err.response.data.error;
-
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
-                    showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handlePreviousFunction);
-                }
-            } else {
-                showAlert("Error", "An Unknow Error Occured!")
-            }
+    const handlePreviousFunction = () => {
+        if (paginationIndex > 0) {
+          setPaginationIndex(paginationIndex - 1);
         }
     };
-  
-    const handleNextFunction = async () => {
-        try {
-        if (paginationIndex < totalPages - 1) {
-            const newPaginationIndex = paginationIndex + 1;
-            setPaginationIndex(newPaginationIndex);
-            const response = await axios.get(`/admin/fetch-products?page=${newPaginationIndex}&limit=7`,
-            {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
-                },
-            });
-          
-            if (response.data) {
-                console.log("fetched data", response.data.result)
-                setProducts(response.data.result);
-            }
+      
+    const handleNextFunction = () => {
+        if (paginationIndex < totalPages) {
+          setPaginationIndex(paginationIndex + 1);
         }
-        } catch (err) {
-            if (err.response) {
-                const status = err.response.status;
-                const errMessage = err.response.data.error;
-
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
-                    showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handleNextFunction);
-                }
-            } else {
-                showAlert("Error", "An Unknow Error Occured!")
-            }
-        }
-          
     };
-
 
     const handleDeleteProduct = async (productId) => {
     

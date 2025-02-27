@@ -7,13 +7,21 @@ export const SubHeaderContext = createContext();
 export const SubHeaderProvider  = ({ children }) => {
     const [screenWidth, setScreenWidth] = useState(window.innerWidth);
     const [isSubHeaderOpen, setIsSubHeaderOpen] = useState(screenWidth >= 986 ? true : false);
+    const [showLargeScreenAccountAndLogoutModal, setShowLargeScreenAccountAndLogoutModal] = useState(false);
 
     const toggleSubHeader = () => {
         setIsSubHeaderOpen(!isSubHeaderOpen);
     };
     
     return (
-        <SubHeaderContext.Provider value={{ isSubHeaderOpen, setIsSubHeaderOpen, toggleSubHeader }}>
+        <SubHeaderContext.Provider value={{ 
+            isSubHeaderOpen, 
+            setIsSubHeaderOpen, 
+            toggleSubHeader,
+            showLargeScreenAccountAndLogoutModal, 
+            setShowLargeScreenAccountAndLogoutModal
+            }}
+        >
             {children}
         </SubHeaderContext.Provider>
     );
