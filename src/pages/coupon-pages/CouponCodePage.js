@@ -141,6 +141,7 @@ function CouponCodePage () {
 
 
     useEffect(() => {
+        setPaginationIndex(0);
         handleFetchCoupons();
     }, [filterPicked])
 

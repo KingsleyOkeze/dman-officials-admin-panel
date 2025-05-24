@@ -71,17 +71,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Check for access token on app load
-    // useEffect(() => {
-    //     const initializeAuth = async () => {
-    //         if (!accessToken || !adminId) {
-    //             await refreshAccessToken(null);
-    //         }
-    //     };
-
-    //     initializeAuth();
-    // }, []);
-
 
     return (
         <AuthContext.Provider value={{ 

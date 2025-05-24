@@ -98,6 +98,7 @@ function CustomersPage () {
     };
   
     useEffect(() => {
+        setPaginationIndex(0);
         handleFetchCustomers()
     }, [filterPicked]);
   

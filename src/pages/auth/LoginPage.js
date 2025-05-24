@@ -71,6 +71,7 @@ function LoginPage () {
                 <button type="submit" disabled={loading}>
                     {loading ? <span className="spinner"></span> : 'Login'}
                 </button>
+                <Link to="/admin/forget-password">Forgot password</Link>
             </form>
             {message && <p className="message">{message}</p>}
             {error && <p className="error">{error}</p>}

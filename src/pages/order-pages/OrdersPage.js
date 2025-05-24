@@ -91,6 +91,7 @@ function OrdersPage () {
 
 
     useEffect(() => {
+        setPaginationIndex(0);
         handleFetchOrders();
     }, [filterPicked]);
 
