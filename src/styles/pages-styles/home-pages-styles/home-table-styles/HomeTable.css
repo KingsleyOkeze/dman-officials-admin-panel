@@ -1,0 +1,192 @@
+
+.home-page-table-container {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 15px;
+    /* min-height: 300px;  */
+    /* Adjust the value below to match the desired height */
+    /* min-height: 100vh; */
+    /* height: 100vh;  */
+
+    margin-top: 0;
+    overflow-x: auto;
+    position: relative;
+}
+
+.home-page-table-container p {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    color: #000000;
+    width: 128px;
+    height: 24px;
+    padding-bottom: 15px;
+}
+
+.home-page-table {
+    width: 100%; 
+    border-collapse: collapse;
+}
+
+.home-page-table thead {
+    border-bottom: 1.5px solid #000000;
+}
+
+.home-page-table-head th {
+    width: 96px;
+    height: 24px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: #000000;
+    white-space: nowrap;
+    text-align: left;
+    padding: 15px; 
+}
+
+
+.home-page-table-body tr {
+    height: 60px; /* Set a consistent height for table rows */
+    vertical-align: middle; /* Ensure all rows are vertically aligned */
+}
+
+.home-page-table-body td {
+    white-space: nowrap;
+    padding: 15px; 
+    font-weight: 500;
+    line-height: 24px;
+    overflow: hidden; /* Prevent overflow */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    vertical-align: middle;
+    border-bottom: 1px solid black;
+    text-align: left; /* Align text to the left */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing content */
+}
+
+/* Handle Empty Cells */
+.home-page-table-body td:empty::before {
+    content: "-"; /* Placeholder text */
+    color: #ccc; /* Optional: Dim placeholder text */
+    text-align: center; /* Center placeholder */
+    display: inline-block; /* Ensure it behaves like text */
+    width: 100%; /* Ensure it spans the width of the cell */
+}
+
+
+/* Style for Table Rows */
+.home-page-table-body tr:hover {
+    background-color: #f9f9f9; /* Light grey on hover */
+    cursor: pointer; /* Show pointer for clickable rows */
+}
+
+
+.home-page-img-and-product-name-container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    gap: 10px; /* Add some space between the image and the product name */
+    vertical-align: middle;
+}
+
+
+.home-page-table-img {
+    width: 50px;
+    height: 45px;
+    margin-right: 10px;
+    object-fit: cover; /* Ensure the image scales correctly */
+    border-radius: 6px;
+}
+
+
+.home-page-table-edit-icon {
+    font-size: 24px;
+}
+
+
+.home-page-delete-icon {
+    color: #B80000;
+    text-align: center;
+    align-items: center;
+    font-size: 24px;
+}
+
+
+.home-page-no-records-message {
+    text-align: center;
+    color: #808080;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 15px 0;
+}
+
+.home-page-no-records-message {
+    background-color: #f2f2f2;
+    border-top: 1px solid #ddd;
+}
+
+
+
+
+.home-page-pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    padding: 15px 0;
+    background-color: #ffffff;
+    border-top: 1px solid #ddd;
+    border-radius: 0 0 12px 12px; /* Match table's rounded corners */
+    width: 100%;
+}
+
+.home-page-pagination-button {
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.home-page-pagination-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.home-page-pagination-button:hover:not(:disabled) {
+    background-color: #ff4f4f;
+    color: #ffffff;
+}
+
+.home-page-pagination-prev {
+    margin-right: 10px;
+}
+
+.home-page-pagination-next {
+    margin-left: 10px;
+}
+
+.home-page-pagination-status {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000000;
+}
+
+
+
+@media (min-width: 986px) {
+    .home-page-table-container {
+        grid-column: 1/2;
+        grid-row: 2/3;
+        /* min-height: 100vh; */
+    }
+
+
+    .home-page-table-body {
+        
+    }
+}

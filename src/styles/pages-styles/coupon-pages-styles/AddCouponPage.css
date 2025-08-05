@@ -25,8 +25,10 @@
     margin-bottom: 50px;
 }
 
+
 .add-coupon-first-section-input-container {
-    flex-basis: 45%;
+    flex-grow: 1;
+    width: 200px;
 }
 
 
@@ -44,6 +46,12 @@
 }
 
 
+.add-coupon-first-section-drop-down-container {
+    width: 200px;
+    flex-grow: 1;
+    position: relative;
+}
+
 .add-coupon-first-section-dropdown {
     display: flex;
     justify-content: space-between;
@@ -57,10 +65,49 @@
 }
 
 
+.add-coupon-first-section-dropdown-p {
+    font-size: 14px;
+}
+
+
+
 .add-coupon-drop-down-icon{
     margin-right: 10px;
 }
 
+
+/* Drop down menu part  */
+
+.add-coupon-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    z-index: 1; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+  }
+  
+.add-coupon-dropdown-menu li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    list-style: none;
+  }
+  
+  
+.add-coupon-dropdown-menu li:hover {
+    background-color: #f1f1f1;
+}
+
+.add-coupon-label {
+    margin-bottom: 15px;
+}
+
+
+/* Second section part  */
 .add-coupon-second-section-container {
     display: flex;
     flex-wrap: wrap;
@@ -69,8 +116,18 @@
     margin-bottom: 50px;
 }
 
+
+.add-coupon-second-section-drop-down-container {
+    width: 200px;
+    flex-grow: 1;
+    position: relative;
+}
+
+
+
 .add-coupon-second-section-input-container {
-    flex-basis: 45%;
+    width: 200px;
+    flex-grow: 1;
 }
 
 
@@ -97,17 +154,64 @@
     border-radius: 12px;
     border: 1px solid #808080;
     background: #F5F3F5;
-    /* padding-right: 10px; */
+}
+
+.add-coupon-second-section-dropdown-p {
+    font-size: 14px;
 }
 
 
 .add-coupon-submit-button {
     background: #000000;
     border-radius: 12px;
-    width: 157px;
+    width: 135px;
     height: 40px;
     color: #FFFFFF;
-    margin-bottom: 30p;
+    font-size: 16px;
+    font-weight: 400;
+    margin-right: 20px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.add-coupon-submit-button:hover {
+    background: #333333;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.add-coupon-submit-button:active {
+    background: #555555;
+    transform: scale(0.95);
+}
+
+/* Cancel Button */
+.add-coupon-cancel-button {
+    background: #F5F3F5;
+    border-radius: 12px;
+    width: 135px;
+    height: 40px;
+    color: #000000;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 10px;
+    margin-bottom: 25px;
+    border: 1px solid #000000;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.add-coupon-cancel-button:hover {
+    background: #E0E0E0;
+    transform: scale(1.05);
+    border-color: #333333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.add-coupon-cancel-button:active {
+    background: #CCCCCC;
+    transform: scale(0.95);
 }
 
 
@@ -115,19 +219,30 @@
 
 
 
-
-
-@media (min-width: 780px) {
+@media (min-width: 786px) {
     
-.add-coupon-first-section-input-container {
-    flex-basis: 20%;
+    .add-coupon-page-h3 { 
+        font-size: 35px;
+    }
+ .add-coupon-first-section-input-container {
+    /* flex-basis: 15%; */
+    /* width: 220px; */
 }
 
 
+.add-coupon-first-section-drop-down-container {
+    /* flex-basis: 15%; */
+    /* width: 220px; */
+}
+
+/*
+.add-coupon-second-section-drop-down-container {
+    flex-basis: 15%;
+}
 
 .add-coupon-second-section-input-container {
     flex-basis: 15%;
-}
+} */
 
 
 

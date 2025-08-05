@@ -3,10 +3,6 @@
     padding: 15px;
 }
 
-/* .edit-product-page-head-h3-and-error-container {
-    display: flex;
-} */
-
 .edit-product-page-head-h3 {
     font-size: 25px;
     font-weight: 700;
@@ -14,68 +10,89 @@
     padding-bottom: 10px;
 }
 
-
-.edit-product-page-sub-head-container {
-    display: block;
-}
-
 .edit-product-page-sub-head {
     font-size: 16px;
     font-weight: 400;
     line-height: 24px;
     padding-bottom: 10px;
-    display: none;
 }
 
-.edit-product-page-sub-head-added-date {
-font-size: 16px;
-font-weight: 600;
-line-height: 24px;
-padding-bottom: 15px;
-}
-
-.edit-product-alert-container {
-    display: none;
-    /* width: 180px;
-    background: #B80000;
-    height: 60px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    padding: 15px; */
-}
 .edit-product-images-container {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 20px;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    justify-content: center;
+    gap: 15px;
 }
 
 .edit-product-image-div {
     background: #FFFFFF;
     border-radius: 10px;
-    width: 125px;
+    height: 150px; /* Set a fixed height to prevent layout shifting */
     text-align: center;
     padding: 15px;
-    display: grid;
-    place-items: center;
-
+    display: flex; /* Use Flexbox for alignment */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Center items vertically */
+    align-items: center; /* Center items horizontally */
+    position: relative; /* For absolute positioning of children if needed */
 }
 
-.edit-product-remove-image-icon {
-    color: #B80000;
-    margin-left: auto;
-    font-size: 16px;
-    /* position: absolute; */
-    /* top: 1;
-    right: 10 */
+.edit-product-img-remove-image-icon {
+    position: absolute;
+    top: 5px; /* Adjust position as needed */
+    right: 5px; /* Adjust position as needed */
+    font-size: 20px; /* Adjust icon size */
+    color: red;
+    cursor: pointer;
 }
+
+.edit-product-image-div img {
+    width: 78px;
+    height: 78px;
+    object-fit: contain; /* Ensure the image fits within its container */
+    margin-bottom: 10px; /* Space between image and other elements */
+}
+
 
 .edit-product-image-div .edit-product-image-icon {
     font-size: 76px;
     padding-bottom: 15px;
 }
+
+
+/* Hide the default input */
+.edit-product-image-pick-input {
+    display: none;
+}
+
+/* Custom label for the input */
+.custom-file-label {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.custom-file-label:hover {
+    background-color: #0056b3;
+}
+
+/* Style for file name text */
+.file-name-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+    text-align: center;
+}
+
+
+
+
 
 .edit-product-input-section {
     padding-top: 30px;
@@ -113,6 +130,7 @@ padding-bottom: 15px;
     margin-top: 10px;
     margin-bottom: 15px;
     background: #F5F3F5;
+    resize: none;
 }
 
 
@@ -127,7 +145,7 @@ padding-bottom: 15px;
 
 .edit-product-sub-specs {
     width: 45%;
-    /* background: green; */
+    position: relative;
 }
 .edit-product-sub-specs p {
     font-size: 16px;
@@ -148,6 +166,56 @@ padding-bottom: 15px;
     border-radius: 12px;
     border: 1px solid #808080;
 }
+
+
+/* Doing some drop down  */
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    z-index: 1; 
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .dropdown-menu li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    list-style: none;
+  }
+  
+  
+  .dropdown-menu li:hover {
+    background-color: #f1f1f1;
+  }
+
+ 
+
+
+/* end */
+
+
+
+.edit-product-sub-input-container {
+    width: 100%;
+    height: 40px;
+}
+
+
+.edit-product-sub-input {
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid #808080 ;
+    background: #F5F3F5;
+    text-indent: 10px;
+}
+
 
 .edit-product-timer-container {
     padding-top: 30px;
@@ -177,15 +245,15 @@ padding-bottom: 15px;
 }
 
 
-.edit-all-time-container {
+.all-time-container {
     display: flex
 }
 
-.edit-all-time-container div {
+.all-time-container div {
     padding-right: 15px;
 }
 
-.edit-all-time-container div p {
+.all-time-container div p {
     white-space: nowrap;
     display: inline-flex; /* Change display to inline-flex */
     align-items: center; /* Center align items vertically */
@@ -195,7 +263,7 @@ padding-bottom: 15px;
     font-weight: 400;
     color: #000000;
 }
-.edit-all-time-container span {
+.all-time-container span {
     border: 1px solid #808080;
     border-radius: 12px;
     width: 43px;
@@ -204,6 +272,34 @@ padding-bottom: 15px;
     place-items: center;
     margin-right: 10px;
 }
+
+.all-time-container input {
+    width: 100%;
+    height: 100%;
+    background: #F5F3F5;
+    border: 1px solid #808080;
+    border-radius: 12px;
+    text-align: center; /* Centers the text horizontally */
+    font-size: 16px; /* Adjust as needed for better visibility */
+    line-height: 1.5; /* Optional for better vertical alignment */
+  }
+  
+  /* Remove the default arrows on number inputs */
+  .all-time-container input[type="number"]::-webkit-inner-spin-button,
+  .all-time-container input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  .all-time-container input[type="number"] {
+    -moz-appearance: textfield; /* For Firefox */
+  }
+  
+  /* Optional: Center the placeholder text vertically */
+  .all-time-container input::placeholder {
+    text-align: center;
+    line-height: 1.5;
+  }
 
 
 .edit-product-button-container {
@@ -238,20 +334,47 @@ padding-bottom: 15px;
 
 
 
-@media (min-width: 780px) {
+.edit-product-save-button {
+    background: #000000; /* Black background */
+    border-radius: 12px; /* Rounded corners */
+    width: 135px; /* Fixed width */
+    height: 40px; /* Fixed height */
+    color: #FFFFFF; /* White text */
+    font-size: 16px; /* Font size */
+    font-weight: 400; /* Font weight */
+    margin-right: 20px; /* Margin right */
+    border: none; /* Remove default border */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background 0.3s ease, transform 0.2s ease; /* Smooth transition */
+}
 
-    .edit-product-page-sub-head-container {
-        display: flex;
-        justify-content: space-between;
-    }
-   
-    .edit-product-page-sub-head {
-        display: block
+.edit-product-save-button:hover {
+    background: #333333; /* Dark gray background on hover */
+    transform: scale(1.05); /* Slightly scale up the button */
+}
+
+.edit-product-save-button:active {
+    background: #555555; /* Even lighter gray when clicked */
+    transform: scale(0.95); /* Slightly scale down when clicked */
+}
+
+
+
+
+
+
+
+
+
+@media (min-width: 986px) {
+
+    .edit-product-page-head-h3 {
+        font-size: 36px;
     }
     
     .edit-product-image-div {
-        width: 200px;
     }
+
     .edit-product-sub-specs {
         flex-basis: 22%;
         /* gap: 5px; */

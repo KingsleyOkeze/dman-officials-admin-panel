@@ -1,0 +1,377 @@
+.add-product-page-container {
+    background: #F5F3F5;
+    padding: 15px;
+}
+
+.add-product-page-head-h3 {
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 54px;
+    padding-bottom: 10px;
+}
+
+.add-product-page-sub-head {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    padding-bottom: 10px;
+}
+
+.add-product-images-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    justify-content: center;
+    gap: 15px;
+}
+
+.add-product-image-div {
+    background: #FFFFFF;
+    border-radius: 10px;
+    height: 150px; /* Set a fixed height to prevent layout shifting */
+    text-align: center;
+    padding: 15px;
+    display: flex; /* Use Flexbox for alignment */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Center items vertically */
+    align-items: center; /* Center items horizontally */
+    position: relative; /* For absolute positioning of children if needed */
+}
+
+.add-product-img-remove-image-icon {
+    position: absolute;
+    top: 5px; /* Adjust position as needed */
+    right: 5px; /* Adjust position as needed */
+    font-size: 20px; /* Adjust icon size */
+    color: red;
+    cursor: pointer;
+}
+
+.add-product-image-div img {
+    width: 78px;
+    height: 78px;
+    object-fit: contain; /* Ensure the image fits within its container */
+    margin-bottom: 10px; /* Space between image and other elements */
+}
+
+
+.add-product-image-div .add-product-image-icon {
+    font-size: 76px;
+    padding-bottom: 15px;
+}
+
+
+/* Hide the default input */
+.add-product-image-pick-input {
+    display: none;
+}
+
+/* Custom label for the input */
+.custom-file-label {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.custom-file-label:hover {
+    background-color: #0056b3;
+}
+
+/* Style for file name text */
+.file-name-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+    text-align: center;
+}
+
+
+.add-product-input-section {
+    padding-top: 30px;
+    padding-bottom: 10px;
+}
+
+.add-product-input-container {
+    display: block;
+}
+
+.add-product-input-container label {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #000000;
+}
+
+.add-product-input-container input {
+    border-radius: 12px;
+    border: 1px solid #808080;
+    height: 40px;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    text-indent: 10px;
+    background: #F5F3F5;
+}
+
+.add-product-input-container textarea {
+    border-radius: 12px;
+    border: 1px solid #808080;
+    height: 74px;
+    width: 100%;
+    text-indent: 10px;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    background: #F5F3F5;
+    resize: none;
+}
+
+
+
+.add-product-specs-section {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    /* background-color: red; */
+
+}
+
+.add-product-sub-specs {
+    width: 45%;
+    position: relative;
+}
+
+.add-product-sub-specs p {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #000000;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.add-product-select-drop-down {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    /* width: 278px; */
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid #808080;
+}
+
+
+/* Doing some drop down  */
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    z-index: 1; 
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .dropdown-menu li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    list-style: none;
+  }
+  
+  
+  .dropdown-menu li:hover {
+    background-color: #f1f1f1;
+  }
+
+ 
+
+
+/* end */
+
+
+
+.add-product-sub-input-container {
+    width: 100%;
+    height: 40px;
+}
+
+
+.add-product-sub-input {
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+    border: 1px solid #808080 ;
+    background: #F5F3F5;
+    text-indent: 10px;
+}
+
+/* Remove spinner arrows in Chrome, Safari, Edge, Opera */
+.add-product-sub-input::-webkit-inner-spin-button,
+.add-product-sub-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.add-product-timer-container {
+    padding-top: 30px;
+    padding-bottom: 15px;
+    width: 100%;
+}
+
+
+.add-product-timer-container p {
+    padding-bottom: 15px;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    display: inline-flex;
+    align-items: center;
+}
+
+
+.add-product-timer-checkbox {
+    border: 1px solid #808080;
+    border-radius: 6.67px;
+    width: 24px;
+    height: 24px;
+    background: #F5F3F5;
+    margin-left: 10px;
+    accent-color: #000000;
+}
+
+
+.all-time-container {
+    display: flex
+}
+
+.all-time-container div {
+    padding-right: 15px;
+}
+
+.all-time-container div p {
+    white-space: nowrap;
+    display: inline-flex; /* Change display to inline-flex */
+    align-items: center; /* Center align items vertically */
+    margin: 0; /* Remove default margin */
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 400;
+    color: #000000;
+}
+.all-time-container span {
+    border: 1px solid #808080;
+    border-radius: 12px;
+    width: 43px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    margin-right: 10px;
+}
+
+.all-time-container input {
+    width: 100%;
+    height: 100%;
+    background: #F5F3F5;
+    border: 1px solid #808080;
+    border-radius: 12px;
+    text-align: center; /* Centers the text horizontally */
+    font-size: 16px; /* Adjust as needed for better visibility */
+    line-height: 1.5; /* Optional for better vertical alignment */
+  }
+  
+  /* Remove the default arrows on number inputs */
+  .all-time-container input[type="number"]::-webkit-inner-spin-button,
+  .all-time-container input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  .all-time-container input[type="number"] {
+    -moz-appearance: textfield; /* For Firefox */
+  }
+  
+  /* Optional: Center the placeholder text vertically */
+  .all-time-container input::placeholder {
+    text-align: center;
+    line-height: 1.5;
+  }
+  
+
+.add-product-create-button {
+    display: grid;
+    place-items: center;
+    background: #000000;
+    border-radius: 12px;
+    width: 157px;
+    height: 40px;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 10px;
+    margin-bottom: 25px;
+    border: none; /* Remove default border */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: background 0.3s ease, transform 0.2s ease; /* Smooth transition */
+}
+
+
+
+.add-product-create-button:hover {
+    background: #333333; /* Dark gray background on hover */
+    transform: scale(1.05); /* Slightly scale up the button */
+}
+
+.add-product-create-button:active {
+    background: #555555; /* Even lighter gray when clicked */
+    transform: scale(0.95); /* Slightly scale down when clicked */
+}
+
+
+/* Spinner Styles */
+.add-product-spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3); /* Light gray border */
+    border-top: 3px solid #FFFFFF; /* White border for the spinner */
+    border-radius: 50%; /* Circular shape */
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite; /* Spin animation */
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+
+
+
+@media (min-width: 986px) {
+    .add-product-page-head-h3 {
+        font-size: 36px;
+    }
+    
+    .add-product-image-div {
+        /* width: 200px; */
+    }
+
+    .add-product-sub-specs {
+        flex-basis: 22%;
+        /* gap: 5px; */
+    }
+
+}

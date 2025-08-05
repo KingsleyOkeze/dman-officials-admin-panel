@@ -1,0 +1,232 @@
+/* Mobile-first styles (default) */
+
+.admin-account-page-container {
+    padding: 20px;
+    background: #f5f3f5;
+    min-height: 100vh;
+  }
+  
+  /* Header section */
+.admin-account-page-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+  
+.admin-account-page-header h1 {
+    margin: 0;
+}
+  
+/* For larger screens, display header items in a row */
+@media (min-width: 768px) {
+    .admin-account-page-header {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+}
+  
+/* Search container */
+.admin-account-page-search-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 40px;
+}
+  
+.admin-account-page-search-container input {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+    flex-grow: 1;
+}
+  
+.admin-account-page-search-btn {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+    /* background-color: #eee; */
+    background: #000000;
+    color: #FFFFFF;
+    cursor: pointer;
+}
+  
+  /* Main content section */
+.admin-account-page-content {
+    display: grid;
+    gap: 20px;
+}
+  
+
+  
+/* Profile Section */
+.admin-account-page-profile-section {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+}
+  
+.admin-account-page-profile-section h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+  
+.admin-account-page-profile-item {
+    margin-bottom: 15px;
+}
+  
+.admin-account-page-profile-item label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+  
+.admin-account-page-profile-value {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    /* background: greenyellow; */
+    height: 40px;
+    flex-grow: 1;
+}
+  
+.admin-account-page-profile-value input {
+    text-indent: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    height: 100%;
+    flex-basis: 60%;
+}
+  
+.admin-account-page-profile-btn {
+    height: 100%;
+    background: #000000;
+    color: #FFFFFF;
+    align-items: center;
+}
+.admin-account-page-profile-icon {
+    
+}
+
+/* Save button with black background */
+.admin-account-page-save-btn {
+    padding: 10px 15px;
+    background: #000;  /* Black background */
+    border: none;
+    border-radius: 4px;
+    color: #ffffff;
+    cursor: pointer;
+}
+  
+/* Activity Table Section */
+.admin-account-page-activity-section {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    overflow-x: auto;
+}
+  
+.admin-account-page-activity-section h2 {
+    margin-top: 0;
+}
+  
+.admin-account-page-activity-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+  
+.admin-account-page-activity-section th,
+.admin-account-page-activity-section td {
+    text-align: left;
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+  
+.admin-account-page-activity-section th {
+    background: #f0f0f0;
+}
+
+
+
+
+
+.admin-account-page-pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    padding: 15px 0;
+    background-color: #ffffff;
+    border-top: 1px solid #ddd;
+    border-radius: 0 0 12px 12px; /* Match table's rounded corners */
+
+    width: 100%;
+}
+
+.admin-account-page-pagination-button {
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.admin-account-page-pagination-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.admin-account-page-pagination-button:hover:not(:disabled) {
+    background-color: #ff4f4f;
+    color: #ffffff;
+}
+
+.admin-account-page-pagination-prev {
+    margin-right: 10px;
+}
+
+.admin-account-page-pagination-next {
+    margin-left: 10px;
+}
+
+.admin-account-page-pagination-status {
+    font-size: 16px;
+    font-weight: 500;
+    color: #000000;
+}
+
+
+
+
+
+
+
+  
+  /* Media query for larger screens (min-width: 986px) */
+@media (min-width: 986px) {
+    /* Adjust the layout of the admin account content if needed */
+    .admin-account-page-content {
+      grid-template-columns: 1fr 1fr;
+    }
+    
+    /* Optionally adjust other elements if necessary, for example: */
+    .admin-account-page-save-btn {
+      /* Keep the button black or change styling if desired */
+      background: #000;
+    }
+}
+  

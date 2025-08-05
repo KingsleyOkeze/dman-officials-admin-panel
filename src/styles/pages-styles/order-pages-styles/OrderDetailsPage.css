@@ -5,10 +5,11 @@
 
 .order-details-head-h3 {
     font-weight: 700;
-    font-size: 18px;
+    font-size: 25px;
     /* line-height: 54px; */
     white-space: nowrap;
     color: #000000;
+    margin-bottom: 15px;
 }
 
 .order-details-body-container {
@@ -18,18 +19,23 @@
     border-radius: 12px;
 }
 
-.order-body-top-header {
+.order-details-body-top-header {
     display: block;
+    line-height: 24px;
 }
 
-.order-body-top-header p {
+.order-details-body-top-header p {
     /* white-space: nowrap; */
     /* text-align: center; */
+    font-weight: 400;
+    padding-bottom: 20px;
+
 }
 
-.order-body-top-header p span {
+.order-details-body-top-header p .order-details-body-top-header-title {
     font-weight: 700;
     font-size: 16px;
+    margin-right: 5px;
 }
 
 .order-details-sub-container {
@@ -58,14 +64,15 @@
     font-weight: 400;
 }
 
-.order-list-span {
+.order-list-span-title {
     font-weight: 600;
     font-size: 16px;
     line-height: 32px;
     color: #000000;
+    margin-right: 5px;
 }
 
-.order-detail-bottom-status-container {
+.order-details-bottom-status-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -74,19 +81,196 @@
     padding-bottom: 15px;
 }
 
-.order-detail-bottom-status-container p {
-    color: #000000;
-    font-weight: 500;
-    font-size: 16px;
+
+
+
+
+.order-details-bottom-order-status-filter-drop-down-container {
+    position: relative;
+    width: 145px;
+    margin-right: 20px;
 }
 
-.order-detail-bottom-tracking-container {
+.order-details-bottom-order-status-drop-down-filter-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #808080;
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+    margin-right: 15px;
+    padding-left: 10px;
+    position: relative; /* Enable absolute positioning for children */
+    /* padding-top: 10px; */
+}
+
+.order-details-bottom-order-status-drop-down-filter-small-border-text {
+    position: absolute;
+    top: -10px; /* Move the text above the border */
+    left: 10px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    background-color: #F5F3F5; /* Match background to cover border line */
+    padding: 0 4px;
+    color: #808080;
+}
+
+.order-details-bottom-order-status-drop-down-filter-box p {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #000000;
+    padding-left: 10px;
+}
+
+.order-details-bottom-order-status-drop-down-icon {
+    padding-right: 10px;
+    width: 14px;
+    height: 14px;
+}
+
+
+
+.order-details-bottom-order-status-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    z-index: 1; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    width: inherit;
+    
+  }
+  
+.order-details-bottom-order-status-dropdown-menu li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    list-style: none;
+  }
+  
+  
+.order-details-bottom-order-status-dropdown-menu li:hover {
+    background-color: #f1f1f1;
+}
+
+
+
+
+
+
+.order-details-bottom-tracking-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-top: 15px;
     padding-bottom: 15px;
 }
+
+
+
+
+
+.order-details-bottom-tracking-filter-drop-down-container {
+    position: relative;
+    width: 145px;
+    margin-right: 20px;
+}
+
+.order-details-bottom-tracking-drop-down-filter-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #808080;
+    width: 100%;
+    height: 40px;
+    border-radius: 12px;
+    margin-right: 15px;
+    padding-left: 10px;
+    position: relative; /* Enable absolute positioning for children */
+    /* padding-top: 10px; */
+}
+
+.order-details-bottom-tracking-drop-down-filter-small-border-text {
+    position: absolute;
+    top: -10px; /* Move the text above the border */
+    left: 10px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    background-color: #F5F3F5; /* Match background to cover border line */
+    padding: 0 4px;
+    color: #808080;
+}
+
+.order-details-bottom-order-status-drop-down-filter-box p {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: #000000;
+    padding-left: 10px;
+}
+
+.order-details-bottom-tracking-drop-down-icon {
+    padding-right: 10px;
+    width: 14px;
+    height: 14px;
+}
+
+
+
+.order-details-bottom-tracking-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    z-index: 1; 
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    width: 140px;
+    width: inherit;
+    
+  }
+  
+.order-details-bottom-tracking-dropdown-menu li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    list-style: none;
+  }
+  
+  
+.order-details-bottom-tracking-dropdown-menu li:hover {
+    background-color: #f1f1f1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* 
+.order-detail-bottom-status-container p {
+    color: #000000;
+    font-weight: 500;
+    font-size: 16px;
+}
+
 
 .order-detail-bottom-tracking-container p {
     color: #000000;
@@ -103,18 +287,18 @@
     height: 40px;
     border-radius: 12px;
     margin-right: 15px;
-    position: relative; /* Enable absolute positioning for children */
-    /* padding-top: 10px; */
+    position: relative;
+   
 }
 
 .order-details-drop-down-filter-small-border-text {
     position: absolute;
-    top: -10px; /* Move the text above the border */
+    top: -10px; 
     left: 10px;
     font-size: 12px;
     font-weight: 400;
     line-height: 16px;
-    background-color: #F5F3F5; /* Match background to cover border line */
+    background-color: #F5F3F5; 
     padding: 0 4px;
     color: #808080;
 }
@@ -131,7 +315,7 @@
     padding-right: 10px;
     width: 14px;
     height: 14px;
-}
+} */
 
 
 .order-details-button-container {
@@ -163,14 +347,25 @@
 
 
 @media (min-width: 780px) {
-    .order-body-top-header {
+    .order-details-head-h3 {
+        font-size: 36px;
+    }
+    .order-details-body-top-header {
         display: flex;
         justify-content: space-between;
-        width: 600px
+        width: 600px;
+        margin-top: 2px;
+        margin-bottom: 5px;
     }
 
 
-    .order-details-drop-down-filter {
-        width: 350px;
+    .order-details-bottom-order-status-filter-drop-down-container {
+        width: 500px;
     }
+
+    .order-details-bottom-tracking-filter-drop-down-container {
+        width: 500px;
+    }
+
+
 }
