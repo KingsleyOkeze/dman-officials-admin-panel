@@ -246,8 +246,8 @@ function AddProductPage () {
         // This ensures the object is correctly transmitted and can be parsed on the server side. 
         formData.append("productAddedTimer", JSON.stringify(productAddedTimer));
 
-console.log(
-    productImages, productName, productDescription, productCategory, productSubCategory, productSize, productColor, productBrand, productPrice, productOfferPrice, productQuantity, productAddedTimer,addTimer);
+// console.log(
+//     productImages, productName, productDescription, productCategory, productSubCategory, productSize, productColor, productBrand, productPrice, productOfferPrice, productQuantity, productAddedTimer,addTimer);
         try {
             const response = await axios.post("/admin/add-product", formData, 
                 {
