@@ -44,15 +44,9 @@ function App() {
         
         </Route>
         {/* Protected Routes */}
-        
-        <Route path="/admin" element={
-           
-                <ProtectedRoute allowedRoles={['Admin']}/>
-           
-            }
-        >
-          <Route index element={<Navigate to="/admin/home-page" replace />} /> {/* Redirect to HomePage */}
-          <Route element={<Dashboard />}>
+        <Route element={<ProtectedRoute allowedRoles={['Admin']}/>}>
+          <Route path="/admin" element={<Dashboard />}>
+            <Route index element={<HomePage />} />
             <Route path="home-page" element={<HomePage />} />
             <Route path="order-page" element={<OrdersPage />} />
             <Route path="order-details-page/:orderId" element={<OrderDetailsPage />} />
