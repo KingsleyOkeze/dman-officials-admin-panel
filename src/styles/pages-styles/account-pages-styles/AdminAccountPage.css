@@ -125,7 +125,7 @@
 }
   
 /* Activity Table Section */
-.admin-account-page-activity-section {
+/* .admin-account-page-activity-section {
     background: #ffffff;
     padding: 20px;
     border-radius: 8px;
@@ -168,7 +168,7 @@
     padding: 15px 0;
     background-color: #ffffff;
     border-top: 1px solid #ddd;
-    border-radius: 0 0 12px 12px; /* Match table's rounded corners */
+    border-radius: 0 0 12px 12px; 
 
     width: 100%;
 }
@@ -208,7 +208,7 @@
     font-weight: 500;
     color: #000000;
 }
-
+ */
 
 
 
@@ -218,9 +218,15 @@
   
   /* Media query for larger screens (min-width: 986px) */
 @media (min-width: 986px) {
+    .admin-account-page-header h1 {
+        text-align: center;
+        margin: auto;
+    }
     /* Adjust the layout of the admin account content if needed */
     .admin-account-page-content {
-      grid-template-columns: 1fr 1fr;
+      /* grid-template-columns: 1fr 1fr; */
+      margin: auto;
+      width: 70%;
     }
     
     /* Optionally adjust other elements if necessary, for example: */

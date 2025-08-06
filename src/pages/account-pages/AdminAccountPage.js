@@ -54,37 +54,37 @@ function AdminAccountPage() {
         }
     };
 
-    const getCustomerActivity = async () => {
-        try {
-            const response = await axios.get(
-                `/admin/fetch-customers-activity?page=${paginationIndex}&limit=7`,
-            {
-                headers: {
-                      Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
-                },
-            });
+    // const getCustomerActivity = async () => {
+    //     try {
+    //         const response = await axios.get(
+    //             `/admin/fetch-customers-activity?page=${paginationIndex}&limit=7`,
+    //         {
+    //             headers: {
+    //                   Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+    //             },
+    //         });
 
-            setActivityData(response.data.activities);
-            setTotalPages(response.data.totalPages);
-            console.log("Fetched customers activity", response.data);
+    //         setActivityData(response.data.activities);
+    //         setTotalPages(response.data.totalPages);
+    //         console.log("Fetched customers activity", response.data);
 
-        } catch (err) {
-            console.error("Error fetching user activity:", err);
-            if (err.response) {
-                const status = err.response.status;
-                const errMessage = err.response.data.error;
+    //     } catch (err) {
+    //         console.error("Error fetching user activity:", err);
+    //         if (err.response) {
+    //             const status = err.response.status;
+    //             const errMessage = err.response.data.error;
 
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
-                    showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(getCustomerActivity);
-                }
-            } else {
-                showAlert("Error", "An Unknow Error Occured!")
-            }
+    //             if (status === 400 || status === 403 || status === 404 || status === 500) {
+    //                 showAlert(status, errMessage)
+    //             } else if (status === 401) {
+    //                 refreshAccessToken(getCustomerActivity);
+    //             }
+    //         } else {
+    //             showAlert("Error", "An Unknow Error Occured!")
+    //         }
 
-        }
-    };
+    //     }
+    // };
 
     const handlePreviousFunction = () => {
         if (paginationIndex > 0) {
@@ -104,7 +104,7 @@ function AdminAccountPage() {
       
     useEffect(() => {
         getAdminDetails();
-        getCustomerActivity();
+        // getCustomerActivity();
     }, []);
 
     const handleProfileChange = (field, value) => {
@@ -244,7 +244,7 @@ function AdminAccountPage() {
                 </div>
 
                 {/* Activity Table Section */}
-                <div className="admin-account-page-activity-section">
+                {/* <div className="admin-account-page-activity-section">
                     <h2>User Activity</h2>
                     <table>
                         <thead>
@@ -275,9 +275,9 @@ function AdminAccountPage() {
                                 </tr>
                             )}
                         </tbody>
-                    </table>
+                    </table> */}
                     {/* Pagination Section */}
-                    <div className="admin-account-page-pagination-container">
+                    {/* <div className="admin-account-page-pagination-container">
                         <button
                             className="admin-account-page-pagination-button pagination-prev"
                             onClick={handlePreviousFunction}
@@ -296,7 +296,7 @@ function AdminAccountPage() {
                             Next
                         </button>
                     </div>
-                </div>
+                </div> */}
 
                 
 
