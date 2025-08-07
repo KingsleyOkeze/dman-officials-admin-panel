@@ -126,3 +126,11 @@
         font-size: 1rem;
     }
 }
+
+
+
+@media (min-width: 786px) {
+    .signup-page form {
+        width: 400px;
+    }  
+}
