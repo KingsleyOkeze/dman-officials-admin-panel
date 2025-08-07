@@ -199,7 +199,6 @@ function EditCouponPage () {
 
     return(
         <div className="edit-coupon-page-container">
-            {customAlert.type ? (<Alert />) : "" }
             <h3 className="edit-coupon-page-h3">Edit Coupon</h3>
             <p className="edit-coupon-page-sub-head">Creating new Coupon</p>
             <div className="edit-coupon-first-section-container">

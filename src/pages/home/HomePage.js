@@ -72,13 +72,6 @@ function HomePage () {
 
     return(
         <div className="home-page-container">
-             {/*customAlert.visibility === true && (
-                <Alert
-                    status={customAlert.status}
-                    title={customAlert.title}
-                    message={customAlert.message}
-                />
-            )*/}
             <div className="home-page-search-and-header-container">
             <div className="home-page-main-search-container">
                 <input type="text" 

@@ -132,7 +132,6 @@ function OrderDetailsPage () {
 
     return(
         <div className="order-details-page-container">
-            {customAlert.type ? (<Alert />) : "" }
             <h3 className="order-details-head-h3">Order Details</h3>
             
             <div className="order-details-body-container">

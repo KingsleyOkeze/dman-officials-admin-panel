@@ -153,7 +153,6 @@ function CouponCodePage () {
       
     return(
         <div className="coupon-code-page-container">
-            {customAlert.type ? (<Alert />) : "" }
             <div className="coupon-code-page-header">
                 <div className="coupon-code-page-header-and-add-new-container">  
                 <h3>Coupon Code</h3>
