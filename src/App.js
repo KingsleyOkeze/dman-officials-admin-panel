@@ -22,51 +22,52 @@ import HomePage from './pages/home/HomePage';
 import AdminAccountPage from './pages/account-pages/AdminAccountPage';
 import { AuthProvider } from './contexts/AuthContext';
 import { AlertProvider } from './contexts/AlertContext';
+import Alert from './components/Alert';
 
 function App() {
 
-  axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
-  // console.log('your server url', process.env.REACT_APP_BASE_URL);
+    axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
+    // console.log('your server url', process.env.REACT_APP_BASE_URL);
 
-  return (
-    <Router>
-    <AuthProvider>
-    <AlertProvider>
-      <Routes>
-        {/* Public Routes */}
-        <Route element={<PublicRoute />}>
-          <Route path="/admin/sign-up" element={<SignUpPage />} />
-          <Route path="/admin/sign-up-email-verification/:token" element={<SignUpVerification/>} />
-          <Route path="/admin/email-sent/:userId" element={<EmailSentPage />} />
-          <Route path="/admin/login" element={<LoginPage />} />
-          <Route path="/admin/forget-password" element={<ForgotPassword />} />
-          <Route path="/admin/reset-password/:token" element={<ResetPassword />} />
-        
-        </Route>
-        {/* Protected Routes */}
-        <Route element={<ProtectedRoute allowedRoles={['Admin']}/>}>
-          <Route path="/admin" element={<Dashboard />}>
-            <Route index element={<HomePage />} />
-            <Route path="home-page" element={<HomePage />} />
-            <Route path="order-page" element={<OrdersPage />} />
-            <Route path="order-details-page/:orderId" element={<OrderDetailsPage />} />
-            <Route path="product-page" element={<AddProductPage />} />
-            <Route path="edit-product-page/:productId" element={<EditProductPage />} />
-            <Route path="customers-page" element={<CustomersPage />} />
-            <Route path="coupon-code-page" element={<CouponCodePage />} />
-            <Route path="edit-coupon-code-page/:couponId" element={<EditCouponPage />} />
-            <Route path="add-coupon-code-page" element={<AddCouponPage />} />
-            <Route path="admin-account-page" element={<AdminAccountPage />} />
-          </Route>
-        </Route>
+    return (
+        <Router>
+            <AuthProvider>
+                <AlertProvider>
+                    <Alert />
+                    <Routes>
+                        {/* Public Routes */}
+                        <Route element={<PublicRoute />}>
+                            <Route path="/admin/sign-up" element={<SignUpPage />} />
+                            <Route path="/admin/sign-up-email-verification/:token" element={<SignUpVerification/>} />
+                            <Route path="/admin/email-sent/:userId" element={<EmailSentPage />} />
+                            <Route path="/admin/login" element={<LoginPage />} />
+                            <Route path="/admin/forget-password" element={<ForgotPassword />} />
+                            <Route path="/admin/reset-password/:token" element={<ResetPassword />} />
+                        </Route>
+                        {/* Protected Routes */}
+                        <Route element={<ProtectedRoute allowedRoles={['Admin']}/>}>
+                            <Route path="/admin" element={<Dashboard />}>
+                                <Route index element={<HomePage />} />
+                                <Route path="home-page" element={<HomePage />} />
+                                <Route path="order-page" element={<OrdersPage />} />
+                                <Route path="order-details-page/:orderId" element={<OrderDetailsPage />} />
+                                <Route path="product-page" element={<AddProductPage />} />
+                                <Route path="edit-product-page/:productId" element={<EditProductPage />} />
+                                <Route path="customers-page" element={<CustomersPage />} />
+                                <Route path="coupon-code-page" element={<CouponCodePage />} />
+                                <Route path="edit-coupon-code-page/:couponId" element={<EditCouponPage />} />
+                                <Route path="add-coupon-code-page" element={<AddCouponPage />} />
+                                <Route path="admin-account-page" element={<AdminAccountPage />} />
+                            </Route>
+                        </Route>
 
-        {/* Fallback Route for Unknown Paths */}
-        <Route path="*" element={<NotFoundPage />} /> {/* This will catch all unknown routes and show the NotFoundPage */}
-      </Routes>
-      </AlertProvider>
-      </AuthProvider>
-    </Router>
-  );
+                        {/* Fallback Route for Unknown Paths */}
+                        <Route path="*" element={<NotFoundPage />} /> {/* This will catch all unknown routes and show the NotFoundPage */}
+                    </Routes>
+                </AlertProvider>
+            </AuthProvider>
+        </Router>
+    );
 }
 
 export default App;

@@ -136,7 +136,6 @@ function HomeTable ({ searchTotalPages, searchResult, searchInput }) {
 
     return (
         <>
-            {customAlert.type ? (<Alert />) : "" }
             <div 
                 className="home-page-table-container" 
                 style={{ 

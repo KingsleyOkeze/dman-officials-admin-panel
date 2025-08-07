@@ -142,7 +142,6 @@ function CustomersPage () {
 
     return(
         <div className="customers-page-container">
-            {customAlert.type ? (<Alert />) : "" }
             <div className="customers-page-header">
                 <h3>Customers</h3>
                 <div className="customers-page-filter-and-refresh-container">

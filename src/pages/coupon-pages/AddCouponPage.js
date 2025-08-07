@@ -131,7 +131,6 @@ function AddCouponPage () {
 
     return(
         <div className="add-coupon-page-container">
-            {customAlert.type ? (<Alert />) : "" }
             <h3 className="add-coupon-page-h3">Add Coupon</h3>
             <p className="add-coupon-page-sub-head">Creating new Coupon</p>
             <div className="add-coupon-first-section-container">

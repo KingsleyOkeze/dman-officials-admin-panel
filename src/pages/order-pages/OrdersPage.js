@@ -153,7 +153,6 @@ function OrdersPage () {
 
     return(
         <div className="order-page-container">
-            {customAlert.type ? (<Alert />) : "" }
             <div className="order-page-header">
                 <h3>Orders</h3>
                 <div className="order-page-filter-and-refresh-container">

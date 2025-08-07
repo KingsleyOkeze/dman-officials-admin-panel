@@ -282,7 +282,6 @@ function AddProductPage () {
 
     return(
         <div className="add-product-page-container">
-            {customAlert.type ? (<Alert />) : "" }
             <h3 className="add-product-page-head-h3">Add Product</h3>
             <p className="add-product-page-sub-head">Creating new Product</p>
             <div className="add-product-images-container">

@@ -367,7 +367,6 @@ function EditProductPage () {
 
     return(
         <div className="edit-product-page-container">
-            {customAlert.type ? (<Alert />) : "" }
             <h3 className="edit-product-page-head-h3">Edit Product</h3>
             <p className="edit-product-page-sub-head">Creating new Product</p>
             <div className="edit-product-images-container">
