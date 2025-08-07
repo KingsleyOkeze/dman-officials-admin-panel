@@ -98,7 +98,13 @@ function HomeTable ({ searchTotalPages, searchResult, searchInput }) {
                 const status = err.response.status;
                 const errMessage = err.response.data.error;
 
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                if (
+                    status === 400 || 
+                    status === 403 || 
+                    status === 404 || 
+                    status === 410 || 
+                    status === 500
+                ) {
                     showAlert(status, errMessage)
                 } else if (status === 401) {
                     refreshAccessToken(() => handleDeleteProduct(productId));

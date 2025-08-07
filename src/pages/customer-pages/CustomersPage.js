@@ -86,7 +86,7 @@ function CustomersPage () {
     };
   
   
-    const filterArr = ['Oldest', 'Newest'];
+    const filterArr = ['Oldest', 'Newest', 'Deleted'];
 
     const handleFilterDropdownClick = () => {
         setShowFilterDrop(!showFilterDropDown);

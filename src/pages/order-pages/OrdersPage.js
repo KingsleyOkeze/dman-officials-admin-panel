@@ -40,7 +40,8 @@ function OrdersPage () {
         'Processing',  
         'Shipped', 
         'Delivered', 
-        'Cancelled'
+        'Cancelled',
+        'Deleted'
     ];
 
     const handleFilterDropdownClick = () => {
