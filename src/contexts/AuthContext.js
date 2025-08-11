@@ -8,9 +8,8 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const navigate = useNavigate();
-    // Store access token and admin ID from session storage
-    const [accessToken, setAccessToken] = useState(sessionStorage.getItem('accessToken') || null);
-    const [adminId, setAdminId] = useState(sessionStorage.getItem('adminId') || null);
+    const [accessToken, setAccessToken] = useState(null);
+    const [adminId, setAdminId] = useState(null);
     const isRefreshing = useRef(false); // Track if we're refreshing the token
     const failedRequests = useRef([]); // Store failed requests to retry later
 
@@ -22,9 +21,6 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error('Logout error:', error);
         } finally {
-            // Always clear session and redirect
-            sessionStorage.removeItem('accessToken');
-            sessionStorage.removeItem('adminId');
             setAccessToken(null);
             setAdminId(null);
             navigate('/admin/login');
@@ -79,8 +75,6 @@ export const AuthProvider = ({ children }) => {
                         // Save new token
                         const newAccessToken = response.data.accessToken;
                         const decoded = jwtDecode(newAccessToken);
-                        sessionStorage.setItem('accessToken', newAccessToken);
-                        sessionStorage.setItem('adminId', decoded.userId);
                         setAccessToken(newAccessToken);
                         setAdminId(decoded.userId);
 
@@ -118,6 +112,20 @@ export const AuthProvider = ({ children }) => {
             axios.interceptors.response.eject(interceptor);
         };
     }, []);
+
+    useEffect(() => {
+        if (accessToken) {
+            try {
+                const decoded = jwtDecode(accessToken);
+                setAdminId(decoded.userId);
+            } catch (err) {
+                console.error("Invalid access token:", err);
+                setAdminId(null);
+            }
+        } else {
+            setAdminId(null);
+        }
+    }, [accessToken]);
 
     return (
         <AuthContext.Provider
