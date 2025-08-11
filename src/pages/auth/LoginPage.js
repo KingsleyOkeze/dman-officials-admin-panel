@@ -69,7 +69,13 @@ function LoginPage () {
                     required
                 />
                 <button type="submit" disabled={loading}>
-                    {loading ? <span className="spinner"></span> : 'Login'}
+                    {
+                        loading ? (
+                            <span className="spinner"></span>
+                        ) 
+                        : 
+                        <span>Login</span>
+                    }
                 </button>
                 <Link to="/admin/forget-password">Forgot password</Link>
             </form>

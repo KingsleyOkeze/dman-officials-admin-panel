@@ -4,17 +4,15 @@ import { AuthContext } from "../../../contexts/AuthContext";
 import axios from "axios";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { FiEdit } from "react-icons/fi";
-// import DeleteConfirmationModal from "../../components/ConfirmationModal";
 import { useNavigate } from "react-router-dom";
 import { ModalContext } from "../../../contexts/ModalContext";
 import ConfirmationModal from "../../../components/ConfirmationModal";
 import { AlertContext } from "../../../contexts/AlertContext";
-import Alert from "../../../components/Alert";
-// import { SearchContext } from "../../../contexts/SearchContext";
+
 
 function HomeTable ({ searchTotalPages, searchResult, searchInput }) {
     const navigate = useNavigate();
-    const { accessToken, refreshAccessToken } = useContext(AuthContext);
+    const { accessToken } = useContext(AuthContext);
     const { showAlert, customAlert } = useContext(AlertContext);
     
     const {
@@ -53,19 +51,15 @@ function HomeTable ({ searchTotalPages, searchResult, searchInput }) {
 
                 if (status === 400 || status === 403 || status === 404 || status === 500) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handleFetchProducts);
-                }
+                } 
+                // 401 errors are handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
         }
     }
 
-    useEffect(() => {
-        handleFetchProducts();
-    }, [paginationIndex]);
-      
+
     const handlePreviousFunction = () => {
         if (paginationIndex > 0) {
           setPaginationIndex(paginationIndex - 1);
@@ -106,9 +100,8 @@ function HomeTable ({ searchTotalPages, searchResult, searchInput }) {
                     status === 500
                 ) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(() => handleDeleteProduct(productId));
-                }
+                } 
+                // 401 errors are handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
@@ -138,7 +131,7 @@ function HomeTable ({ searchTotalPages, searchResult, searchInput }) {
 
     useEffect(() => {
         handleFetchProducts();
-    }, [accessToken]);
+    }, [accessToken, paginationIndex]);
 
     return (
         <>
@@ -212,21 +205,21 @@ function HomeTable ({ searchTotalPages, searchResult, searchInput }) {
                         }}
                     >
                         <button
-                        className="home-page-pagination-button pagination-prev"
-                        onClick={handlePreviousFunction}
-                        disabled={paginationIndex === 0}
+                            className="home-page-pagination-button pagination-prev"
+                            onClick={handlePreviousFunction}
+                            disabled={paginationIndex === 0}
                         >
-                        Previous
+                            Previous
                         </button>
                         <span className="home-page-pagination-status">
-                            {paginationIndex + 1} / {totalPages}
+                            {totalPages ? paginationIndex + 1 : 0} / {totalPages ? totalPages : 0}
                         </span>
                         <button
-                        className="home-page-pagination-button pagination-next"
-                        onClick={handleNextFunction}
-                        disabled={paginationIndex + 1 === totalPages}
+                            className="home-page-pagination-button pagination-next"
+                            onClick={handleNextFunction}
+                            disabled={paginationIndex + 1 === totalPages}
                         >
-                        Next
+                            Next
                         </button>
                     </div>
                 </div>

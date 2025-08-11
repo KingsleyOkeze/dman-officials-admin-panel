@@ -4,15 +4,16 @@ import { SlCalender } from "react-icons/sl";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { TiArrowSortedUp } from "react-icons/ti";
 import axios from "axios";
-import Alert from "../../components/Alert";
 import { AuthContext } from "../../contexts/AuthContext";
 import { AlertContext } from "../../contexts/AlertContext";
+import { useNavigate } from "react-router-dom";
 
 
 function AddCouponPage () {
-    const { accessToken, refreshAccessToken } = useContext(AuthContext);
-    const { showAlert, customAlert } = useContext(AlertContext);
-
+    const { accessToken } = useContext(AuthContext);
+    const { showAlert } = useContext(AlertContext);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
     const [couponName, setCouponName] = useState('');
     const [couponCode, setCouponCode] = useState('');
     const [couponDiscountAmount, setCouponDiscountAmount] = useState('');
@@ -81,6 +82,16 @@ function AddCouponPage () {
 
     const addCouponFunction = async () => {
         console.log(couponName,couponCode, usageLimit, couponDiscountAmount, expirationDate, minimumPurchaseAmount, couponDiscountType, couponStatus, couponCategory, couponSubCategory)
+        setLoading(true); // Enable loading state
+
+        if (!couponName.trim()) return "Coupon Name is required";
+        if (!couponCode.trim()) return "Coupon Code is required";
+        if (couponDiscountType === "Select Discount") return "Please select a discount type";
+        if (!couponDiscountAmount || parseFloat(couponDiscountAmount) <= 0) return "Discount amount must be greater than 0";
+        if (couponStatus === "Select Status") return "Please select a status";
+        if (couponCategory === "Select Category") return "Please select a category";
+        if (!expirationDate) return "Expiration date is required";
+
         try {
             const response = await axios.post("/admin/add-coupon", {
                 couponName: couponName.toUpperCase(),
@@ -102,32 +113,30 @@ function AddCouponPage () {
     
             if (response.data) {
                 showAlert("success", response.data.message);  
+                navigate("/admin/coupon-code-page");
             } 
         } catch (err) {
             if (err.response) {
                 const status = err.response.status;
                 const errMessage = err.response.data.error;
 
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                if (
+                    status === 400 || 
+                    status === 403 || 
+                    status === 404 || 
+                    status === 500
+                ) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(addCouponFunction);
-                }
+                } 
+                // 401 errors are handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
+        } finally {
+            setLoading(false); // Disable loading state
         }
     };
     
-
-    useEffect(() => {
-        // setTimeout(() => {
-        //     if (customAlert) {
-        //         setCustomAlert(false);
-        //     }
-        // }, 5000);
-    }, [customAlert]);
-
 
     return(
         <div className="add-coupon-page-container">
@@ -325,16 +334,23 @@ function AddCouponPage () {
                     </div>
                 </div>
             </div>
-            <div className="add-coupon-submit-button-container">
+            <div className="add-coupon-button-container">
                 <button 
                     className="add-coupon-submit-button"
-                    onClick={addCouponFunction}>
-                        Submit
-                    </button>
+                    onClick={addCouponFunction}
+                    disabled={loading} // Disable the button while loading
+                >
+                    {loading ? (
+                       <div className="add-coupon-spinner"></div> // Show spinner when loading
+                    ) : (
+                        <span>Submit</span> // Show "Submit" text when not loading
+                    )}
+                </button>
                 <button 
                     className="add-coupon-cancel-button"
-                    onClick={addCouponFunction}>
-                        Cancel
+                    onClick={() => navigate("/admin/coupon-code-page")}
+                >
+                    Cancel
                 </button>
             </div>
             

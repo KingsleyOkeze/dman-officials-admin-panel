@@ -11,10 +11,10 @@ import { ModalContext } from "../../contexts/ModalContext";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { AuthContext } from "../../contexts/AuthContext";
 import { AlertContext } from "../../contexts/AlertContext";
-import Alert from "../../components/Alert";
+
 
 function OrdersPage () {
-    const { accessToken, refreshAccessToken } = useContext(AuthContext);
+    const { accessToken } = useContext(AuthContext);
     const { showAlert, customAlert } = useContext(AlertContext);
     const navigate = useNavigate();
     const {
@@ -77,9 +77,8 @@ function OrdersPage () {
 
                 if (status === 400 || status === 403 || status === 404 || status === 500) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    await refreshAccessToken(handleFetchOrders);
-                }
+                } 
+                // 401 errors are handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
@@ -137,11 +136,15 @@ function OrdersPage () {
                 const status = err.response.status;
                 const errMessage = err.response.data.error;
 
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                if (
+                    status === 400 || 
+                    status === 403 || 
+                    status === 404 || 
+                    status === 500
+                ) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(() => handleConfirmDeleteOrder(orderId));
-                }
+                } 
+                // 401 errors handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
@@ -257,7 +260,7 @@ function OrdersPage () {
                     Previous
                 </button>
                     <span className="order-page-pagination-status">
-                        {paginationIndex + 1} / {totalPages ? totalPages : 0}
+                        {totalPages ? paginationIndex + 1 : 0} / {totalPages ? totalPages : 0}
                     </span>
                 <button
                     className="order-page-pagination-button pagination-next"
