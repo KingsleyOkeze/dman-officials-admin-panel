@@ -11,7 +11,9 @@ import { AlertContext } from "../../contexts/AlertContext";
 
 
 function AdminAccountPage() {
-    const { accessToken, adminId, refreshAccessToken } = useContext(AuthContext);
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const { accessToken } = useContext(AuthContext);
     const { showAlert, customAlert } = useContext(AlertContext);
     const [paginationIndex, setPaginationIndex] = useState(0); // Track current page
     const [totalPages, setTotalPages] = useState(0); // Total number of pages (example)
@@ -42,11 +44,15 @@ function AdminAccountPage() {
                 const status = err.response.status;
                 const errMessage = err.response.data.error;
 
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                if (
+                    status === 400 || 
+                    status === 403 || 
+                    status === 404 || 
+                    status === 500
+                ) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(getAdminDetails);
-                }
+                } 
+                // 401 errors handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
@@ -76,9 +82,8 @@ function AdminAccountPage() {
 
     //             if (status === 400 || status === 403 || status === 404 || status === 500) {
     //                 showAlert(status, errMessage)
-    //             } else if (status === 401) {
-    //                 refreshAccessToken(getCustomerActivity);
-    //             }
+    //             } 
+                    // 401 errors handled by AuthContext interceptor
     //         } else {
     //             showAlert("Error", "An Unknow Error Occured!")
     //         }
@@ -121,6 +126,7 @@ function AdminAccountPage() {
     };
 
     const handleSaveDetails = async () => {
+        setLoading(true); // Enable loading state
         try {
             const response = await axios.put(`/admin/update-profile/${accessToken}`, {
                 firstName,
@@ -144,15 +150,21 @@ function AdminAccountPage() {
                 const status = err.response.status;
                 const errMessage = err.response.data.error;
 
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                if (
+                    status === 400 || 
+                    status === 403 || 
+                    status === 404 || 
+                    status === 500
+                ) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handleSaveDetails);
-                }
+                } 
+                // 401 errors handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
 
+        } finally {
+            setLoading(false); // Disable loading state
         }
     };
 
@@ -238,8 +250,16 @@ function AdminAccountPage() {
                             </button>
                         </div>
                     </div>
-                    <button className="admin-account-page-save-btn" onClick={handleSaveDetails}>
-                        Save Details
+                    <button 
+                        className="admin-account-page-save-btn" 
+                        onClick={handleSaveDetails}
+                        disabled={loading} // Disable the button while loading
+                    >
+                        {loading ? (
+                            <div className="admin-account-page-spinner"></div>
+                        ) : (
+                            <span>Save Details</span> // Wrap the text in a <span>
+                        )}
                     </button>
                 </div>
 

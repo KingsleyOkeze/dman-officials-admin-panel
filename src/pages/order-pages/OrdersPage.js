@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import "../../styles/pages-styles/order-pages-styles/OrdersPage.css"
 import { TfiReload } from "react-icons/tfi";
 import { TiArrowSortedDown } from "react-icons/ti";
-import { FiEdit } from "react-icons/fi";
+import { FiEye } from "react-icons/fi";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -11,10 +11,10 @@ import { ModalContext } from "../../contexts/ModalContext";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { AuthContext } from "../../contexts/AuthContext";
 import { AlertContext } from "../../contexts/AlertContext";
-import Alert from "../../components/Alert";
+
 
 function OrdersPage () {
-    const { accessToken, refreshAccessToken } = useContext(AuthContext);
+    const { accessToken } = useContext(AuthContext);
     const { showAlert, customAlert } = useContext(AlertContext);
     const navigate = useNavigate();
     const {
@@ -40,7 +40,8 @@ function OrdersPage () {
         'Processing',  
         'Shipped', 
         'Delivered', 
-        'Cancelled'
+        'Cancelled',
+        'Deleted'
     ];
 
     const handleFilterDropdownClick = () => {
@@ -76,9 +77,8 @@ function OrdersPage () {
 
                 if (status === 400 || status === 403 || status === 404 || status === 500) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    await refreshAccessToken(handleFetchOrders);
-                }
+                } 
+                // 401 errors are handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
@@ -136,11 +136,15 @@ function OrdersPage () {
                 const status = err.response.status;
                 const errMessage = err.response.data.error;
 
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                if (
+                    status === 400 || 
+                    status === 403 || 
+                    status === 404 || 
+                    status === 500
+                ) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(() => handleConfirmDeleteOrder(orderId));
-                }
+                } 
+                // 401 errors handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
@@ -197,7 +201,7 @@ function OrdersPage () {
                             <th>Payment</th>
                             <th>Status</th>
                             <th>Date</th>
-                            <th>Edit</th>
+                            <th>View</th>
                             <th>Delete</th>
                         </tr>
                     </thead>
@@ -205,8 +209,9 @@ function OrdersPage () {
                         {orders && orders?.length > 0 ? (
                             orders.map((order, index) => (
                                 <tr>
-                                    <td style={{ display: 'flex', alignItems: 'center' }}
-                                        onClick={() => navigate(`/admin/order-details-page/${order._id}`)}>
+                                    <td 
+                                        style={{ display: 'flex', alignItems: 'center' }}
+                                    >
                                         <span 
                                             style={{
                                                 background: color[Math.floor(Math.random() * color.length)]
@@ -221,7 +226,11 @@ function OrdersPage () {
                                     <td>{order.paymentStatus}</td>
                                     <td>{order.orderStatus}</td>
                                     <td>{order.createdAt}</td>
-                                    <td><FiEdit className="order-edit-icon"/></td>
+                                    <td
+                                        onClick={() => navigate(`/admin/order-details-page/${order._id}`)}
+                                    >
+                                        <FiEye className="order-view-icon"/>
+                                    </td>
                                     <td>
                                         <FaRegTrashCan 
                                             className="order-delete-icon"
@@ -256,7 +265,7 @@ function OrdersPage () {
                     Previous
                 </button>
                     <span className="order-page-pagination-status">
-                        {paginationIndex + 1} / {totalPages ? totalPages : 0}
+                        {totalPages ? paginationIndex + 1 : 0} / {totalPages ? totalPages : 0}
                     </span>
                 <button
                     className="order-page-pagination-button pagination-next"

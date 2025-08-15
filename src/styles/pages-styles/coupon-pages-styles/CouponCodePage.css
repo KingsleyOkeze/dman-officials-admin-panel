@@ -16,14 +16,19 @@
 .coupon-code-page-header-and-add-new-container {
     display: flex;
     align-items: center;
+    flex-wrap: nowrap;
 }
 
 .coupon-code-page-header h3 {
     font-size: 25px;
     font-weight: 700;
-    white-space: nowrap;
-    /* background-color: yellow; */
 }
+
+
+.coupon-code-page-title-code-text {
+    display: none;
+}
+
 
 .coupon-add-new-text {
     display: none;
@@ -33,6 +38,8 @@
 .coupon-code-page-add-coupon-icon {
     font-size: 18.22px; 
     /* height:17.78; */
+    margin-left: 5px;
+    margin-top: 10px;
 }
 
 .coupon-code-page-filter-and-refresh-container {
@@ -310,18 +317,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 @media (min-width: 800px) {
 
     .coupon-code-page-header h3 {
@@ -335,6 +330,17 @@
 
     .coupon-code-page-header-and-add-new-container {
         align-items: center;
+        /* This is already correct, but make sure it's applied */
+        flex-wrap: nowrap;
+    }
+
+    .coupon-code-page-header h3 {
+        font-size: 25px;
+        font-weight: 700;
+    }
+   
+    .coupon-code-page-title-code-text {
+        display: inline;
     }
 
     .coupon-code-page-add-new-container {

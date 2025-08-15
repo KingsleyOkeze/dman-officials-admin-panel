@@ -4,16 +4,16 @@ import { FaRegTrashCan } from "react-icons/fa6";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { TfiReload } from "react-icons/tfi";
 import { TiArrowSortedUp } from "react-icons/ti";
-
 import axios from "axios";
 import { ModalContext } from "../../contexts/ModalContext";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { AuthContext } from "../../contexts/AuthContext";
-import Alert from "../../components/Alert";
 import { AlertContext } from "../../contexts/AlertContext";
+import { formatDate } from "../../utils/dateFormatter";
+
 
 function CustomersPage () {
-    const { accessToken, adminId, refreshAccessToken } = useContext(AuthContext);
+    const { accessToken, adminId } = useContext(AuthContext);
     const {
             isModalOpen, 
             setModalOpen, 
@@ -22,7 +22,7 @@ function CustomersPage () {
             handleDeleteClick, 
             handleCancelDelete
         } = useContext(ModalContext); 
-    const { showAlert, customAlert } = useContext(AlertContext);
+    const { showAlert } = useContext(AlertContext);
     const [customers, setCustomers] = useState([]);
     const [showFilterDropDown, setShowFilterDrop] = useState(false);
     const [filterPicked, setFilterPicked] = useState('Newest');
@@ -45,6 +45,7 @@ function CustomersPage () {
             if (response.data) {
                 console.log("fetched data", response.data.result)
                 setCustomers(response.data.result);
+                // setCurrentPage
                 setTotalPages(response.data.totalPages)
             }
         } catch (err) {
@@ -54,9 +55,8 @@ function CustomersPage () {
 
                 if (status === 400 || status === 403 || status === 404 || status === 500) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handleFetchCustomers);
-                }
+                } 
+                // 401 errors are handled by the AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
@@ -65,13 +65,12 @@ function CustomersPage () {
         }
     }
   
-    useEffect(() => {
-        handleFetchCustomers();
-    }, []);
 
     useEffect(() => {
-        handleFetchCustomers();
-    }, [paginationIndex]);
+        if (accessToken && adminId) {
+            handleFetchCustomers();
+        }
+    }, [accessToken, adminId, paginationIndex, filterPicked]);
       
     const handlePreviousFunction = () => {
         if (paginationIndex > 0) {
@@ -86,7 +85,7 @@ function CustomersPage () {
     };
   
   
-    const filterArr = ['Oldest', 'Newest'];
+    const filterArr = ['Oldest', 'Newest', 'Deleted'];
 
     const handleFilterDropdownClick = () => {
         setShowFilterDrop(!showFilterDropDown);
@@ -95,12 +94,8 @@ function CustomersPage () {
     const handleFilterClick = (item) => {
         setFilterPicked(item);
         setShowFilterDrop(false);
+        setPaginationIndex(0); // Reset to first page when filter changes
     };
-  
-    useEffect(() => {
-        setPaginationIndex(0);
-        handleFetchCustomers()
-    }, [filterPicked]);
   
 
     const handleDeleteCustomerAccount = async (customerId) => {
@@ -127,12 +122,12 @@ function CustomersPage () {
 
                 if (status === 400 || status === 403 || status === 404 || status === 500) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(() => handleDeleteCustomerAccount(customerId));
-                }
+                } 
+                // 401 errors are handled by the AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
+            console.log('error deleting customer', err);
         } finally {
             setModalOpen(false);
             setSelectedItem(null);
@@ -197,7 +192,7 @@ function CustomersPage () {
                                     <td style={{ display: 'flex', alignItems: 'center' }}>
                                         <span 
                                         className="customers-page-table-index">{index + 1}</span> 
-                                        {customer.customerFirstName} {customer.customerLastName}
+                                        {customer.firstName} {customer.lastName}
                                     </td>
                                     <td className="customers-page-phone-and-email-container">
                                         <div>{customer.phoneNumber}</div>
@@ -205,8 +200,8 @@ function CustomersPage () {
                                     </td>
                                     {/* <td>{customer.password}</td> */}
                                     <td>{customer.country}</td>
-                                    <td>{customer.dob}</td>
-                                    <td>{customer.createdAt}</td>
+                                    <td>{formatDate(customer.dob, "dob")}</td>
+                                    <td>{formatDate(customer.createdAt)}</td>
                     
                                     <td>
                                         <FaRegTrashCan 
@@ -244,7 +239,7 @@ function CustomersPage () {
                     Previous
                 </button>
                     <span className="customers-page-pagination-status">
-                        {paginationIndex + 1} / {totalPages}
+                        {totalPages ? paginationIndex + 1 : 0} / {totalPages ? totalPages : 0}
                     </span>
                 <button
                     className="customers-page-pagination-button pagination-next"

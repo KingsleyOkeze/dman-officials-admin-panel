@@ -29,9 +29,7 @@ function LoginPage () {
             });
 
             setMessage(response.data.message);
-            // Handle successful login, such as redirecting or storing tokens.
-            sessionStorage.setItem('accessToken', response.data.accessToken); // Store new access token in sessionStorage
-            sessionStorage.setItem("adminId", response.data.userId);
+            // Handle successful login, such as redirecting 
             setAdminId(response.data.userId);
             setAccessToken(response.data.accessToken);
             navigate("/admin");
@@ -69,7 +67,13 @@ function LoginPage () {
                     required
                 />
                 <button type="submit" disabled={loading}>
-                    {loading ? <span className="spinner"></span> : 'Login'}
+                    {
+                        loading ? (
+                            <span className="spinner"></span>
+                        ) 
+                        : 
+                        <span>Login</span>
+                    }
                 </button>
                 <Link to="/admin/forget-password">Forgot password</Link>
             </form>

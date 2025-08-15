@@ -16,7 +16,7 @@ import Alert from "../../components/Alert";
 
 function CouponCodePage () {
     const navigate = useNavigate();
-    const { accessToken, refreshAccessToken } = useContext(AuthContext);
+    const { accessToken } = useContext(AuthContext);
     const { showAlert, customAlert } = useContext(AlertContext);
     const {
         isModalOpen, 
@@ -39,14 +39,17 @@ function CouponCodePage () {
 
     const filterArr = ['All Types', 'Percentage Off', 'Flat Discount'];
 
+    // Toggle filter dropdown
     const handleFilterDropdownClick = () => {
         setShowFilterDrop(!showFilterDropDown);
     };
   
     
+    // Select a filter and reset pagination
     const handleFilterClick = (item) => {
-      setFilterPicked(item);
-      setShowFilterDrop(false);
+        setFilterPicked(item);
+        setShowFilterDrop(false);
+        setPaginationIndex(0); // Reset to first page
     };
 
 
@@ -74,9 +77,8 @@ function CouponCodePage () {
 
                 if (status === 400 || status === 403 || status === 404 || status === 500) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handleFetchCoupons);
-                }
+                } 
+                // 401 errors are handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
@@ -98,7 +100,6 @@ function CouponCodePage () {
 
     const handleConfirmDeleteCoupon = async (couponId) => {
         try {
-
             // Call the DELETE API
             const response = await axios.delete(
                 `/admin/delete-coupon/${couponId}`,
@@ -120,11 +121,15 @@ function CouponCodePage () {
                 const status = err.response.status;
                 const errMessage = err.response.data.error;
 
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                if (
+                    status === 400 || 
+                    status === 403 || 
+                    status === 404 || 
+                    status === 500
+                ) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(() => handleConfirmDeleteCoupon(couponId));
-                }
+                } 
+                // 401 errors are handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
@@ -135,19 +140,12 @@ function CouponCodePage () {
     };
 
 
+    // Fetch coupons when accessToken, adminId, paginationIndex, or filterPicked changes
     useEffect(() => {
-        handleFetchCoupons();
-    }, [])
-
-
-    useEffect(() => {
-        setPaginationIndex(0);
-        handleFetchCoupons();
-    }, [filterPicked])
-
-    useEffect(() => {
-        handleFetchCoupons();
-    }, [paginationIndex]);
+        if (accessToken) {
+            handleFetchCoupons();
+        }
+    }, [accessToken, paginationIndex, filterPicked]);
       
 
       
@@ -155,7 +153,7 @@ function CouponCodePage () {
         <div className="coupon-code-page-container">
             <div className="coupon-code-page-header">
                 <div className="coupon-code-page-header-and-add-new-container">  
-                <h3>Coupon Code</h3>
+                <h3>Coupon <span className="coupon-code-page-title-code-text">Code</span></h3>
                 <div 
                     className="coupon-code-page-add-new-container"
                     onClick={() => navigate("/admin/add-coupon-code-page")}>
@@ -270,7 +268,7 @@ function CouponCodePage () {
                     Previous
                 </button>
                     <span className="coupon-code-page-pagination-status">
-                        {paginationIndex + 1} / {totalPages}
+                        {totalPages ? paginationIndex + 1 : 0} / {totalPages ? totalPages : 0}
                     </span>
                 <button
                     className="coupon-code-page-pagination-button pagination-next"

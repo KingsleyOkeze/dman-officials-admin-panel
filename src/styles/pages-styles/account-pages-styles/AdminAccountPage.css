@@ -106,6 +106,8 @@
   
 .admin-account-page-profile-btn {
     height: 100%;
+    width: 70px;
+    border-radius: 10px;
     background: #000000;
     color: #FFFFFF;
     align-items: center;
@@ -122,8 +124,31 @@
     border-radius: 4px;
     color: #ffffff;
     cursor: pointer;
+    height: 40px;
+    min-width: 140px;
+    display: grid;
+    place-items: center;
+}
+
+
+.admin-account-page-spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3); /* Light gray border */
+    border-top: 3px solid #FFFFFF; /* White border for the spinner */
+    border-radius: 50%; /* Circular shape */
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite; /* Spin animation */
+    width: 16px;   /* match text height closely */
+    height: 16px;  /* match text height closely */
 }
   
+
+.admin-account-page-save-btn span {
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
+
 /* Activity Table Section */
 /* .admin-account-page-activity-section {
     background: #ffffff;

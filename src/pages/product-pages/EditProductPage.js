@@ -6,17 +6,17 @@ import axios from "axios";
 import { TiArrowSortedUp } from "react-icons/ti";
 import Alert from "../../components/Alert";
 import { useEffect, useState, useRef, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import { AlertContext } from "../../contexts/AlertContext";
 import urlToFile from "../../utils/urlToFile";
 
 
-function EditProductPage () {
-    const { accessToken, refreshAccessToken } = useContext(AuthContext);
-    const { productId } = useParams(); // Get product ID from URL
-    const { showAlert, customAlert } = useContext(AlertContext);
-
+function EditProductPage() {
+    const { accessToken } = useContext(AuthContext);
+    const { showAlert } = useContext(AlertContext);
+    const { productId } = useParams();
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
     const [firstImagePreview, setFirstImagePreview] = useState(null);
@@ -24,486 +24,331 @@ function EditProductPage () {
     const [thirdImagePreview, setThirdImagePreview] = useState(null);
     const [fourthImagePreview, setFourthImagePreview] = useState(null);
 
-
-    const [productImages, setProductImages] = useState({ firstImage: "", secondImage: "", thirdImage: "", fourthImage: ""});
-    const [productName, setProductName] = useState("");
+    const [productImages, setProductImages] = useState({
+        firstImage: '',
+        secondImage: '',
+        thirdImage: '',
+        fourthImage: '',
+    });
+    const [productName, setProductName] = useState('');
     const [productDescription, setProductDescription] = useState('');
-    const [productCategory, setProductCategory] = useState('');
-    const [productSubCategory, setProductSubCategory] = useState('');
-    const [productSize, setProductSize] = useState([]);
+    const [productCategory, setProductCategory] = useState('Select Category');
+    const [productSubCategory, setProductSubCategory] = useState('Sub Category');
+    const [productSize, setProductSize] = useState(['Selected Size']);
     const [productPrice, setProductPrice] = useState('');
     const [productBrand, setProductBrand] = useState('');
-    const [productOfferPrice, setProductOfferPrice] = useState();
-    const [productQuantity, setProductQuantity] = useState();
-    const [productColor, setProductColor] = useState(['']);
-    const [addTimer, setAddTimer] = useState(null);
-    const [productAddedTimer, setProductAddedTimer] = useState({ hrs: 0, min: 0, sec: 0});
-    
+    const [productOfferPrice, setProductOfferPrice] = useState('');
+    const [productQuantity, setProductQuantity] = useState('');
+    const [productColor, setProductColor] = useState(['Select Color']);
+    const [productAddedTimer, setProductAddedTimer] = useState({ hrs: 0, min: 0, sec: 0 });
+    const [addTimer, setAddTimer] = useState(false);
 
-    // Create refs for each file input element to directly access and reset them    
-    const firstImageInputRef = useRef(null); // Ref for the first image file input
-    const secondImageInputRef = useRef(null); // Ref for the second image file input
-    const thirdImageInputRef = useRef(null); // Ref for the third image file input
-    const fourthImageInputRef = useRef(null); // Ref for the fourth image file input
-    
+    const firstImageInputRef = useRef(null);
+    const secondImageInputRef = useRef(null);
+    const thirdImageInputRef = useRef(null);
+    const fourthImageInputRef = useRef(null);
 
-
-
-    const handleFirstImageChange = (event) => {
+    const handleImageChange = (key, event, setPreview) => {
         const file = event.target.files[0];
         if (file) {
-          setProductImages((prevState) => ({
-            ...prevState,
-            firstImage: file
-          }));
-          setFirstImagePreview(URL.createObjectURL(file)); // Generate a preview URL
+            setProductImages((prev) => ({ ...prev, [key]: file }));
+            setPreview(URL.createObjectURL(file));
         }
-      };
-    
-      const handleSecondImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-          setProductImages((prevState) => ({
-            ...prevState,
-            secondImage: file
-          }));
-          setSecondImagePreview(URL.createObjectURL(file)); // Generate a preview URL
-        }
-      };
-    
-      const handleThirdImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-          setProductImages((prevState) => ({
-            ...prevState,
-            thirdImage: file
-          }));
-          setThirdImagePreview(URL.createObjectURL(file)); // Generate a preview URL
-        }
-      };
-    
-      const handleFourthImageChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-          setProductImages((prevState) => ({
-            ...prevState,
-            fourthImage: file
-          }));
-          setFourthImagePreview(URL.createObjectURL(file)); // Generate a preview URL
-        }
-      };
-    
-      // Log productImages after it changes
-      useEffect(() => {
-        console.log("Updated productImages:", productImages);
-      }, [productImages]);
+    };
 
+    const clearImage = (key, setPreview, inputRef) => {
+        setProductImages((prev) => ({ ...prev, [key]: '' }));
+        setPreview(null);
+        inputRef.current.value = null;
+    };
 
-
-   
-      const clearFirstImage = () => {
-        setProductImages((prevState) => ({
-          ...prevState,
-          firstImage: null, // Clear first image
-        }));
-        setFirstImagePreview(null); // Clear preview URL
-        firstImageInputRef.current.value = null; // Reset the file input
-      };
-      
-      const clearSecondImage = () => {
-        setProductImages((prevState) => ({
-          ...prevState,
-          secondImage: null, // Clear second image
-        }));
-        setSecondImagePreview(null); // Clear preview URL
-        secondImageInputRef.current.value = null; // Reset the file input
-      };
-      
-      const clearThirdImage = () => {
-        setProductImages((prevState) => ({
-          ...prevState,
-          thirdImage: null, // Clear third image
-        }));
-        setThirdImagePreview(null); // Clear preview URL
-        thirdImageInputRef.current.value = null; // Reset the file input
-      };
-      
-      const clearFourthImage = () => {
-        setProductImages((prevState) => ({
-          ...prevState,
-          fourthImage: null, // Clear fourth image
-        }));
-        setFourthImagePreview(null); // Clear preview URL
-        fourthImageInputRef.current.value = null; // Reset the file input
-      };
-      
-
-
-    // DROP DOWNS CATEGORY
     const [categoryDropDownListIsOpen, setCategoryDropDownListIsOpen] = useState(false);
     const [subCategoryDropDownListIsOpen, setSubCategoryDropDownListIsOpen] = useState(false);
     const [sizeDropDownListIsOpen, setSizeDropDownListIsOpen] = useState(false);
     const [colorDropDownListIsOpen, setColorDropDownListIsOpen] = useState(false);
-    
 
     const categories = ['Mens Wear', 'Foot Wear', 'Accessories'];
     const subCategories = ['T Shirt', 'Hoodie', 'Sweat Shirt', 'Bullup 500'];
     const sizes = ['S', 'M', 'L', 'XL'];
-    const colors = ['Black ', 'White'];
-  
+    const colors = ['Black', 'White'];
 
     const handleCategoryDropdownClick = () => {
         setCategoryDropDownListIsOpen(!categoryDropDownListIsOpen);
     };
-  
+
     const handleCategoryClick = (category) => {
-    //   setSelectedCategory(category);
-      setProductCategory(category);
-      setCategoryDropDownListIsOpen(false);
+        setProductCategory(category);
+        setCategoryDropDownListIsOpen(false);
     };
-    
+
     const handleSubCategoryDropdownClick = () => {
         setSubCategoryDropDownListIsOpen(!subCategoryDropDownListIsOpen);
     };
-  
+
     const handleSubCategoryClick = (subCategory) => {
-    //   setSelectedSubCategory(subCategory);
-      setProductSubCategory(subCategory);
-      setSubCategoryDropDownListIsOpen(false);
+        setProductSubCategory(subCategory);
+        setSubCategoryDropDownListIsOpen(false);
     };
 
     const handleSizeDropdownClick = () => {
         setSizeDropDownListIsOpen(!sizeDropDownListIsOpen);
     };
-  
-    const handleSizeClick = (size) => {
-    //   setSelectedSize(size);
-      setProductSize(size);
-      setSizeDropDownListIsOpen(false);
-    };
 
     const handleColorDropdownClick = () => {
         setColorDropDownListIsOpen(!colorDropDownListIsOpen);
     };
-  
-    const handleColorClick = (color) => {
-    //   setSelectedColor(color);
-      setProductColor(color);
-      setColorDropDownListIsOpen(false);
-    };
 
-
-    const handleShowMultiDropdownSelection = (item) => {
-        return item.join(", "); // ✅ Correctly joins all selected sizes
+    const handleShowMultiDropdownSelection = (items) => {
+        const filtered = items.filter((item) => item !== 'Selected Size' && item !== 'Select Color');
+        return filtered.length > 0 ? filtered.join(', ') : items[0] || 'None';
     };
-    
 
     const handleEditProduct = async () => {
-        setLoading(true); // Enable loading state
+        // Client-side validation
+        const actualProductCategory = productCategory === 'Select Category' ? '' : productCategory.replace(/\s+/g, '');
+        const actualProductSubCategory = productSubCategory === 'Sub Category' ? '' : productSubCategory.replace(/\s+/g, '');
+        const actualProductSizeArr = productSize.filter((i) => i !== 'Selected Size');
+        const actualProductColorArr = productColor.filter((i) => i !== 'Select Color');
 
-        // // Create a FormData instance
-        const formData = new FormData();
- 
-        // Iterate over the productImages object using a standard for loop
-        // to handle both existing URLs and newly uploaded File objects.
-        const keys = Object.keys(productImages);
-        for (let i = 0; i < keys.length; i++) {
-            const key = keys[i];
-            let image = productImages[key]; 
-            if (typeof image === 'string') {
-                // It's a URL, convert to File object
-                const filename = image.split('/').pop(); // Extract filename from URL
-                const file = await urlToFile(image, filename, 'image/jpeg'); // Adjust mimeType as needed
-                formData.append('images', file);
-            } else if (image instanceof File) {
-                // It's a new file uploaded by the user
-                formData.append('images', image);
-            }
+        if (!productName) {
+            showAlert('Error', 'Product name is required.');
+            return;
+        }
+        if (!productDescription) {
+            showAlert('Error', 'Product description is required.');
+            return;
+        }
+        if (!actualProductCategory) {
+            showAlert('Error', 'Please select a valid category.');
+            return;
+        }
+        if (!actualProductSubCategory) {
+            showAlert('Error', 'Please select a valid sub-category.');
+            return;
+        }
+        if (actualProductSizeArr.length === 0) {
+            showAlert('Error', 'Please select at least one size.');
+            return;
+        }
+        if (actualProductColorArr.length === 0) {
+            showAlert('Error', 'Please select at least one color.');
+            return;
+        }
+        if (!productBrand) {
+            showAlert('Error', 'Product brand is required.');
+            return;
+        }
+        if (!productPrice) {
+            showAlert('Error', 'Product price is required.');
+            return;
+        }
+        if (!productOfferPrice) {
+            showAlert('Error', 'Product offer price is required.');
+            return;
+        }
+        if (!productQuantity) {
+            showAlert('Error', 'Product quantity is required.');
+            return;
+        }
+        if (!Object.values(productImages).some((img) => img)) {
+            showAlert('Error', 'At least one image is required.');
+            return;
         }
 
-        // Append the size array
-        productSize.forEach((size) => {
-            formData.append("productSize[]", size);
+        setLoading(true);
+
+        const formData = new FormData();
+        Object.values(productImages).forEach((image, index) => {
+            if (image instanceof File) {
+                formData.append('images', image);
+            } else if (typeof image === 'string' && image) {
+                formData.append(`existingImages[${index}]`, image);
+            }
         });
 
-        // Append colors array
-        productColor.forEach((color) => {
-            formData.append("productColor[]", color);
+        actualProductSizeArr.forEach((size) => {
+            formData.append('productSize[]', size);
         });
 
-        // Append all fields to FormData
-        formData.append("productName", productName);
-        formData.append("productDescription", productDescription);
-        formData.append("productCategory", productCategory);
-        formData.append("productSubCategory", productSubCategory);
-        formData.append("productBrand", productBrand);
-        formData.append("productPrice", productPrice);
-        formData.append("productOfferPrice", productOfferPrice);
-        formData.append("productQuantity", productQuantity);
-        // When appending an object to FormData, use JSON.stringify() to convert it into a JSON string. 
-        // This ensures the object is correctly transmitted and can be parsed on the server side. 
-        formData.append("productAddedTimer", JSON.stringify(productAddedTimer));
+        actualProductColorArr.forEach((color) => {
+            formData.append('productColor[]', color);
+        });
 
-    //     console.log(
-    // productImages, productName, productDescription, productCategory, productSubCategory, productSize, productColor, productBrand, productPrice, productOfferPrice, productQuantity, productAddedTimer
-    // ,addTimer);
-    // console.log('added timer is', productAddedTimer)
+        formData.append('productName', productName);
+        formData.append('productDescription', productDescription);
+        formData.append('productCategory', actualProductCategory);
+        formData.append('productSubCategory', actualProductSubCategory);
+        formData.append('productBrand', productBrand);
+        formData.append('productPrice', productPrice);
+        formData.append('productOfferPrice', productOfferPrice);
+        formData.append('productQuantity', productQuantity);
+        formData.append('productAddedTimer', JSON.stringify(productAddedTimer));
 
         try {
-            const response = await axios.post(`/admin/edit-product/${productId}`, formData, 
-                {
-                    headers: {
-                      Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+            const response = await axios.post(`/admin/edit-product/${productId}`, formData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'multipart/form-data',
                 },
             });
 
             if (response.status === 200) {
-                console.log("successfully updated product", response.data)
-                showAlert("success", response.data.message); 
-                
-            } 
+                showAlert('success', response.data.message);
+                // Reset form and navigate back
+                setProductName('');
+                setProductDescription('');
+                setProductCategory('Select Category');
+                setProductSubCategory('Sub Category');
+                setProductSize(['Selected Size']);
+                setProductColor(['Select Color']);
+                setProductBrand('');
+                setProductPrice('');
+                setProductOfferPrice('');
+                setProductQuantity('');
+                setProductAddedTimer({ hrs: 0, min: 0, sec: 0 });
+                setAddTimer(false);
+                setProductImages({ firstImage: '', secondImage: '', thirdImage: '', fourthImage: '' });
+                setFirstImagePreview(null);
+                setSecondImagePreview(null);
+                setThirdImagePreview(null);
+                setFourthImagePreview(null);
+                firstImageInputRef.current.value = null;
+                secondImageInputRef.current.value = null;
+                thirdImageInputRef.current.value = null;
+                fourthImageInputRef.current.value = null;
+                navigate('/admin/home-page');
+            }
         } catch (err) {
             if (err.response) {
-                const status = err.response.status;
-                const errMessage = err.response.data.error;
-
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
-                    showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handleEditProduct);
+                const { status, data } = err.response;
+                if ([400, 403, 404, 500].includes(status)) {
+                    showAlert(status, data.error || 'An error occurred.');
                 }
             } else {
-                showAlert("Error", "An Unknow Error Occured!")
+                showAlert('Error', 'An unknown error occurred!');
             }
+        } finally {
+            setLoading(false);
         }
     };
-
 
     useEffect(() => {
         const handleFetchProductById = async () => {
             try {
-                const response = await axios.get(`/admin/fetch-product-by-id/${productId}`,
-                {
+                const response = await axios.get(`/admin/fetch-product-by-id/${productId}`, {
                     headers: {
-                        Authorization: `Bearer ${accessToken}`, // Add token to Authorization header
+                        Authorization: `Bearer ${accessToken}`,
                     },
                 });
-                
-                if (response.status === 200) {
-                    showAlert("success", response.data.message);
 
+                if (response.status === 200) {
                     const {
-                        addedTimer,
-                        createdAt,
-                        productBrand,
-                        productCategory,
-                        productColor,
-                        productDescription,
                         productImageUrl,
                         productName,
-                        productOfferPrice,
-                        productPrice,
-                        productQuantity,
-                        productSize,
+                        productDescription,
+                        productCategory,
                         productSubCategory,
-                        timerExpiryDate,
-                        productAddedTimer
-                        
+                        productSize,
+                        productColor,
+                        productBrand,
+                        productPrice,
+                        productOfferPrice,
+                        productQuantity,
+                        productAddedTimer,
+                        addedTimer,
                     } = response.data;
-                    console.log('fetch for edit', response.data)
-                    console.log("type of timerExpiryDate, is", typeof timerExpiryDate, timerExpiryDate)
-                    // Images... 
-                    setFirstImagePreview(productImageUrl[0]);
-                    setSecondImagePreview(productImageUrl[1]);
-                    setThirdImagePreview(productImageUrl[2]);
-                    setFourthImagePreview(productImageUrl[3]);
-                
-                    console.log('type of color', typeof productColor);
-                    console.log('type of size', typeof productSize);
-                    console.log('added timer is', productAddedTimer)
 
                     setProductImages({
-                        firstImage: productImageUrl[0] || "",
-                        secondImage: productImageUrl[1] || "",
-                        thirdImage: productImageUrl[2] || "",
-                        fourthImage: productImageUrl[3] || ""
+                        firstImage: productImageUrl[0] || '',
+                        secondImage: productImageUrl[1] || '',
+                        thirdImage: productImageUrl[2] || '',
+                        fourthImage: productImageUrl[3] || '',
                     });
-
-                    setProductName(productName)
-                    setProductDescription(productDescription)
-                    setProductCategory(productCategory)
-                    setProductSubCategory(productSubCategory)
-                    setProductSize(Array.isArray(productSize) ? productSize : [productSize]);
-                    setProductPrice(productPrice)
-                    setProductBrand(productBrand)
-                    setProductOfferPrice(productOfferPrice)
-                    setProductQuantity(productQuantity)
-                    setProductColor(productColor);
-                    setProductAddedTimer(productAddedTimer); 
-                    setAddTimer(addedTimer)
+                    setFirstImagePreview(productImageUrl[0] || null);
+                    setSecondImagePreview(productImageUrl[1] || null);
+                    setThirdImagePreview(productImageUrl[2] || null);
+                    setFourthImagePreview(productImageUrl[3] || null);
+                    setProductName(productName || '');
+                    setProductDescription(productDescription || '');
+                    setProductCategory(productCategory || 'Select Category');
+                    setProductSubCategory(productSubCategory || 'Sub Category');
+                    setProductSize(Array.isArray(productSize) && productSize.length > 0 ? productSize : ['Selected Size']);
+                    setProductColor(Array.isArray(productColor) && productColor.length > 0 ? productColor : ['Select Color']);
+                    setProductBrand(productBrand || '');
+                    setProductPrice(productPrice?.toString() || '');
+                    setProductOfferPrice(productOfferPrice?.toString() || '');
+                    setProductQuantity(productQuantity?.toString() || '');
+                    setProductAddedTimer(productAddedTimer || { hrs: 0, min: 0, sec: 0 });
+                    setAddTimer(addedTimer || false);
                 }
-
             } catch (err) {
                 if (err.response) {
-                    const status = err.response.status;
-                    const errMessage = err.response.data.error;
-    
-                    if (status === 400 || status === 403 || status === 404 || status === 500) {
-                        showAlert(status, errMessage)
-                    } else if (status === 401) {
-                        refreshAccessToken(handleFetchProductById);
+                    const { status, data } = err.response;
+                    if ([400, 403, 404, 500].includes(status)) {
+                        showAlert(status, data.error || 'An error occurred.');
                     }
                 } else {
-                    showAlert("Error", "An Unknow Error Occured!")
+                    showAlert('Error', 'An unknown error occurred!');
                 }
-            } finally {
-                // setLoading(false);
             }
         };
 
         handleFetchProductById();
-    }, [productId]);
+    }, [productId, accessToken, showAlert]);
 
-
-    return(
+    return (
         <div className="edit-product-page-container">
             <h3 className="edit-product-page-head-h3">Edit Product</h3>
-            <p className="edit-product-page-sub-head">Creating new Product</p>
+            <p className="edit-product-page-sub-head">Updating Product Details</p>
             <div className="edit-product-images-container">
-                <div className="edit-product-image-div">
-                    {firstImagePreview && (
-                        <LiaTimesSolid
-                            className="edit-product-img-remove-image-icon"
-                            onClick={clearFirstImage}
-                        />
-                    )}
-                    {firstImagePreview ? (
-                        <img src={firstImagePreview} alt="Preview" 
-                            onClick={() => {
-                            const newTab = window.open(firstImagePreview, '_blank');
-                            newTab.focus();}}
-                        />
-                    ) : (
-                        <CiImageOn className="edit-product-image-icon" />
-                    )}
-                    <label htmlFor="file-input-1" className="custom-file-label">
-                        Pick Image
-                    </label>
-                    <input
-                        type="file"
-                        id="file-input-1"
-                        accept="image/*"
-                        onChange={handleFirstImageChange}
-                        className="edit-product-image-pick-input"
-                        ref={firstImageInputRef}
-                    />
-                    <p className="file-name-text">
-                        {firstImagePreview ? "Image Selected" : "No file chosen"}
-                    </p>
-                </div>
-                <div className="edit-product-image-div">
-                    {secondImagePreview && (
-                    <LiaTimesSolid
-                        className="edit-product-img-remove-image-icon"
-                        onClick={clearSecondImage}
-                    />
-                    )}
-                    {secondImagePreview ? (
-                    <img src={secondImagePreview} alt="Preview"
-                        onClick={() => {
-                            const newTab = window.open(secondImagePreview, '_blank');
-                            newTab.focus();
-                        }} 
-                    />
-                    ) : (
-                        <CiImageOn className="edit-product-image-icon" />
-                    )}
-                    <label htmlFor="file-input-2" className="custom-file-label">
-                        Pick Image
-                    </label>
-                    <input
-                        type="file"
-                        id="file-input-2"
-                        accept="image/*"
-                        onChange={handleSecondImageChange}
-                        className="edit-product-image-pick-input"
-                        ref={secondImageInputRef}
-                    />
-                    <p className="file-name-text">
-                        {secondImagePreview ? "Image Selected" : "No file chosen"}
-                    </p>
-                </div>
-                <div className="edit-product-image-div">
-                    {thirdImagePreview && (
-                        <LiaTimesSolid
-                            className="edit-product-img-remove-image-icon"
-                            onClick={clearThirdImage}
-                        />
-                    )}
-                    {thirdImagePreview ? (
-                        <img src={thirdImagePreview} alt="Preview" 
-                            onClick={() => {
-                                const newTab = window.open(thirdImagePreview, '_blank');
-                                newTab.focus();
-                            }}
-                        />
-                    ) : (
-                        <CiImageOn className="edit-product-image-icon" />
-                    )}
-                    <label htmlFor="file-input-3" className="custom-file-label">
-                        Pick Image
-                    </label>
-                    <input
-                        type="file"
-                        id="file-input-3"
-                        accept="image/*"
-                        onChange={handleThirdImageChange}
-                        className="edit-product-image-pick-input"
-                        ref={thirdImageInputRef}
-                    />
-                    <p className="file-name-text">
-                        {thirdImagePreview ? "Image Selected" : "No file chosen"}
-                    </p>
-                </div>
-                <div className="edit-product-image-div">
-                    {fourthImagePreview && (
-                        <LiaTimesSolid
-                            className="product-img-remove-image-icon"
-                            onClick={clearFourthImage}
-                        />
-                    )}
-                    {fourthImagePreview ? (
-                        <img src={fourthImagePreview} alt="Preview" 
-                            onClick={() => {
-                                const newTab = window.open(fourthImagePreview, '_blank');
-                                newTab.focus();
-                            }}
-                        />
+                {[
+                    { key: 'firstImage', preview: firstImagePreview, setPreview: setFirstImagePreview, ref: firstImageInputRef, id: 'file-input-1' },
+                    { key: 'secondImage', preview: secondImagePreview, setPreview: setSecondImagePreview, ref: secondImageInputRef, id: 'file-input-2' },
+                    { key: 'thirdImage', preview: thirdImagePreview, setPreview: setThirdImagePreview, ref: thirdImageInputRef, id: 'file-input-3' },
+                    { key: 'fourthImage', preview: fourthImagePreview, setPreview: setFourthImagePreview, ref: fourthImageInputRef, id: 'file-input-4' },
+                ].map(({ key, preview, setPreview, ref, id }) => (
+                    <div className="edit-product-image-div" key={key}>
+                        {preview && (
+                            <LiaTimesSolid
+                                className="edit-product-img-remove-image-icon"
+                                onClick={() => clearImage(key, setPreview, ref)}
+                            />
+                        )}
+                        {preview ? (
+                            <img
+                                src={preview}
+                                alt="Preview"
+                                onClick={() => {
+                                    const newTab = window.open(preview, '_blank');
+                                    newTab.focus();
+                                }}
+                            />
                         ) : (
-                        <CiImageOn className="edit-product-image-icon" />
-                    )}
-                    <label htmlFor="file-input-4" className="custom-file-label">
-                        Pick Image
-                    </label>
-                    <input
-                        type="file"
-                        id="file-input-4"
-                        accept="image/*"
-                        onChange={handleFourthImageChange}
-                        className="edit-product-image-pick-input"
-                        ref={fourthImageInputRef}
-                    />
-                    <p className="file-name-text">
-                        {fourthImagePreview ? "Image Selected" : "No file chosen"}
-                    </p>
-                </div>
+                            <CiImageOn className="edit-product-image-icon" />
+                        )}
+                        <label htmlFor={id} className="custom-file-label">
+                            Pick Image
+                        </label>
+                        <input
+                            type="file"
+                            id={id}
+                            accept="image/*"
+                            onChange={(e) => handleImageChange(key, e, setPreview)}
+                            className="edit-product-image-pick-input"
+                            ref={ref}
+                            aria-label={`Upload ${key} image`}
+                        />
+                        <p className="file-name-text">{preview ? 'Image Selected' : 'No file chosen'}</p>
+                    </div>
+                ))}
             </div>
 
             <div className="edit-product-input-section">
                 <div className="edit-product-input-container">
                     <label>Product Name * </label>
                     <div>
-                        <input type="text" 
+                        <input
+                            type="text"
                             value={productName}
                             placeholder="Enter product name"
                             onChange={(e) => {
@@ -511,13 +356,14 @@ function EditProductPage () {
                                     setProductName(e.target.value);
                                 }
                             }}
+                            aria-label="Product Name"
                         />
                     </div>
                 </div>
                 <div className="edit-product-input-container">
                     <label>Product Details * </label>
                     <div>
-                        <textarea type="text" 
+                        <textarea
                             value={productDescription}
                             placeholder="Product description"
                             onChange={(e) => {
@@ -525,6 +371,7 @@ function EditProductPage () {
                                     setProductDescription(e.target.value);
                                 }
                             }}
+                            aria-label="Product Description"
                         />
                     </div>
                 </div>
@@ -533,14 +380,9 @@ function EditProductPage () {
                         <p>Category</p>
                         <div className="edit-product-select-drop-down" onClick={handleCategoryDropdownClick}>
                             <p>{productCategory}</p>
-                            {
-                                categoryDropDownListIsOpen ? 
-                                    <TiArrowSortedUp />
-                                : 
-                                    <TiArrowSortedDown />
-                            }
+                            {categoryDropDownListIsOpen ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
                         </div>
-                        {categoryDropDownListIsOpen === true ? (
+                        {categoryDropDownListIsOpen && (
                             <ul className="dropdown-menu">
                                 {categories.map((category) => (
                                     <li key={category} onClick={() => handleCategoryClick(category)}>
@@ -548,20 +390,15 @@ function EditProductPage () {
                                     </li>
                                 ))}
                             </ul>
-                        ) : <></>} 
+                        )}
                     </div>
                     <div className="edit-product-sub-specs">
                         <p>Sub - Category</p>
                         <div className="edit-product-select-drop-down" onClick={handleSubCategoryDropdownClick}>
                             <p>{productSubCategory}</p>
-                            {
-                                subCategoryDropDownListIsOpen ? 
-                                    <TiArrowSortedUp />
-                                : 
-                                    <TiArrowSortedDown />
-                            }
+                            {subCategoryDropDownListIsOpen ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
                         </div>
-                        {subCategoryDropDownListIsOpen === true ? (
+                        {subCategoryDropDownListIsOpen && (
                             <ul className="dropdown-menu">
                                 {subCategories.map((subCategory) => (
                                     <li key={subCategory} onClick={() => handleSubCategoryClick(subCategory)}>
@@ -569,59 +406,60 @@ function EditProductPage () {
                                     </li>
                                 ))}
                             </ul>
-                        ) : <></>}
+                        )}
                     </div>
                     <div className="edit-product-sub-specs">
                         <p>Size</p>
                         <div className="edit-product-select-drop-down" onClick={handleSizeDropdownClick}>
-                            <p>{productSize.length > 1 ? handleShowMultiDropdownSelection(productSize) : productSize[0]}</p>
-                            {
-                               sizeDropDownListIsOpen ? 
-                                    <TiArrowSortedUp />
-                                : 
-                                    <TiArrowSortedDown />
-                            }
+                            <p>{handleShowMultiDropdownSelection(productSize)}</p>
+                            {sizeDropDownListIsOpen ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
                         </div>
-                        {sizeDropDownListIsOpen === true ? (
+                        {sizeDropDownListIsOpen && (
                             <ul className="dropdown-menu">
                                 {sizes.map((size) => (
-                                    <li key={size} /*onClick={() => handleSizeClick(size)}*/>
-                                        <input type="checkbox" 
+                                    <li key={size}>
+                                        <input
+                                            type="checkbox"
                                             className="edit-product-timer-checkbox"
-                                            value={size} 
-                                            checked={productSize.includes(size)} 
+                                            value={size}
+                                            checked={productSize.includes(size)}
                                             onChange={(e) => {
                                                 const value = e.target.value;
                                                 setProductSize((prevSizes) =>
                                                     prevSizes.includes(value)
-                                                        ? prevSizes.filter((s) => s !== value) // Remove size
-                                                        : [...prevSizes, value] // Add size
+                                                        ? prevSizes.filter((s) => s !== value)
+                                                        : [...prevSizes, value]
                                                 );
                                             }}
-                                                 
-                                        /> {size}
+                                            aria-label={`Select size ${size}`}
+                                        />
+                                        {size}
                                     </li>
                                 ))}
                             </ul>
-                        ) : <></>}
+                        )}
                     </div>
                     <div className="edit-product-sub-specs">
                         <p>Brand</p>
                         <div className="edit-product-sub-input-container">
-                            <input type="text" 
-                                value={productBrand}
+                            <input
+                                type="text"
                                 className="edit-product-sub-input"
+                                value={productBrand}
                                 onChange={(e) => setProductBrand(e.target.value)}
                                 required
+                                aria-label="Product Brand"
                             />
                         </div>
                     </div>
                     <div className="edit-product-sub-specs">
                         <p>Price</p>
                         <div className="edit-product-sub-input-container">
-                            <input type="number" 
+                            <input
+                                type="number"
+                                className="edit-product-sub-input"
                                 value={productPrice}
-                                className="edit-product-sub-input" 
+                                min="0"
                                 onKeyDown={(e) => {
                                     if (e.key === '-') {
                                         e.preventDefault();
@@ -630,22 +468,24 @@ function EditProductPage () {
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     if (Number(value) < 0) {
-                                        e.target.value = "";
+                                        e.target.value = '';
                                         return;
                                     }
-                                    setProductPrice(Number(value));
+                                    setProductPrice(value);
                                 }}
-                                min="0"
                                 required
+                                aria-label="Product Price"
                             />
                         </div>
                     </div>
                     <div className="edit-product-sub-specs">
                         <p>Offer price</p>
                         <div className="edit-product-sub-input-container">
-                            <input type="text" 
-                                value={productOfferPrice}
+                            <input
+                                type="number"
                                 className="edit-product-sub-input"
+                                value={productOfferPrice}
+                                min="0"
                                 onKeyDown={(e) => {
                                     if (e.key === '-') {
                                         e.preventDefault();
@@ -654,22 +494,24 @@ function EditProductPage () {
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     if (Number(value) < 0) {
-                                        e.target.value = "";
+                                        e.target.value = '';
                                         return;
                                     }
-                                    setProductOfferPrice(Number(value));
+                                    setProductOfferPrice(value);
                                 }}
-                                min="0"
                                 required
+                                aria-label="Product Offer Price"
                             />
                         </div>
                     </div>
                     <div className="edit-product-sub-specs">
                         <p>Quantity</p>
                         <div className="edit-product-sub-input-container">
-                            <input type="text" 
-                                value={productQuantity}
+                            <input
+                                type="number"
                                 className="edit-product-sub-input"
+                                value={productQuantity}
+                                min="0"
                                 onKeyDown={(e) => {
                                     if (e.key === '-') {
                                         e.preventDefault();
@@ -678,159 +520,114 @@ function EditProductPage () {
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     if (Number(value) < 0) {
-                                        e.target.value = "";
+                                        e.target.value = '';
                                         return;
                                     }
-                                    setProductQuantity(Number(value));
+                                    setProductQuantity(value);
                                 }}
-                                min="0"
                                 required
+                                aria-label="Product Quantity"
                             />
                         </div>
                     </div>
                     <div className="edit-product-sub-specs">
                         <p>Color</p>
                         <div className="edit-product-select-drop-down" onClick={handleColorDropdownClick}>
-                            <p>{productColor.length > 1 ? handleShowMultiDropdownSelection(productColor) : productColor[0]}</p>
-                            {
-                                colorDropDownListIsOpen ? 
-                                    <TiArrowSortedUp />
-                                : 
-                                    <TiArrowSortedDown />
-                                    
-                            }
+                            <p>{handleShowMultiDropdownSelection(productColor)}</p>
+                            {colorDropDownListIsOpen ? <TiArrowSortedUp /> : <TiArrowSortedDown />}
                         </div>
-                        {colorDropDownListIsOpen === true ? (
+                        {colorDropDownListIsOpen && (
                             <ul className="dropdown-menu">
                                 {colors.map((color) => (
-                                    <li key={color} /*onClick={() => handleColorClick(color)}*/>
-                                        <input type="checkbox" 
+                                    <li key={color}>
+                                        <input
+                                            type="checkbox"
                                             className="edit-product-timer-checkbox"
-                                            value={color} 
-                                            checked={productColor.includes(color)} 
+                                            value={color}
+                                            checked={productColor.includes(color)}
                                             onChange={(e) => {
                                                 const value = e.target.value;
                                                 setProductColor((prevColors) =>
                                                     prevColors.includes(value)
-                                                        ? prevColors.filter((c) => c !== value) // Remove color
-                                                        : [...prevColors, value] // Add color
+                                                        ? prevColors.filter((c) => c !== value)
+                                                        : [...prevColors, value]
                                                 );
                                             }}
-                                            /> <span>{color}</span>
+                                            aria-label={`Select color ${color}`}
+                                        />
+                                        <span>{color}</span>
                                     </li>
                                 ))}
                             </ul>
-                        ) : <></>}
+                        )}
                     </div>
                 </div>
                 <div className="edit-product-timer-container">
-                    <p>Timer 
-                        <input type="checkbox" 
+                    <p>
+                        Timer
+                        <input
+                            type="checkbox"
                             checked={addTimer}
                             onChange={() => {
-                                const newAddTimer = !addTimer; // Toggle the addTimer state
-                                setAddTimer(newAddTimer); 
-                    
-                                // If the checkbox is unchecked, reset the timer values to 0
+                                const newAddTimer = !addTimer;
+                                setAddTimer(newAddTimer);
                                 if (!newAddTimer) {
                                     setProductAddedTimer({ hrs: 0, min: 0, sec: 0 });
                                 }
-                            }} 
+                            }}
                             className="edit-product-timer-checkbox"
+                            aria-label="Enable Timer"
                         />
                     </p>
                     <div className="all-time-container">
-                        <div>
-                            <p>
-                                <span>
-                                    <input type="number" 
-                                    placeholder="12"
-                                    disabled={addTimer === false ? true : false}
-                                    value={productAddedTimer.hrs}
-                                    onChange={(e) => {
-                                        const inputValue = e.target.value;
-                                        if (inputValue.length <= 2 || inputValue === '') {
-                                          const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
-                                          if (!isNaN(numericValue) && numericValue <= 99) {
-                                            setProductAddedTimer({...productAddedTimer, hrs: numericValue});
-                                          }
-                                        }
-                                      }}
-                                      style={{ background: addTimer === false ? 'lightgrey' : '#F5F3F5'}}
-                                    />
-                                </span> Hrs 
-                            </p>
-                        </div>
-                        <div>
-                            <p>
-                                <span>
-                                    <input type="number" 
-                                    placeholder="00"
-                                    min={0}
-                                    max={59}
-                                    disabled={addTimer === false ? true : false}
-                                    value={productAddedTimer.min}
-                                    onChange={(e) => {
-                                      const inputValue = e.target.value;
-                                      if (inputValue.length <= 2 || inputValue === '') {
-                                        const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
-                                        if (!isNaN(numericValue) && numericValue <= 59) {
-                                          setProductAddedTimer({...productAddedTimer, min: numericValue});
-                                        }
-                                      }
-                                    }}
-                                    style={{ background: addTimer === false ? 'lightgrey' : '#F5F3F5'}}
-                                    />
-                                </span> Mins 
-                            </p>
-                        </div>
-                        <div>
-                            <p>
-                                <span>
-                                    <input type="number" 
-                                    placeholder="00"
-                                    min={0}
-                                    max={59}
-                                    disabled={addTimer === false ? true : false}
-                                    value={productAddedTimer.sec}
-                                    onChange={(e) => {
-                                      const inputValue = e.target.value;
-                                      if (inputValue.length <= 2 || inputValue === '') {
-                                        const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
-                                        if (!isNaN(numericValue) && numericValue <= 59) {
-                                          setProductAddedTimer({...productAddedTimer, sec: numericValue});
-                                        }
-                                      }
-                                    }}
-                                    style={{ background: addTimer === false ? 'lightgrey' : '#F5F3F5'}}
-                                    />
-                                </span> Secs
-                            </p>
-                        </div>
-
+                        {['hrs', 'min', 'sec'].map((unit, index) => (
+                            <div key={unit}>
+                                <p>
+                                    <span>
+                                        <input
+                                            type="number"
+                                            placeholder={index === 0 ? '12' : '00'}
+                                            min="0"
+                                            max={index === 0 ? '99' : '59'}
+                                            disabled={!addTimer}
+                                            value={productAddedTimer[unit]}
+                                            onChange={(e) => {
+                                                const inputValue = e.target.value;
+                                                if (inputValue.length <= 2 || inputValue === '') {
+                                                    const numericValue = inputValue === '' ? 0 : parseInt(inputValue);
+                                                    if (!isNaN(numericValue) && numericValue <= (index === 0 ? 99 : 59)) {
+                                                        setProductAddedTimer({ ...productAddedTimer, [unit]: numericValue });
+                                                    }
+                                                }
+                                            }}
+                                            style={{ background: !addTimer ? 'lightgrey' : '#F5F3F5' }}
+                                            aria-label={`Timer ${unit}`}
+                                        />
+                                    </span>
+                                    {unit.charAt(0).toUpperCase() + unit.slice(1)}
+                                </p>
+                            </div>
+                        ))}
                     </div>
-                </div> 
+                </div>
                 <div className="edit-product-button-container">
-                   <button 
-                        className="edit-product-save-button"
+                    <button
+                        className={`edit-product-save-button ${loading ? 'loading' : ''}`}
                         onClick={handleEditProduct}
-                        >
-                            Submit changes
-                        </button>
-                   <button 
-                       className="edit-product-cancel-button"
-                       >
-                            Cancel
+                        disabled={loading}
+                    >
+                        {loading ? <div className="edit-product-spinner"></div> : 'Submit Changes'}
+                    </button>
+                    <button
+                        className="edit-product-cancel-button"
+                        onClick={() => navigate('/admin/home-page')}
+                    >
+                        Cancel
                     </button>
                 </div>
-
             </div>
-
-
         </div>
-    )
+    );
 }
-
-
 
 export default EditProductPage;

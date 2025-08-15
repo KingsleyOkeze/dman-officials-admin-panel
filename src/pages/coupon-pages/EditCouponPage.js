@@ -4,19 +4,18 @@ import { SlCalender } from "react-icons/sl";
 import { TiArrowSortedDown } from "react-icons/ti";
 import { TiArrowSortedUp } from "react-icons/ti";
 import axios from "axios";
-import Alert from "../../components/Alert";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import { AlertContext } from "../../contexts/AlertContext";
 
 function EditCouponPage () {
-    const { accessToken, refreshAccessToken } = useContext(AuthContext);
+    const { accessToken } = useContext(AuthContext);
     const { couponId } = useParams();
-    const { showAlert, customAlert } = useContext(AlertContext);
-
+    const { showAlert } = useContext(AlertContext);
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
     const [couponName, setCouponName] = useState('');
     const [couponCode, setCouponCode] = useState('');
-    // const [product, setProduct] = useState('');
     const [couponDiscountAmount, setCouponDiscountAmount] = useState('');
     const [usageLimit, setUsageLimit] = useState(0)
     const [expirationDate, setExpirationDate] = useState('');
@@ -83,6 +82,19 @@ function EditCouponPage () {
 
     const editCouponFunction = async () => {
         console.log(couponName,couponCode, couponDiscountAmount, expirationDate, minimumPurchaseAmount, couponDiscountType, couponStatus, couponCategory, couponSubCategory)
+        setLoading(true); // Enable loading state
+        
+        if (!couponName.trim()) return "Coupon Name is required";
+        if (!couponCode.trim()) return "Coupon Code is required";
+        if (couponDiscountType === "Select Discount") return "Please select a discount type";
+        if (!couponDiscountAmount || parseFloat(couponDiscountAmount) <= 0) return "Discount amount must be greater than 0";
+        if (couponStatus === "Select status") return "Please select a status";
+        if (couponCategory === "Select category") return "Please select a category";
+        if (couponSubCategory === "Select sub category") return "Please select a sub-category";
+        if (!expirationDate) return "Expiration date is required";
+        if (minimumPurchaseAmount < 0) return "Minimum purchase amount cannot be negative";
+        if (usageLimit < 0) return "Usage limit cannot be negative";
+
         try {
             const response = await axios.post("/admin/edit-coupon", {
                 couponId,
@@ -105,6 +117,7 @@ function EditCouponPage () {
     
             if (response.data) {
                 showAlert("success", response.data.message);  
+                navigate("/admin/coupon-code-page");
             } 
         } catch (err) {
             console.error(err);
@@ -113,25 +126,22 @@ function EditCouponPage () {
                 const status = err.response.status;
                 const errMessage = err.response.data.error;
 
-                if (status === 400 || status === 403 || status === 404 || status === 500) {
+                if (
+                    status === 400 || 
+                    status === 403 || 
+                    status === 404 || 
+                    status === 500
+                ) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(editCouponFunction);
-                }
+                } 
+                // 401 errors handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
+        } finally {
+            setLoading(false); // Disable loading state
         }
     };
-    
-
-    useEffect(() => {
-        // setTimeout(() => {
-        //     if (customAlert) {
-        //         setCustomAlert(false);
-        //     }
-        // }, 5000);
-    }, [customAlert]);
 
 
     useEffect(() => {
@@ -180,11 +190,15 @@ function EditCouponPage () {
                     const status = err.response.status;
                     const errMessage = err.response.data.error;
     
-                    if (status === 400 || status === 403 || status === 404 || status === 500) {
+                    if (
+                        status === 400 || 
+                        status === 403 || 
+                        status === 404 || 
+                        status === 500
+                    ) {
                         showAlert(status, errMessage)
-                    } else if (status === 401) {
-                        refreshAccessToken(handleFetchProductById);
-                    }
+                    } 
+                    // 401 errors handled by AuthContext interceptor
                 } else {
                     showAlert("Error", "An Unknow Error Occured!")
                 }
@@ -394,14 +408,21 @@ function EditCouponPage () {
                     </div>
                 </div>
             </div>
-            <div className="edit-coupon-submit-button-container">
+            <div className="edit-coupon-button-container">
                 <button 
                     className="edit-coupon-submit-button"
-                    onClick={editCouponFunction}>
-                        Submit
-                    </button>
+                    onClick={editCouponFunction}
+                    disabled={loading} // Disable the button while loading
+                >
+                    {loading ? (
+                       <div className="edit-coupon-spinner"></div> // Show spinner when loading
+                    ) : (
+                        <span>Submit</span> // Show "Submit" text when not loading
+                    )}
+                </button>
                 <button 
                     className="edit-coupon-cancel-button"
+                    onClick={() => navigate("/admin/coupon-code-page")}
                     >
                         Cancel
                 </button>

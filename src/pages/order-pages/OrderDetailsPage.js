@@ -6,12 +6,14 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import { AlertContext } from "../../contexts/AlertContext";
-import Alert from "../../components/Alert";
+import { formatDate } from "../../utils/dateFormatter"; 
+
 
 function OrderDetailsPage () {
-    const { accessToken, refreshAccessToken } = useContext(AuthContext);
-    const { showAlert, customAlert } = useContext(AlertContext);
+    const { accessToken } = useContext(AuthContext);
+    const { showAlert } = useContext(AlertContext);
     const { orderId } = useParams(); 
+    const [loading, setLoading] = useState(false);
     const [orderDetails, setOrderDetails] = useState({});
 
     const [showOrderStatusDropDown, setShowOrderStatusDropDown] = useState(false);
@@ -21,7 +23,10 @@ function OrderDetailsPage () {
 
 
     const orderStatusArr = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
-    const trackingArr = ['url', 'url1'];
+
+    const trackingUrl = orderId 
+    ? `${process.env.REACT_APP_DMAN_ECOMMERCE_SITE_URL}/account/order-tracking/${orderId}`
+    : '';
 
     const handleOrderStatusDropdownClick = () => {
         setShowOrderStatusDropDown(!showOrderStatusDropDown);
@@ -68,9 +73,8 @@ function OrderDetailsPage () {
 
                 if (status === 400 || status === 403 || status === 404 || status === 500) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handleFetchOrderDetails);
-                }
+                } 
+                // 401 errors are handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
@@ -83,6 +87,7 @@ function OrderDetailsPage () {
     }, []);
 
     const handleUpdateOrderStatus = async () => {
+        setLoading(true); // Enable loading state
         try {
             const response = await axios.post("/admin/update-order-status", {
                 orderId,
@@ -108,12 +113,13 @@ function OrderDetailsPage () {
 
                 if (status === 400 || status === 403 || status === 404 || status === 500) {
                     showAlert(status, errMessage)
-                } else if (status === 401) {
-                    refreshAccessToken(handleUpdateOrderStatus);
-                }
+                } 
+                // 401 errors are handled by AuthContext interceptor
             } else {
                 showAlert("Error", "An Unknow Error Occured!")
             }
+        } finally {
+            setLoading(false); // Disable loading state
         }
     }
     
@@ -146,7 +152,10 @@ function OrderDetailsPage () {
                     </p>
                     <p>
                         <span className="order-details-body-top-header-title">Date:</span> 
-                        <span>{orderDetails.createdAt}</span>
+                        <span>
+                            {/* Use the new formatDate function here */}
+                            {formatDate(orderDetails.createdAt)}
+                        </span>
                     </p>
                 </div>
                 <div className="order-details-sub-container">
@@ -261,33 +270,9 @@ function OrderDetailsPage () {
                     </div>
                 </div>
                 <div className="order-details-bottom-tracking-container">
-                    <p>TRACKING URL:</p>
-                    <div className="order-details-bottom-tracking-filter-drop-down-container">
-                        <div className="order-details-bottom-tracking-drop-down-filter-box" onClick={handleTrackingDropdownClick}>
-                            <small 
-                                className="order-details-bottom-tracking-drop-down-filter-small-border-text"
-                            >
-                                filter order by status
-                            </small>
-                       
-                            <p>{trackingPicked}</p>
-                            
-                            {
-                                showTrackingDropDown ? 
-                                   <TiArrowSortedUp className="order-details-bottom-tracking-drop-down-icon"/>
-                                : 
-                                <TiArrowSortedDown className="order-details-bottom-tracking-drop-down-icon"/>
-                            }
-                        </div>
-                        {showTrackingDropDown === true ? (
-                            <ul className="order-details-bottom-tracking-dropdown-menu">
-                                {trackingArr.map((item) => (
-                                    <li key={item} onClick={() => handleTrackingClick(item)}>
-                                        {item}
-                                    </li>
-                                ))}
-                            </ul>
-                        ) : <></>} 
+                    <p>CUSTOMER TRACKING URL:</p>
+                    <div className="order-details-bottom-tracking-url-container">
+                        <a href={trackingUrl} target="_blank" rel="noopener noreferrer">{trackingUrl}</a>
                     </div>
                 </div>
                 <div className="order-details-button-container">
@@ -295,8 +280,13 @@ function OrderDetailsPage () {
                     <button 
                         className="order-details-save-button"
                         onClick={handleUpdateOrderStatus}
+                        disabled={loading} // Disable the button while loading
                     >
-                        Save changes
+                        {loading ? (
+                            <div className="order-details-save-button-spinner"></div> // Show spinner when loading
+                        ) : (
+                            <span>Save changes</span> 
+                        )}
                     </button>
                 </div>
             </div>

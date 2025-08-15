@@ -161,9 +161,13 @@
 }
 
 
-.edit-coupon-submit-button-container {
-
+.edit-coupon-button-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 25px;
 }
+
 .edit-coupon-submit-button {
     background: #000000;
     border-radius: 12px;
@@ -176,6 +180,8 @@
     border: none;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    display: grid;
+    place-items: center;
 }
 
 .edit-coupon-submit-button:hover {
@@ -198,8 +204,6 @@
     color: #000000;
     font-size: 16px;
     font-weight: 400;
-    margin-top: 10px;
-    margin-bottom: 25px;
     border: 1px solid #000000;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s ease, border-color 0.3s ease, box-shadow 0.3s ease;
@@ -218,6 +222,22 @@
 }
 
 
+.edit-coupon-spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3); /* Light gray border */
+    border-top: 3px solid #FFFFFF; /* White border for the spinner */
+    border-radius: 50%; /* Circular shape */
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite; /* Spin animation */
+    width: 16px;   /* match text height closely */
+    height: 16px;  /* match text height closely */
+}
+
+.edit-coupon-submit-button span {
+    height: 20px;
+    display: flex;
+    align-items: center;
+}
 
 
 
