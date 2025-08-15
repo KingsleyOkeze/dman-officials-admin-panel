@@ -283,7 +283,7 @@ function OrderDetailsPage () {
                         disabled={loading} // Disable the button while loading
                     >
                         {loading ? (
-                            <div className="order-details-spinner"></div> // Show spinner when loading
+                            <div className="order-details-save-button-spinner"></div> // Show spinner when loading
                         ) : (
                             <span>Save changes</span> 
                         )}

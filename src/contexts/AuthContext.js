@@ -114,18 +114,21 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        if (accessToken) {
+        const rehydrateAuth = async () => {
             try {
-                const decoded = jwtDecode(accessToken);
+                const res = await axios.post('/admin/refresh-token', {}, { withCredentials: true });
+                const decoded = jwtDecode(res.data.accessToken);
+                setAccessToken(res.data.accessToken);
                 setAdminId(decoded.userId);
             } catch (err) {
-                console.error("Invalid access token:", err);
+                console.log("No valid session, user must login");
+                setAccessToken(null);
                 setAdminId(null);
             }
-        } else {
-            setAdminId(null);
-        }
-    }, [accessToken]);
+        };
+
+        rehydrateAuth();
+    }, []);
 
     return (
         <AuthContext.Provider

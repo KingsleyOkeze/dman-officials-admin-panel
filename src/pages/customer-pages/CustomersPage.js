@@ -192,7 +192,7 @@ function CustomersPage () {
                                     <td style={{ display: 'flex', alignItems: 'center' }}>
                                         <span 
                                         className="customers-page-table-index">{index + 1}</span> 
-                                        {customer.customerFirstName} {customer.customerLastName}
+                                        {customer.firstName} {customer.lastName}
                                     </td>
                                     <td className="customers-page-phone-and-email-container">
                                         <div>{customer.phoneNumber}</div>

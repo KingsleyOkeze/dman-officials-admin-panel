@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import "../../styles/pages-styles/order-pages-styles/OrdersPage.css"
 import { TfiReload } from "react-icons/tfi";
 import { TiArrowSortedDown } from "react-icons/ti";
-import { FiEdit } from "react-icons/fi";
+import { FiEye } from "react-icons/fi";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -201,7 +201,7 @@ function OrdersPage () {
                             <th>Payment</th>
                             <th>Status</th>
                             <th>Date</th>
-                            <th>Edit</th>
+                            <th>View</th>
                             <th>Delete</th>
                         </tr>
                     </thead>
@@ -209,8 +209,9 @@ function OrdersPage () {
                         {orders && orders?.length > 0 ? (
                             orders.map((order, index) => (
                                 <tr>
-                                    <td style={{ display: 'flex', alignItems: 'center' }}
-                                        onClick={() => navigate(`/admin/order-details-page/${order._id}`)}>
+                                    <td 
+                                        style={{ display: 'flex', alignItems: 'center' }}
+                                    >
                                         <span 
                                             style={{
                                                 background: color[Math.floor(Math.random() * color.length)]
@@ -225,7 +226,11 @@ function OrdersPage () {
                                     <td>{order.paymentStatus}</td>
                                     <td>{order.orderStatus}</td>
                                     <td>{order.createdAt}</td>
-                                    <td><FiEdit className="order-edit-icon"/></td>
+                                    <td
+                                        onClick={() => navigate(`/admin/order-details-page/${order._id}`)}
+                                    >
+                                        <FiEye className="order-view-icon"/>
+                                    </td>
                                     <td>
                                         <FaRegTrashCan 
                                             className="order-delete-icon"
