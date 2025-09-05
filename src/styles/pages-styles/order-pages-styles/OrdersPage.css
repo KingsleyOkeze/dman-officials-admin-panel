@@ -145,6 +145,7 @@
     white-space: nowrap;
     text-align: left;
     padding: 15px; 
+    text-align: center;
 }
 
 .orders-page-table-body td {
@@ -154,6 +155,7 @@
     overflow: hidden; /* Prevent overflow */
     text-overflow: ellipsis; /* Add ellipsis for overflowing text */
     vertical-align: middle;
+    text-align: center;
 }
 
 

@@ -3,13 +3,14 @@ import "../../styles/pages-styles/order-pages-styles/OrderDetailsPage.css"
 import { TiArrowSortedDown } from "react-icons/ti";
 import { TiArrowSortedUp } from "react-icons/ti";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import { AlertContext } from "../../contexts/AlertContext";
 import { formatDate } from "../../utils/dateFormatter"; 
 
 
 function OrderDetailsPage () {
+    const navigate = useNavigate();
     const { accessToken } = useContext(AuthContext);
     const { showAlert } = useContext(AlertContext);
     const { orderId } = useParams(); 
@@ -276,7 +277,12 @@ function OrderDetailsPage () {
                     </div>
                 </div>
                 <div className="order-details-button-container">
-                    <button className="order-details-cancel-button">Cancel</button>
+                    <button 
+                        className="order-details-cancel-button"
+                        onClick={() => navigate(-1)}
+                    >
+                        Cancel
+                    </button>
                     <button 
                         className="order-details-save-button"
                         onClick={handleUpdateOrderStatus}

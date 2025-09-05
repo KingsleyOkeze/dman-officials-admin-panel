@@ -11,7 +11,7 @@ import { ModalContext } from "../../contexts/ModalContext";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { AuthContext } from "../../contexts/AuthContext";
 import { AlertContext } from "../../contexts/AlertContext";
-
+import { formatDate } from "../../utils/dateFormatter";
 
 function OrdersPage () {
     const { accessToken } = useContext(AuthContext);
@@ -225,7 +225,7 @@ function OrdersPage () {
                                     <td>{order.orderTotalAmount}</td>
                                     <td>{order.paymentStatus}</td>
                                     <td>{order.orderStatus}</td>
-                                    <td>{order.createdAt}</td>
+                                    <td>{formatDate(order.createdAt)}</td>
                                     <td
                                         onClick={() => navigate(`/admin/order-details-page/${order._id}`)}
                                     >
