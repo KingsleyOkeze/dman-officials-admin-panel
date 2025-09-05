@@ -166,6 +166,7 @@
     white-space: nowrap;
     text-align: left;
     padding: 15px; 
+    text-align: center;
 }
 
 
@@ -181,6 +182,7 @@
     text-overflow: ellipsis; /* Add ellipsis for overflowing text */
     vertical-align: middle;
     line-height: 24px;
+    text-align: center;
 }
 
 

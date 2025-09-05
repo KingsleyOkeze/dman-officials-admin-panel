@@ -168,6 +168,9 @@
     border: 1px solid #808080;
 }
 
+.edit-product-select-drop-down p {
+    font-size: 14px;
+}
 
 /* Doing some drop down  */
 
