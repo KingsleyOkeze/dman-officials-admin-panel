@@ -190,7 +190,7 @@ function SignUpPage() {
             {message && <p className="message">{message}</p>}
             {error && <p className="error">{error}</p>}
             <p className="signup-page-bottom-sign-in-instruction-text">
-                Already have an account? <Link to="/admin/login">Sign in</Link>
+                Already have an account? <Link to="/admin/login" style={{ color: '#303285ff' }}>Sign in</Link>
             </p>
         </div>
     );

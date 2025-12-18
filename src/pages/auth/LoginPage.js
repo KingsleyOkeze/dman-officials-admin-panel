@@ -66,23 +66,21 @@ function LoginPage () {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-                <button type="submit" disabled={loading}>
-                    {
-                        loading ? (
-                            <span className="spinner"></span>
-                        ) 
-                        : 
-                        <span>Login</span>
-                    }
+                <button type="submit" disabled={loading} className="login-button">
+                    {loading ? (
+                        <span className="spinner"></span>
+                    ) : (
+                        "Login"
+                    )}
                 </button>
-                <Link to="/admin/forget-password">Forgot password</Link>
+                <Link to="/admin/forget-password" style={{ color: '#2980b9' }}>Forgot password</Link>
             </form>
             {message && <p className="message">{message}</p>}
             {error && <p className="error">{error}</p>}
             <p 
                 className="login-page-bottom-sign-up-instruction-text"
             >
-                Don't have an account? <Link to="/admin/sign-up">Sign up</Link>
+                Don't have an account? <Link to="/admin/sign-up" style={{ color: '#303285ff' }}>Sign up</Link>
             </p>
         </div>
     );

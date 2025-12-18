@@ -27,7 +27,6 @@ import Alert from './components/Alert';
 function App() {
 
     axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
-    // console.log('your server url', process.env.REACT_APP_BASE_URL);
 
     return (
         <Router>
