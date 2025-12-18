@@ -1,4 +1,3 @@
-/* General Layout */
 .login-page {
     display: flex;
     flex-direction: column;
@@ -56,9 +55,7 @@
 
 /* Button and Spinner */
 .login-page button {
-    display: grid;
-    place-items: center;
-    position: relative;
+    position: relative; 
     width: 100%;
     height: 50px;
     background-color: #3498db;
@@ -69,6 +66,7 @@
     cursor: pointer;
     transition: background-color 0.3s;
     margin-bottom: 10px;
+    padding: 0; 
 }
 
 .login-page button:hover {
@@ -80,33 +78,18 @@
     cursor: not-allowed;
 }
 
-/* Button and Spinner */
-.login-page button {
-    position: relative; /* Add this */
-    width: 100%;
-    height: 50px;
-    background-color: #3498db;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-bottom: 10px;
-    padding: 0; /* Add this to remove any default padding */
-}
 
 .login-page button span {
     display: inline-block;
-    line-height: 50px; /* Match button height */
+    line-height: 50px; 
 }
 
 /* Spinner Animation */
 .spinner {
-    position: absolute; /* Change from display: block */
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    transform: translate(-50%, -50%); /* Perfect centering */
+    position: absolute; 
+    top: 30%;
+    left: 49%;
+    transform: translate(-50%, -50%);
     width: 18px;
     height: 18px;
     border: 3px solid #fff;
